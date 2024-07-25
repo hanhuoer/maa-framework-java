@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>io.github.hanhuoer</groupId>
+        <artifactId>maa-framework-java-parent</artifactId>
+        <version>${revision}</version>
+    </parent>
+
+    <name>Maa Platform v${version}</name>
+    <artifactId>maa-platform</artifactId>
+    <version>${maa.version}</version>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+    <profiles>
+        <profile>
+            <id>linux-aarch64</id>
+            <activation>
+                <os>
+                    <family>unix</family>
+                    <arch>aarch64</arch>
+                </os>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>io.github.hanhuoer</groupId>
+                    <artifactId>maa-linux-aarch64</artifactId>
+                </dependency>
+            </dependencies>
+        </profile>
+
+        <profile>
+            <id>linux-x86_64</id>
+            <activation>
+                <os>
+                    <family>unix</family>
+                    <arch>amd64</arch>
+                </os>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>io.github.hanhuoer</groupId>
+                    <artifactId>maa-linux-x86_64</artifactId>
+                </dependency>
+            </dependencies>
+        </profile>
+
+        <profile>
+            <id>macos-aarch64</id>
+            <activation>
+                <os>
+                    <family>mac</family>
+                    <arch>aarch64</arch>
+                </os>
+                <property>
+                    <name>!linux-build</name>
+                </property>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>io.github.hanhuoer</groupId>
+                    <artifactId>maa-macos-aarch64</artifactId>
+                </dependency>
+            </dependencies>
+        </profile>
+
+        <profile>
+            <id>macos-x86_64</id>
+            <activation>
+                <os>
+                    <family>mac</family>
+                    <arch>x86_64</arch>
+                </os>
+                <property>
+                    <name>!linux-build</name>
+                </property>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>io.github.hanhuoer</groupId>
+                    <artifactId>maa-macos-x86_64</artifactId>
+                </dependency>
+            </dependencies>
+        </profile>
+
+        <profile>
+            <id>windows-aarch64</id>
+            <activation>
+                <os>
+                    <family>windows</family>
+                    <arch>aarch64</arch>
+                </os>
+                <property>
+                    <name>!linux-build</name>
+                </property>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>io.github.hanhuoer</groupId>
+                    <artifactId>maa-windows-aarch64</artifactId>
+                </dependency>
+            </dependencies>
+        </profile>
+
+        <profile>
+            <id>windows-x86_64</id>
+            <activation>
+                <os>
+                    <family>windows</family>
+                    <arch>amd64</arch>
+                </os>
+                <property>
+                    <name>!linux-build</name>
+                </property>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>io.github.hanhuoer</groupId>
+                    <artifactId>maa-windows-x86_64</artifactId>
+                </dependency>
+            </dependencies>
+        </profile>
+
+    </profiles>
+
+
+</project>

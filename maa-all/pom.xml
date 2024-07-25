@@ -1,0 +1,66 @@
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>io.github.hanhuoer</groupId>
+        <artifactId>maa-framework-java-parent</artifactId>
+        <version>${revision}</version>
+    </parent>
+
+    <name>Maa All v${version}</name>
+    <artifactId>maa-all</artifactId>
+    <version>${revision}</version>
+
+    <properties>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+    <dependencies>
+        <!-- Core -->
+        <dependency>
+            <groupId>io.github.hanhuoer</groupId>
+            <artifactId>maa-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.github.hanhuoer</groupId>
+            <artifactId>maa-common</artifactId>
+        </dependency>
+
+        <!-- Maa -->
+        <dependency>
+            <groupId>io.github.hanhuoer</groupId>
+            <artifactId>maa-agent</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.github.hanhuoer</groupId>
+            <artifactId>maa-platform</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.github.hanhuoer</groupId>
+            <artifactId>maa-linux-aarch64</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.github.hanhuoer</groupId>
+            <artifactId>maa-linux-x86_64</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.github.hanhuoer</groupId>
+            <artifactId>maa-macos-aarch64</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.github.hanhuoer</groupId>
+            <artifactId>maa-macos-x86_64</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.github.hanhuoer</groupId>
+            <artifactId>maa-windows-aarch64</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.github.hanhuoer</groupId>
+            <artifactId>maa-windows-x86_64</artifactId>
+        </dependency>
+    </dependencies>
+
+</project>
