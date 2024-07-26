@@ -179,8 +179,11 @@ debug
 
 !.gitkeep
 
-
-
+*.zip
+*.tar
+*.gz
+*.jar
+*.war
 
 
 

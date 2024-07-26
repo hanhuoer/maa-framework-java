@@ -7,13 +7,13 @@
         <version>${revision}</version>
     </parent>
 
-    <name>Maa Framework Java v${version}</name>
+    <name>Maa Framework Java v${project.version}</name>
     <artifactId>maa-framework-java</artifactId>
     <version>${revision}</version>
 
     <properties>
-        <maven.compiler.source>11</maven.compiler.source>
-        <maven.compiler.target>11</maven.compiler.target>
+        <maven.compiler.source>${java.version}</maven.compiler.source>
+        <maven.compiler.target>${java.version}</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 

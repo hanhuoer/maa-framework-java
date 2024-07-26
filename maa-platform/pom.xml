@@ -9,7 +9,7 @@
         <version>${revision}</version>
     </parent>
 
-    <name>Maa Platform v${version}</name>
+    <name>Maa Platform v${project.version}</name>
     <artifactId>maa-platform</artifactId>
     <version>${maa.version}</version>
 

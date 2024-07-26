@@ -53,7 +53,7 @@ graph TD
 <dependency>
   <groupId>io.github.hanhuoer</groupId>
   <artifactId>maa-framework-java</artifactId>
-  <version>1.0.0</version>
+  <version>1.0.1</version>
 </dependency>
 ```
 
@@ -65,7 +65,7 @@ graph TD
 <dependency>
   <groupId>io.github.hanhuoer</groupId>
   <artifactId>maa-all</artifactId>
-  <version>1.0.0</version>
+  <version>1.0.1</version>
 </dependency>
 ```
 
@@ -102,15 +102,39 @@ public class Main {
 git clone https://github.com/hanhuoer/maa-framework-java.git
 ```
 
-### 2️⃣ 跟着以下文档，填充各环境的本地库文件
+### 2️⃣ 添加本地库文件
 
-- [agent - README.md](maa-agent/src/main/resources/README.md)
+#### MaaAgentBinary
+
+- 请参考 [agent - README.md](maa-agent/src/main/resources/README.md) 文档
+
+#### MaaFramework Native Libraries
+
+**方式一：手动放置本地库文件**
+
+将各平台的本地库文件手动放到对应目录中
+
 - [linux-aarch64 - README.md](maa-linux-aarch64/src/main/resources/README.md)
 - [linux-x86_64 - README.md](maa-linux-x86_64/src/main/resources/README.md)
 - [macos-aarch64 - README.md](maa-macos-aarch64/src/main/resources/README.md)
 - [macos-x86_64 - README.md](maa-macos-x86_64/src/main/resources/README.md)
 - [windows-aarch64 - README.md](maa-windows-aarch64/src/main/resources/README.md)
 - [windows-x86_64 - README.md](maa-windows-x86_64/src/main/resources/README.md)
+
+**方式二：通过脚本自动放置文件 【推荐】**
+
+1. 下载所有平台的发布包放到目录 [maa-libs](maa-libs) 中
+   ```
+   └─maa-libs
+     │ MAA-linux-aarch64-version.zip
+     │ MAA-linux-x86_64-version.zip
+     │ MAA-macos-aarch64-version.zip
+     │ MAA-macos-x86_64-version.zip
+     │ MAA-win-aarch64-version.zip
+     │ MAA-win-x86_64-version.zip
+   ```
+2. 执行脚本 `python scripts/copy_lib.py`
+   > 该脚本会清理目标文件夹，并将解压后的本地库复制过去
 
 ### 3️⃣ 安装
 

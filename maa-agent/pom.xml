@@ -9,13 +9,13 @@
         <version>${revision}</version>
     </parent>
 
-    <name>Maa Agent v${version}</name>
+    <name>Maa Agent v${project.version}</name>
     <artifactId>maa-agent</artifactId>
     <version>${agent.version}</version>
 
     <properties>
-        <maven.compiler.source>11</maven.compiler.source>
-        <maven.compiler.target>11</maven.compiler.target>
+        <maven.compiler.source>${java.version}</maven.compiler.source>
+        <maven.compiler.target>${java.version}</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 

@@ -1,6 +1,16 @@
 说明
 ===
 
+## 版本
+
+- SDK：maa-framework-java
+
+| SDK   | MaaFramework |
+|-------|--------------|
+| 1.0.0 | 1.8.8        |
+| 1.0.1 | 1.8.9        |
+
+
 ## MaaFramework 相关文档
 
 - [快速开始](https://github.com/MaaXYZ/MaaFramework/blob/main/docs/zh_cn/1.1-快速开始.md)
