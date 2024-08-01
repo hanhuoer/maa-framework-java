@@ -1,11 +1,11 @@
 package io.github.hanhuoer.maa.core;
 
-import io.github.hanhuoer.maa.MaaWindowsAarch64LibraryLoader;
-import io.github.hanhuoer.maa.loader.LibraryLoader;
+import io.github.hanhuoer.maa.Maa;
 import io.github.hanhuoer.maa.callbak.MaaControllerCallback;
 import io.github.hanhuoer.maa.model.AdbInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import javax.imageio.ImageIO;
@@ -18,10 +18,17 @@ import java.util.List;
 @Slf4j
 class AdbControllerTest {
 
+    Maa maa;
+
     @BeforeAll
     static void init() throws Exception {
-        LibraryLoader loader = new MaaWindowsAarch64LibraryLoader();
-        loader.loadLibrary();
+//        LibraryLoader loader = new MaaWindowsAarch64LibraryLoader();
+//        loader.loadLibrary();
+    }
+
+    @BeforeEach
+    void setUp() throws Exception {
+        maa = Maa.create();
     }
 
     private static String bufferedImageToBase64(BufferedImage bufferedImage) {
