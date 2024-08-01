@@ -69,6 +69,6 @@ zip_files = [f for f in os.listdir(maa_libs_dir) if f.endswith('.zip')]
 clear_all_directories(platform_arch_map)
 
 # 执行复制操作
-# extract_and_move(zip_files, platform_arch_map)
+extract_and_move(zip_files, platform_arch_map)
 
 print("所有文件已处理完毕")
