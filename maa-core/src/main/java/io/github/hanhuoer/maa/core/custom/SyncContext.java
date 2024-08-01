@@ -26,6 +26,10 @@ public class SyncContext {
         this.handle = handle;
     }
 
+    public boolean runTask(String taskName) {
+        return runTask(taskName, "{}");
+    }
+
     /**
      * sync context run task.
      *
@@ -39,8 +43,12 @@ public class SyncContext {
                         this.handle,
                         taskName,
                         taskParam
-                ).getValue()
+                )
         );
+    }
+
+    public RecognitionResult runRecognition(BufferedImage image, String taskName) {
+        return runRecognition(image, taskName, "{}");
     }
 
     /**
@@ -58,16 +66,7 @@ public class SyncContext {
         RectBuffer rectBuffer = new RectBuffer();
         StringBuffer detailBuffer = new StringBuffer();
 
-        MaaFramework.syncContext().MaaSyncContextRunRecognition(
-                this.handle,
-                imageBuffer.getHandle(),
-                taskName,
-                taskParam,
-                rectBuffer.getHandle(),
-                detailBuffer.getHandle()
-        ).getValue();
-
-        MaaBool maaBool = MaaFramework.syncContext().MaaSyncContextRunRecognition(
+        Boolean maaBool = MaaFramework.syncContext().MaaSyncContextRunRecognition(
                 this.handle,
                 imageBuffer.getHandle(),
                 taskName,
@@ -77,13 +76,17 @@ public class SyncContext {
         );
 
         RecognitionResult recognitionResult = new RecognitionResult()
-                .setSuccess(maaBool.getValue())
+                .setSuccess(Boolean.TRUE.equals(maaBool))
                 .setRect(rectBuffer.getValue())
                 .setDetail(detailBuffer.getValue());
 
         detailBuffer.close();
 
         return recognitionResult;
+    }
+
+    public boolean runAction(String taskName, Rect curBox, String curRecDetail) {
+        return runAction(taskName, "{}", curBox, curRecDetail);
     }
 
     /**
@@ -99,7 +102,7 @@ public class SyncContext {
         RectBuffer rectBuffer = new RectBuffer();
         rectBuffer.setValue(curBox);
 
-        MaaBool maaBool = MaaFramework.syncContext().MaaSyncContextRunAction(
+        Boolean maaBool = MaaFramework.syncContext().MaaSyncContextRunAction(
                 this.handle,
                 taskName,
                 taskParam,
@@ -109,7 +112,7 @@ public class SyncContext {
 
         rectBuffer.close();
 
-        return Boolean.TRUE.equals(maaBool.getValue());
+        return Boolean.TRUE.equals(maaBool);
     }
 
     public boolean click(int x, int y) {
@@ -118,15 +121,19 @@ public class SyncContext {
                         this.handle,
                         x,
                         y
-                ).getValue()
+                )
         );
+    }
+
+    public boolean swipe(int x1, int y1, int x2, int y2) {
+        return swipe(x1, y1, x2, y2, 1000);
     }
 
     public boolean swipe(int x1, int y1, int x2, int y2, int duration) {
         return Boolean.TRUE.equals(
                 MaaFramework.syncContext().MaaSyncContextSwipe(
                         this.handle, x1, y1, x2, y2, duration
-                ).getValue()
+                )
         );
     }
 
@@ -134,7 +141,7 @@ public class SyncContext {
         return Boolean.TRUE.equals(
                 MaaFramework.syncContext().MaaSyncContextPressKey(
                         this.handle, key
-                ).getValue()
+                )
         );
     }
 
@@ -142,7 +149,7 @@ public class SyncContext {
         return Boolean.TRUE.equals(
                 MaaFramework.syncContext().MaaSyncContextInputText(
                         this.handle, text
-                ).getValue()
+                )
         );
     }
 
@@ -150,7 +157,7 @@ public class SyncContext {
         return Boolean.TRUE.equals(
                 MaaFramework.syncContext().MaaSyncContextTouchDown(
                         this.handle, contact, x, y, pressure
-                ).getValue()
+                )
         );
     }
 
@@ -158,7 +165,7 @@ public class SyncContext {
         return Boolean.TRUE.equals(
                 MaaFramework.syncContext().MaaSyncContextTouchMove(
                         this.handle, contact, x, y, pressure
-                ).getValue()
+                )
         );
     }
 
@@ -166,32 +173,32 @@ public class SyncContext {
         return Boolean.TRUE.equals(
                 MaaFramework.syncContext().MaaSyncContextTouchUp(
                         this.handle, contact
-                ).getValue()
+                )
         );
     }
 
     public BufferedImage screencap() throws IOException {
         ImageBuffer imageBuffer = new ImageBuffer();
-        MaaBool maaBool = MaaFramework.syncContext().MaaSyncContextScreencap(
+        Boolean maaBool = MaaFramework.syncContext().MaaSyncContextScreencap(
                 this.handle,
                 imageBuffer.getHandle()
         );
 
         BufferedImage image = imageBuffer.getValue();
 
-        if (!maaBool.getValue()) return null;
+        if (!Boolean.TRUE.equals(maaBool)) return null;
         return image;
     }
 
     public BufferedImage cachedImage() throws IOException {
         ImageBuffer imageBuffer = new ImageBuffer();
-        MaaBool maaBool = MaaFramework.syncContext().MaaSyncContextCachedImage(
+        Boolean maaBool = MaaFramework.syncContext().MaaSyncContextCachedImage(
                 this.handle,
                 imageBuffer.getHandle()
         );
 
         BufferedImage image = imageBuffer.getValue();
-        if (!maaBool.getValue()) return null;
+        if (!Boolean.TRUE.equals(maaBool)) return null;
         return image;
     }
 

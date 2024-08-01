@@ -499,52 +499,52 @@ public class MaaFramework {
      */
     public interface MaaSyncContext extends Library {
 
-        MaaBool MaaSyncContextRunTask(MaaSyncContextHandle sync_context, String task_name, String param);
+        Boolean MaaSyncContextRunTask(MaaSyncContextHandle sync_context, String task_name, String param);
 
-        MaaBool MaaSyncContextRunRecognition(MaaSyncContextHandle sync_context,
+        Boolean MaaSyncContextRunRecognition(MaaSyncContextHandle sync_context,
                                              MaaImageBufferHandle image,
                                              String task_name,
                                              String task_param,
                                              MaaRectHandle out_box /* out */,
                                              MaaStringBufferHandle out_detail /* out */);
 
-        MaaBool MaaSyncContextRunAction(MaaSyncContextHandle sync_context,
+        Boolean MaaSyncContextRunAction(MaaSyncContextHandle sync_context,
                                         String task_name, String task_param,
                                         MaaRectHandle cur_box,
                                         String cur_rec_detail);
 
-        MaaBool MaaSyncContextClick(MaaSyncContextHandle sync_context, int x, int y);
+        Boolean MaaSyncContextClick(MaaSyncContextHandle sync_context, int x, int y);
 
-        MaaBool MaaSyncContextSwipe(MaaSyncContextHandle sync_context,
+        Boolean MaaSyncContextSwipe(MaaSyncContextHandle sync_context,
                                     int x1, int y1,
                                     int x2, int y2,
                                     int duration);
 
-        MaaBool MaaSyncContextPressKey(MaaSyncContextHandle sync_context, int keycode);
+        Boolean MaaSyncContextPressKey(MaaSyncContextHandle sync_context, int keycode);
 
-        MaaBool MaaSyncContextInputText(MaaSyncContextHandle sync_context, String text);
+        Boolean MaaSyncContextInputText(MaaSyncContextHandle sync_context, String text);
 
-        MaaBool MaaSyncContextTouchDown(MaaSyncContextHandle sync_context,
+        Boolean MaaSyncContextTouchDown(MaaSyncContextHandle sync_context,
                                         int contact,
                                         int x,
                                         int y,
                                         int pressure);
 
-        MaaBool MaaSyncContextTouchMove(MaaSyncContextHandle sync_context,
+        Boolean MaaSyncContextTouchMove(MaaSyncContextHandle sync_context,
                                         int contact,
                                         int x,
                                         int y,
                                         int pressure);
 
-        MaaBool MaaSyncContextTouchUp(MaaSyncContextHandle sync_context, int contact);
+        Boolean MaaSyncContextTouchUp(MaaSyncContextHandle sync_context, int contact);
 
-        MaaBool MaaSyncContextScreencap(MaaSyncContextHandle sync_context, MaaImageBufferHandle out_image);
+        Boolean MaaSyncContextScreencap(MaaSyncContextHandle sync_context, MaaImageBufferHandle out_image);
 
         /**
          * @param sync_context sync context
          * @param out_image    out image
          */
-        MaaBool MaaSyncContextCachedImage(MaaSyncContextHandle sync_context, MaaImageBufferHandle out_image);
+        Boolean MaaSyncContextCachedImage(MaaSyncContextHandle sync_context, MaaImageBufferHandle out_image);
     }
 
 }

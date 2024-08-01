@@ -2,10 +2,9 @@ package io.github.hanhuoer.maa.jna;
 
 import com.sun.jna.Library;
 import com.sun.jna.Native;
-import io.github.hanhuoer.maa.loader.MaaLibraryLoader;
 import io.github.hanhuoer.maa.MaaOptions;
+import io.github.hanhuoer.maa.loader.MaaLibraryLoader;
 import io.github.hanhuoer.maa.model.AdbInfo;
-import io.github.hanhuoer.maa.ptr.MaaBool;
 import io.github.hanhuoer.maa.ptr.MaaInstanceHandle;
 import io.github.hanhuoer.maa.ptr.MaaStringBufferHandle;
 import io.github.hanhuoer.maa.ptr.MaaWin32Hwnd;
@@ -140,7 +139,7 @@ public class MaaToolkit {
 
         Long MaaToolkitFindDeviceWithAdb(String adb_path);
 
-        MaaBool MaaToolkitPostFindDevice();
+        Boolean MaaToolkitPostFindDevice();
 
         Boolean MaaToolkitPostFindDeviceWithAdb(String adb_path);
 

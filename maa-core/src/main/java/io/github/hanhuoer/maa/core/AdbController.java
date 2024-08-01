@@ -7,7 +7,6 @@ import io.github.hanhuoer.maa.core.base.Controller;
 import io.github.hanhuoer.maa.jna.MaaFramework;
 import io.github.hanhuoer.maa.jna.MaaToolkit;
 import io.github.hanhuoer.maa.model.AdbInfo;
-import io.github.hanhuoer.maa.ptr.MaaBool;
 import io.github.hanhuoer.maa.ptr.MaaControllerHandle;
 import io.github.hanhuoer.maa.util.FileUtils;
 import io.github.hanhuoer.maa.util.StringUtils;
@@ -96,7 +95,7 @@ public class AdbController extends Controller {
     public static List<AdbInfo> find(String adb) {
         Long count = 0L;
         if (StringUtils.isEmpty(adb)) {
-            MaaBool b = MaaToolkit.device().MaaToolkitPostFindDevice();
+            MaaToolkit.device().MaaToolkitPostFindDevice();
         } else {
             count = MaaToolkit.device().MaaToolkitFindDeviceWithAdb(adb);
         }
