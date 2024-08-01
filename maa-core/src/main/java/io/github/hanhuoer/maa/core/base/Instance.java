@@ -15,6 +15,7 @@ import io.github.hanhuoer.maa.model.RecognitionDetail;
 import io.github.hanhuoer.maa.model.TaskDetail;
 import io.github.hanhuoer.maa.ptr.StringBuffer;
 import io.github.hanhuoer.maa.ptr.*;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 
 import java.awt.image.BufferedImage;
@@ -275,11 +276,16 @@ public class Instance implements AutoCloseable {
      * @param controller the controller to bind.
      * @return true if the resource and controller were successfully bound, False otherwise.
      */
-    public boolean bind(Resource resource, Controller controller) {
-        Boolean resourceResult = MaaFramework.instance().MaaBindResource(this.handle, resource.getHandle());
-        Boolean controllerResult = MaaFramework.instance().MaaBindController(this.handle, controller.getHandle());
-        return Boolean.TRUE.equals(resourceResult)
-                && Boolean.TRUE.equals(controllerResult);
+    public boolean bind(@NonNull Resource resource, @NonNull Controller controller) {
+        return bindResource(resource) && bindController(controller);
+    }
+
+    public boolean bindResource(@NonNull Resource resource) {
+        return Boolean.TRUE.equals(MaaFramework.instance().MaaBindResource(this.handle, resource.getHandle()));
+    }
+
+    public boolean bindController(@NonNull Controller controller) {
+        return Boolean.TRUE.equals(MaaFramework.instance().MaaBindController(this.handle, controller.getHandle()));
     }
 
     /**
