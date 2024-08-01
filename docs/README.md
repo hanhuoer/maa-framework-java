@@ -5,10 +5,18 @@
 
 - SDK：maa-framework-java
 
+```xml
+<dependency>
+  <groupId>io.github.hanhuoer</groupId>
+  <artifactId>maa-framework-java</artifactId>
+</dependency>
+```
+
 | SDK   | MaaFramework |
 |-------|--------------|
 | 1.0.0 | 1.8.8        |
 | 1.0.1 | 1.8.9        |
+| 1.0.2 | 1.8.9        |
 
 
 ## MaaFramework 相关文档
