@@ -36,7 +36,7 @@ public abstract class CustomRecognizer {
      * @param customParam the custom recognition param from pipeline.
      * @return analyze result object.
      */
-    public abstract CustomRecognizerAnalyzeResult analyze(
+    public abstract CustomRecognizerResult analyze(
             SyncContext context,
             BufferedImage image,
             String taskName,
@@ -62,7 +62,7 @@ public abstract class CustomRecognizer {
             throw new RuntimeException(e);
         }
 
-        CustomRecognizerAnalyzeResult analyze = this.analyze(context, image, taskName, customParam);
+        CustomRecognizerResult analyze = this.analyze(context, image, taskName, customParam);
 
         RectBuffer rectBuffer = new RectBuffer(outBoxHandle);
         rectBuffer.setValue(analyze.getBox());

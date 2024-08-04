@@ -3,8 +3,6 @@ package io.github.hanhuoer.maa.core.base;
 import com.alibaba.fastjson2.JSONObject;
 import io.github.hanhuoer.maa.Maa;
 import io.github.hanhuoer.maa.core.AdbController;
-import io.github.hanhuoer.maa.core.base.Instance;
-import io.github.hanhuoer.maa.core.base.Resource;
 import io.github.hanhuoer.maa.core.custom.CustomAction;
 import io.github.hanhuoer.maa.core.custom.CustomRecognizer;
 import io.github.hanhuoer.maa.core.custom.SyncContext;
@@ -232,14 +230,14 @@ class InstanceTest {
 
         CustomRecognizer customRecognizer = new CustomRecognizer() {
             @Override
-            public CustomRecognizerAnalyzeResult analyze(SyncContext context, BufferedImage image,
-                                                         String taskName, String customParam) {
+            public CustomRecognizerResult analyze(SyncContext context, BufferedImage image,
+                                                  String taskName, String customParam) {
                 log.info("[custom recognizer]");
                 log.info("context: {}", context);
                 log.info("image: {}", image);
                 log.info("taskName: {}", taskName);
                 log.info("customParam: {}", customParam);
-                return new CustomRecognizerAnalyzeResult(
+                return new CustomRecognizerResult(
                         true,
                         new Rect().setX(0).setY(0).setW(600).setH(600),
                         "detail...."
@@ -344,15 +342,15 @@ class InstanceTest {
         }
 
         @Override
-        public CustomRecognizerAnalyzeResult analyze(SyncContext context, BufferedImage image,
-                                                     String taskName, String customParam) {
+        public CustomRecognizerResult analyze(SyncContext context, BufferedImage image,
+                                              String taskName, String customParam) {
             log.info("[custom recognizer]");
             log.info("context: {}", context);
             log.info("image: {}", image);
             log.info("taskName: {}", taskName);
             log.info("customParam: {}", customParam);
 
-            return new CustomRecognizerAnalyzeResult(
+            return new CustomRecognizerResult(
                     true,
                     new Rect().setX(0).setY(0).setW(600).setH(600),
                     "detail...."

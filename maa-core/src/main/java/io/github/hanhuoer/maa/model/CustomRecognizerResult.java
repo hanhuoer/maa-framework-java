@@ -8,13 +8,13 @@ import lombok.experimental.Accessors;
  */
 @Data
 @Accessors(chain = true)
-public class CustomRecognizerAnalyzeResult {
+public class CustomRecognizerResult {
 
     private boolean success;
     private Rect box;
     private String detail;
 
-    public CustomRecognizerAnalyzeResult(boolean success, Rect box, String detail) {
+    public CustomRecognizerResult(boolean success, Rect box, String detail) {
         this.success = success;
         this.box = box;
         this.detail = detail;

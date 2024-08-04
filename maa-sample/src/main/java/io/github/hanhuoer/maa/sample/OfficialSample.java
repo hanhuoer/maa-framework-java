@@ -9,7 +9,7 @@ import io.github.hanhuoer.maa.core.custom.CustomAction;
 import io.github.hanhuoer.maa.core.custom.CustomRecognizer;
 import io.github.hanhuoer.maa.core.custom.SyncContext;
 import io.github.hanhuoer.maa.model.AdbInfo;
-import io.github.hanhuoer.maa.model.CustomRecognizerAnalyzeResult;
+import io.github.hanhuoer.maa.model.CustomRecognizerResult;
 import io.github.hanhuoer.maa.model.Rect;
 import io.github.hanhuoer.maa.model.TaskDetail;
 import io.github.hanhuoer.maa.util.CollectionUtils;
@@ -64,8 +64,8 @@ public class OfficialSample {
     public static class MyRecognizer extends CustomRecognizer {
 
         @Override
-        public CustomRecognizerAnalyzeResult analyze(SyncContext context, BufferedImage image, String taskName, String customParam) {
-            return new CustomRecognizerAnalyzeResult(
+        public CustomRecognizerResult analyze(SyncContext context, BufferedImage image, String taskName, String customParam) {
+            return new CustomRecognizerResult(
                     true,
                     new Rect().setX(0).setY(0).setW(100).setH(100),
                     "Hello World!"

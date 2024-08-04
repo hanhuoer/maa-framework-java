@@ -1,12 +1,13 @@
 package io.github.hanhuoer.maa.core.custom;
 
 import io.github.hanhuoer.maa.jna.MaaFramework;
+import io.github.hanhuoer.maa.model.RecognitionResult;
 import io.github.hanhuoer.maa.model.Rect;
+import io.github.hanhuoer.maa.ptr.ImageBuffer;
+import io.github.hanhuoer.maa.ptr.MaaSyncContextHandle;
+import io.github.hanhuoer.maa.ptr.RectBuffer;
 import io.github.hanhuoer.maa.ptr.StringBuffer;
-import io.github.hanhuoer.maa.ptr.*;
-import lombok.Data;
 import lombok.Getter;
-import lombok.experimental.Accessors;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -200,14 +201,6 @@ public class SyncContext {
         BufferedImage image = imageBuffer.getValue();
         if (!Boolean.TRUE.equals(maaBool)) return null;
         return image;
-    }
-
-    @Data
-    @Accessors(chain = true)
-    public static class RecognitionResult {
-        private boolean success;
-        private Rect rect;
-        private String detail;
     }
 
 }
