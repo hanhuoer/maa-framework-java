@@ -15,13 +15,16 @@ import io.github.hanhuoer.maa.model.RecognitionDetail;
 import io.github.hanhuoer.maa.model.TaskDetail;
 import io.github.hanhuoer.maa.ptr.StringBuffer;
 import io.github.hanhuoer.maa.ptr.*;
+import lombok.Getter;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -34,8 +37,16 @@ import java.util.function.Function;
 @Slf4j
 public class Instance implements AutoCloseable {
 
+    private final Map<String, CustomRecognizer> customRecognizerMap = new HashMap<>();
+    private final Map<String, CustomAction> customActionHashMap = new HashMap<>();
+    private ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+    @Getter
     private MaaInstanceHandle handle;
-    protected ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+    @Getter
+    private Controller controller;
+    @Getter
+    private Resource resource;
+
 
     public Instance() {
         this(null, null);
@@ -281,11 +292,19 @@ public class Instance implements AutoCloseable {
     }
 
     public boolean bindResource(@NonNull Resource resource) {
-        return Boolean.TRUE.equals(MaaFramework.instance().MaaBindResource(this.handle, resource.getHandle()));
+        boolean equals = Boolean.TRUE.equals(MaaFramework.instance().MaaBindResource(this.handle, resource.getHandle()));
+        if (equals) {
+            this.resource = resource;
+        }
+        return equals;
     }
 
     public boolean bindController(@NonNull Controller controller) {
-        return Boolean.TRUE.equals(MaaFramework.instance().MaaBindController(this.handle, controller.getHandle()));
+        boolean equals = Boolean.TRUE.equals(MaaFramework.instance().MaaBindController(this.handle, controller.getHandle()));
+        if (equals) {
+            this.controller = controller;
+        }
+        return equals;
     }
 
     /**
@@ -458,7 +477,11 @@ public class Instance implements AutoCloseable {
                 null
         );
 
-        return Boolean.TRUE.equals(result);
+        boolean equals = Boolean.TRUE.equals(result);
+        if (equals) {
+            customRecognizerMap.put(name, recognizer);
+        }
+        return equals;
     }
 
     public boolean registerAction(String name, CustomAction action) {
@@ -476,7 +499,65 @@ public class Instance implements AutoCloseable {
                 null
         );
 
-        return Boolean.TRUE.equals(result);
+        boolean equals = Boolean.TRUE.equals(result);
+        if (equals) {
+            customActionHashMap.put(name, action);
+        }
+        return equals;
+    }
+
+    public boolean unregisterRecognizer(String name) {
+        if (name == null || name.isEmpty()) {
+            throw new IllegalArgumentException("Recognizer name cannot be null or empty");
+        }
+
+        Boolean result = MaaFramework.instance().MaaUnregisterCustomRecognizer(
+                this.handle,
+                name
+        );
+
+        boolean equals = Boolean.TRUE.equals(result);
+        if (equals) {
+            customRecognizerMap.remove(name);
+        }
+        return equals;
+    }
+
+    public boolean unregisterAction(String name) {
+        if (name == null || name.isEmpty()) {
+            throw new IllegalArgumentException("Action name cannot be null or empty");
+        }
+
+        Boolean result = MaaFramework.instance().MaaUnregisterCustomAction(
+                this.handle,
+                name
+        );
+
+        boolean equals = Boolean.TRUE.equals(result);
+        if (equals) {
+            customActionHashMap.remove(name);
+        }
+        return equals;
+    }
+
+    public boolean clearCustomRecognizer() {
+        Boolean result = MaaFramework.instance().MaaClearCustomRecognizer(this.handle);
+
+        boolean equals = Boolean.TRUE.equals(result);
+        if (equals) {
+            customActionHashMap.clear();
+        }
+        return equals;
+    }
+
+    public boolean clearCustomAction() {
+        Boolean result = MaaFramework.instance().MaaClearCustomAction(this.handle);
+
+        boolean equals = Boolean.TRUE.equals(result);
+        if (equals) {
+            customActionHashMap.clear();
+        }
+        return equals;
     }
 
     public Integer status(long id) {
