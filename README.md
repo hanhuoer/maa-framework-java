@@ -53,7 +53,7 @@ graph TD
 <dependency>
   <groupId>io.github.hanhuoer</groupId>
   <artifactId>maa-framework-java</artifactId>
-  <version>1.0.2</version>
+  <version>1.0.3</version>
 </dependency>
 ```
 
@@ -65,7 +65,7 @@ graph TD
 <dependency>
   <groupId>io.github.hanhuoer</groupId>
   <artifactId>maa-all</artifactId>
-  <version>1.0.2</version>
+  <version>1.0.3</version>
 </dependency>
 ```
 
