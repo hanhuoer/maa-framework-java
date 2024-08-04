@@ -6,6 +6,7 @@ import io.github.hanhuoer.maa.consts.MaaCtrlOptionEnum;
 import io.github.hanhuoer.maa.jna.MaaFramework;
 import io.github.hanhuoer.maa.ptr.ImageBuffer;
 import io.github.hanhuoer.maa.ptr.MaaControllerHandle;
+import io.github.hanhuoer.maa.ptr.StringBuffer;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -144,6 +145,14 @@ public abstract class Controller implements AutoCloseable {
 
     public boolean status(long maaId) {
         return MaaFramework.controller().MaaControllerStatus(handle, maaId) > 0;
+    }
+
+    public String uuid() {
+        StringBuffer stringBuffer = new StringBuffer();
+        MaaFramework.controller().MaaControllerGetUUID(this.handle, stringBuffer.getHandle());
+        String uuid = stringBuffer.getValue();
+        stringBuffer.close();
+        return uuid;
     }
 
 }
