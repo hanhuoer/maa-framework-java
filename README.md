@@ -93,6 +93,8 @@ public class Main {
 >
 更多使用示例请参考 [使用示例](maa-sample)
 
+**游戏实战示例** [maa-framework-java-sample](https://github.com/hanhuoer/maa-framework-java-sample)
+
 
 ## 💻 开发指南
 
