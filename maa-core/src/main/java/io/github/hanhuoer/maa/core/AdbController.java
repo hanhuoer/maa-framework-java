@@ -10,6 +10,7 @@ import io.github.hanhuoer.maa.model.AdbInfo;
 import io.github.hanhuoer.maa.ptr.MaaControllerHandle;
 import io.github.hanhuoer.maa.util.FileUtils;
 import io.github.hanhuoer.maa.util.StringUtils;
+import lombok.Getter;
 
 import java.util.Collections;
 import java.util.List;
@@ -22,6 +23,7 @@ import java.util.stream.LongStream;
  */
 public class AdbController extends Controller {
 
+    @Getter
     private AdbInfo adbInfo;
 
 
