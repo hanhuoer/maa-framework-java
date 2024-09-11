@@ -45,6 +45,9 @@
     <modules>
         <module>maa-core</module>
         <module>maa-common</module>
+        <module>maa-all</module>
+        <module>maa-framework-java</module>
+        <module>maa-sample</module>
         <module>maa-agent</module>
         <module>maa-platform</module>
         <module>maa-linux-aarch64</module>
@@ -53,9 +56,6 @@
         <module>maa-macos-x86_64</module>
         <module>maa-windows-aarch64</module>
         <module>maa-windows-x86_64</module>
-        <module>maa-all</module>
-        <module>maa-framework-java</module>
-        <module>maa-sample</module>
     </modules>
 
     <properties>
@@ -66,7 +66,7 @@
 
         <!-- Maa Framework Java Version: current project -->
         <!-- https://github.com/hanhuoer/maa-framework-java -->
-        <revision>1.0.4</revision>
+        <revision>1.0.5</revision>
 
         <!-- Maa Framework Version: native lib -->
         <!-- https://github.com/MaaXYZ/MaaFramework -->
