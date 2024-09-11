@@ -545,7 +545,7 @@ public class Instance implements AutoCloseable {
 
         boolean equals = Boolean.TRUE.equals(result);
         if (equals) {
-            customActionHashMap.clear();
+            customRecognizerMap.clear();
         }
         return equals;
     }
