@@ -5,6 +5,7 @@ import io.github.hanhuoer.maa.callbak.MaaControllerCallback;
 import io.github.hanhuoer.maa.consts.MaaCtrlOptionEnum;
 import io.github.hanhuoer.maa.jna.MaaFramework;
 import io.github.hanhuoer.maa.ptr.ImageBuffer;
+import io.github.hanhuoer.maa.ptr.MaaCallbackTransparentArg;
 import io.github.hanhuoer.maa.ptr.MaaControllerHandle;
 import io.github.hanhuoer.maa.ptr.StringBuffer;
 import lombok.Getter;
@@ -20,21 +21,23 @@ import java.util.concurrent.Executors;
  * @author H
  */
 @Slf4j
-@Getter
 public abstract class Controller implements AutoCloseable {
 
     protected ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
 
+    @Getter
     protected MaaControllerHandle handle;
+    @Getter
     protected MaaControllerCallback callback;
-    protected Object callbackArgs;
+    @Getter
+    protected MaaCallbackTransparentArg callbackArgs;
 
 
     protected Controller() {
         this(null, null);
     }
 
-    protected Controller(MaaControllerCallback callback, Object callbackArgs) {
+    protected Controller(MaaControllerCallback callback, MaaCallbackTransparentArg callbackArgs) {
         this.callback = callback;
         this.callbackArgs = callbackArgs;
     }
