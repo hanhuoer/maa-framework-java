@@ -17,14 +17,17 @@ import java.util.function.Function;
 /**
  * @author H
  */
-@Getter
 @Slf4j
 public class Resource implements AutoCloseable {
 
-    private MaaResourceHandle handle;
-    private final MaaResourceCallback callback;
-    private final MaaCallbackTransparentArg callbackArg;
     protected ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+
+    @Getter
+    private MaaResourceHandle handle;
+    @Getter
+    private final MaaResourceCallback callback;
+    @Getter
+    private final MaaCallbackTransparentArg callbackArg;
 
 
     public Resource() {
