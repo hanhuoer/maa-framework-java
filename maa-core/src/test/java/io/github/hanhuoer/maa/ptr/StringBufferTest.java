@@ -67,27 +67,27 @@ class StringBufferTest {
         });
 
         StringBuffer first = stringBufferList.get(0);
-        String str = MaaFramework.buffer().MaaGetString(first.getHandle());
+        String str = MaaFramework.buffer().MaaStringBufferGet(first.getHandle());
         log.info("index 0 value: {}", str);
 
         first.close();
-        str = MaaFramework.buffer().MaaGetString(first.getHandle());
+        str = MaaFramework.buffer().MaaStringBufferGet(first.getHandle());
         log.info("index 0 value: {}", str);
 
         StringBuffer sec = stringBufferList.get(1);
         log.info("index 1 value: {}", sec.getValue());
-        MaaFramework.buffer().MaaDestroyStringBuffer(sec.getHandle());
+        MaaFramework.buffer().MaaStringBufferDestroy(sec.getHandle());
         log.info("index 1 value: {}", sec.getValue());
-        log.info("index 1 value: {}", MaaFramework.buffer().MaaGetString(sec.getHandle()));
+        log.info("index 1 value: {}", MaaFramework.buffer().MaaStringBufferGet(sec.getHandle()));
 
         StringBuffer thd = stringBufferList.get(2);
-        log.info("index 2 value: {}", MaaFramework.buffer().MaaGetString(thd.getHandle()));
-        log.info("index 2 value: {}", MaaFramework.buffer().MaaGetString(thd.getHandle()));
-        MaaFramework.buffer().MaaDestroyStringBuffer(thd.getHandle());
-        log.info("index 2 value: {}", MaaFramework.buffer().MaaGetString(thd.getHandle()));
-        log.info("index 2 value: {}", MaaFramework.buffer().MaaGetString(thd.getHandle()));
+        log.info("index 2 value: {}", MaaFramework.buffer().MaaStringBufferGet(thd.getHandle()));
+        log.info("index 2 value: {}", MaaFramework.buffer().MaaStringBufferGet(thd.getHandle()));
+        MaaFramework.buffer().MaaStringBufferDestroy(thd.getHandle());
+        log.info("index 2 value: {}", MaaFramework.buffer().MaaStringBufferGet(thd.getHandle()));
+        log.info("index 2 value: {}", MaaFramework.buffer().MaaStringBufferGet(thd.getHandle()));
 
         // [2024-xx-xx xx:xx:xx.xxx][ERR][Px44628][Tx12177][MaaBuffer.cpp][L16][MaaDestroyStringBuffer] handle is null
-        MaaFramework.buffer().MaaDestroyStringBuffer(null);
+        MaaFramework.buffer().MaaStringBufferDestroy(null);
     }
 }

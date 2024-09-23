@@ -172,6 +172,8 @@ debug
 /maa-macos-x86_64/src/main/resources/mac_x86_64
 /maa-windows-aarch64/src/main/resources/win_aarch64
 /maa-windows-x86_64/src/main/resources/win_x86_64
+/maa-android-aarch64/src/main/resources/android_aarch64
+/maa-android-x86_64/src/main/resources/android_x86_64
 
 *.so
 *.dylib
@@ -190,3 +192,4 @@ debug
 
 
 
+/maa-libs/2.0.0/MaaPiCli

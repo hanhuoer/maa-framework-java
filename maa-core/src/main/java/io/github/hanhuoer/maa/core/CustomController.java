@@ -1,6 +1,6 @@
 package io.github.hanhuoer.maa.core;
 
-import io.github.hanhuoer.maa.callbak.MaaControllerCallback;
+import io.github.hanhuoer.maa.callbak.MaaNotificationCallback;
 import io.github.hanhuoer.maa.core.base.Controller;
 import io.github.hanhuoer.maa.core.custom.CustomControllerAgent;
 import io.github.hanhuoer.maa.jna.MaaFramework;
@@ -21,12 +21,12 @@ public class CustomController extends Controller {
         this(customController, null, null);
     }
 
-    public CustomController(CustomControllerAgent customController, MaaControllerCallback callback) {
+    public CustomController(CustomControllerAgent customController, MaaNotificationCallback callback) {
         this(customController, callback, null);
     }
 
     public CustomController(CustomControllerAgent customController,
-                            MaaControllerCallback callback, MaaCallbackTransparentArg callbackArg) {
+                            MaaNotificationCallback callback, MaaCallbackTransparentArg callbackArg) {
 
         MaaControllerHandle handle = MaaFramework.controller().MaaCustomControllerCreate(
                 customController.getHandle(),

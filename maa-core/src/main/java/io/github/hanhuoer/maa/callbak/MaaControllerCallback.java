@@ -2,7 +2,9 @@ package io.github.hanhuoer.maa.callbak;
 
 /**
  * @author H
+ * @deprecated use MaaNotificationCallback instead
  */
-public interface MaaControllerCallback extends MaaAPICallback {
+@Deprecated
+public interface MaaControllerCallback extends MaaNotificationCallback {
 
 }

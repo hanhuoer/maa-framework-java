@@ -1,8 +1,14 @@
 package io.github.hanhuoer.maa.core.custom;
 
+import io.github.hanhuoer.maa.model.RecognitionDetail;
 import io.github.hanhuoer.maa.model.Rect;
+import io.github.hanhuoer.maa.model.TaskDetail;
 import io.github.hanhuoer.maa.ptr.*;
+import io.github.hanhuoer.maa.ptr.base.MaaBool;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
 /**
@@ -18,56 +24,73 @@ public abstract class CustomAction {
     public CustomAction() {
         this.handle = new MaaCustomActionHandle();
         handle.action = this::runAgent;
-        handle.stop = this::stopAgent;
     }
 
-    /**
-     * run the given action.
-     *
-     * @param context     the context.
-     * @param taskName    the name of the task.
-     * @param customParam the custom action param from pipeline.
-     * @param box         the current box.
-     * @param recDetail   the current recognition detail.
-     * @return success or not.
-     */
-    public abstract boolean run(
-            SyncContext context,
-            String taskName,
-            String customParam,
-            Rect box,
-            String recDetail
-    );
+    public abstract RunResult run(Context context, RunArg arg);
 
-    /**
-     * stop the given action.
-     */
-    public abstract void stop();
 
-    public boolean runAgent(
-            MaaSyncContextHandle contextHandle,
-            String taskName,
-            String customParam,
+    public MaaBool runAgent(
+            MaaContextHandle contextHandle,
+            MaaTaskId taskId,
+            String currentTaskName,
+            String customActionName,
+            String customActionParam,
+            MaaRecoId recoId,
             MaaRectHandle boxHandle,
-            String recDetail,
-            MaaTransparentArg arg
+            MaaCallbackTransparentArg arg
     ) {
-        SyncContext syncContext = new SyncContext(contextHandle);
+        Context context = new Context(contextHandle);
+
+        TaskDetail taskDetail = context.getTasker().getTaskDetail(taskId);
+        if (taskDetail == null) return MaaBool.FALSE;
+
+        RecognitionDetail recognitionDetail = context.getTasker().getRecognitionDetail(recoId);
+        if (recognitionDetail == null) return MaaBool.FALSE;
 
         RectBuffer rectBuffer = new RectBuffer(boxHandle);
         Rect box = rectBuffer.getValue();
         rectBuffer.close();
 
-        return this.run(
-                syncContext,
-                taskName,
-                customParam,
-                box,
-                recDetail
-        );
+        RunArg runArg = new RunArg()
+                .setTaskDetail(taskDetail)
+                .setCurrentTaskName(currentTaskName)
+                .setCustomActionName(customActionName)
+                .setCustomActionParam(customActionParam)
+                .setRecognitionDetail(recognitionDetail)
+                .setBox(box);
+
+        return MaaBool.valueOf(this.run(context, runArg).ifSuccess());
     }
 
-    public void stopAgent() {
-        this.stop();
+
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Accessors(chain = true)
+    public static class RunArg {
+
+        private TaskDetail taskDetail;
+        private String currentTaskName;
+        private String customActionName;
+        private String customActionParam;
+        private RecognitionDetail recognitionDetail;
+        private Rect box;
+
     }
+
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Accessors(chain = true)
+    public static class RunResult {
+
+        private Boolean success;
+
+        public boolean ifSuccess() {
+            return Boolean.TRUE.equals(success);
+        }
+
+    }
+
+
 }

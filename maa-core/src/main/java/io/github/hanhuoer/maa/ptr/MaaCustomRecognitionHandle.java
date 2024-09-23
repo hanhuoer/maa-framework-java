@@ -11,13 +11,13 @@ import java.util.List;
  *
  * @author H
  */
-public class MaaCustomRecognizerHandle extends Structure {
+public class MaaCustomRecognitionHandle extends Structure {
 
-    public MaaCustomRecognitionCallback analyze;
+    public MaaCustomRecognitionCallback recognizer;
 
     @Override
     protected List<String> getFieldOrder() {
-        return List.of("analyze");
+        return List.of("recognizer");
     }
 
 }

@@ -3,8 +3,8 @@ package io.github.hanhuoer.maa.sample;
 import io.github.hanhuoer.maa.Maa;
 import io.github.hanhuoer.maa.MaaOptions;
 import io.github.hanhuoer.maa.core.AdbController;
-import io.github.hanhuoer.maa.core.base.Instance;
 import io.github.hanhuoer.maa.core.base.Resource;
+import io.github.hanhuoer.maa.core.base.Tasker;
 import io.github.hanhuoer.maa.model.AdbInfo;
 
 import java.util.List;
@@ -22,9 +22,10 @@ public class QuickStart {
         controller.connect();
         Resource resource = new Resource();
         resource.load("./resource");
-        Instance instance = new Instance();
-        boolean bind = instance.bind(controller, resource);
+        Tasker tasker = new Tasker();
+        boolean bind = tasker.bind(controller, resource);
         System.out.println("bind result: " + bind);
-        System.out.println(instance.inited());
+        System.out.println(tasker.inited());
+        tasker.close();
     }
 }

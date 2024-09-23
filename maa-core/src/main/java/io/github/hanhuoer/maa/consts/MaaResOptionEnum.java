@@ -1,5 +1,6 @@
 package io.github.hanhuoer.maa.consts;
 
+import io.github.hanhuoer.maa.ptr.MaaResOption;
 import lombok.Getter;
 
 /**
@@ -14,6 +15,10 @@ public enum MaaResOptionEnum {
 
     MaaResOptionEnum(int value) {
         this.value = value;
+    }
+
+    public MaaResOption value() {
+        return new MaaResOption(this.value);
     }
 
 }

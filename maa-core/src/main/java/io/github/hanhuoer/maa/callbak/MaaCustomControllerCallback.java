@@ -2,9 +2,14 @@ package io.github.hanhuoer.maa.callbak;
 
 import com.sun.jna.Callback;
 import com.sun.jna.ptr.IntByReference;
-import io.github.hanhuoer.maa.ptr.*;
+import io.github.hanhuoer.maa.ptr.MaaImageBufferHandle;
+import io.github.hanhuoer.maa.ptr.MaaStringBufferHandle;
+import io.github.hanhuoer.maa.ptr.MaaStringView;
+import io.github.hanhuoer.maa.ptr.MaaTransparentArg;
 
 /**
+ * MaaCustomController.h MaaCustomControllerCallbacks
+ *
  * @author H
  */
 public interface MaaCustomControllerCallback {

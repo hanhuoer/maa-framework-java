@@ -126,6 +126,38 @@
             </dependencies>
         </profile>
 
+        <profile>
+            <id>android-aarch64</id>
+            <activation>
+                <os>
+                    <family>unix</family>
+                    <arch>aarch64</arch>
+                </os>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>io.github.hanhuoer</groupId>
+                    <artifactId>maa-android-aarch64</artifactId>
+                </dependency>
+            </dependencies>
+        </profile>
+
+        <profile>
+            <id>android-x86_64</id>
+            <activation>
+                <os>
+                    <family>unix</family>
+                    <arch>amd64</arch>
+                </os>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>io.github.hanhuoer</groupId>
+                    <artifactId>maa-android-x86_64</artifactId>
+                </dependency>
+            </dependencies>
+        </profile>
+
     </profiles>
 
 

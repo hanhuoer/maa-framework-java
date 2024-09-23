@@ -1,44 +1,38 @@
 package io.github.hanhuoer.maa.core.util;
 
 import io.github.hanhuoer.maa.consts.MaaStatusEnum;
-import io.github.hanhuoer.maa.model.TaskDetail;
+import io.github.hanhuoer.maa.ptr.MaaId;
 
-import java.util.function.BiFunction;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 /**
  * @author H
  */
-public class TaskFuture extends Future {
+public class TaskFuture<T> extends Future {
 
-    private final BiFunction<Long, String, Boolean> setParamFunc;
-    private final Function<Long, TaskDetail> queryDetailFunc;
+    private final Function<MaaId, T> getFunc;
 
-    public TaskFuture(Long maaid,
-                      Function<Long, MaaStatusEnum> statusFunc,
-                      BiFunction<Long, String, Boolean> setParamFunc,
-                      Function<Long, TaskDetail> queryDetailFunc) {
-        super(maaid, statusFunc);
-        this.setParamFunc = setParamFunc;
-        this.queryDetailFunc = queryDetailFunc;
+    public TaskFuture(MaaId maaid,
+                      Function<MaaId, MaaStatusEnum> statusFunc,
+                      Consumer<MaaId> waitFunc,
+                      Function<MaaId, T> getFunc) {
+        super(maaid, statusFunc, waitFunc);
+        this.getFunc = getFunc;
     }
 
-    public boolean setParam(String param) {
-        /*
-         * Set the param of the task.
-         *
-         * @param param The param of the task.
-         * @return True if the param was successfully set, False otherwise.
-         */
-        return setParamFunc.apply(getMaaid(), param);
+    @Override
+    public TaskFuture<T> waiting() {
+        super.waiting();
+        return this;
     }
 
-    public TaskDetail get() {
+    public T get() {
         /*
          * Get the detail of the task.
          *
          * @return The detail of the task.
          */
-        return queryDetailFunc.apply(getMaaid());
+        return getFunc.apply(getMaaid());
     }
 }

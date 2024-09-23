@@ -22,7 +22,7 @@ public class StringBuffer implements AutoCloseable {
             this.handle = handle;
             own = false;
         } else {
-            this.handle = MaaFramework.buffer().MaaCreateStringBuffer();
+            this.handle = MaaFramework.buffer().MaaStringBufferCreate();
             own = true;
         }
     }
@@ -31,7 +31,7 @@ public class StringBuffer implements AutoCloseable {
     public void close() {
         if (this.handle == null) return;
         if (!this.own) return;
-        MaaFramework.buffer().MaaDestroyStringBuffer(this.handle);
+        MaaFramework.buffer().MaaStringBufferDestroy(this.handle);
     }
 
     public String getValue() {
@@ -43,8 +43,8 @@ public class StringBuffer implements AutoCloseable {
      */
     public String getValue(boolean close) {
         if (this.handle == null) throw new RuntimeException("MaaStringBufferHandle is null");
-        String value = MaaFramework.buffer().MaaGetString(this.handle);
-        Long valueLen = MaaFramework.buffer().MaaGetStringSize(this.handle);
+        String value = MaaFramework.buffer().MaaStringBufferGet(this.handle);
+        Long valueLen = MaaFramework.buffer().MaaStringBufferSize(this.handle).getValue();
 //        return handle.getPointer().getString(valueLen - 1, StandardCharsets.UTF_8.name());
         if (close) {
             close();
@@ -54,17 +54,17 @@ public class StringBuffer implements AutoCloseable {
 
     public boolean setValue(String value) {
         if (this.handle == null) throw new RuntimeException("MaaStringBufferHandle is null");
-        return MaaFramework.buffer().MaaSetString(this.handle, value);
+        return MaaFramework.buffer().MaaStringBufferSet(this.handle, value).getValue();
     }
 
     public boolean empty() {
         if (this.handle == null) throw new RuntimeException("MaaStringBufferHandle is null");
-        return MaaFramework.buffer().MaaIsStringEmpty(this.handle);
+        return MaaFramework.buffer().MaaStringBufferIsEmpty(this.handle).getValue();
     }
 
     public boolean clear() {
         if (this.handle == null) throw new RuntimeException("MaaStringBufferHandle is null");
-        return MaaFramework.buffer().MaaClearString(this.handle);
+        return MaaFramework.buffer().MaaStringBufferClear(this.handle).getValue();
     }
 
 }

@@ -1,6 +1,9 @@
 package io.github.hanhuoer.maa.consts;
 
+import io.github.hanhuoer.maa.ptr.MaaStatus;
 import lombok.Getter;
+
+import java.util.function.Function;
 
 /**
  * @author H
@@ -11,8 +14,8 @@ public enum MaaStatusEnum {
     INVALID(0),
     PENDING(1000),
     RUNNING(2000),
-    SUCCESS(3000),
-    FAILURE(4000);
+    SUCCEEDED(3000),
+    FAILED(4000);
 
     private final int value;
 
@@ -27,4 +30,11 @@ public enum MaaStatusEnum {
         return INVALID;
     }
 
+    public static MaaStatusEnum of(MaaStatus status) {
+        return of(status.getValue());
+    }
+
+    public static Function<Long, MaaStatusEnum> of(Object status) {
+        return null;
+    }
 }

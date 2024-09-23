@@ -82,6 +82,16 @@
             <artifactId>maa-windows-x86_64</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>io.github.hanhuoer</groupId>
+            <artifactId>maa-android-aarch64</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.github.hanhuoer</groupId>
+            <artifactId>maa-android-x86_64</artifactId>
+            <scope>test</scope>
+        </dependency>
 
         <dependency>
             <groupId>org.junit.jupiter</groupId>

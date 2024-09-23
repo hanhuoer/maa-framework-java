@@ -77,19 +77,19 @@ class StringListBufferTest {
 
         StringListBuffer stringListBuffer = new StringListBuffer();
         stringBufferList.forEach(item -> {
-            Boolean b = MaaFramework.buffer().MaaStringListAppend(stringListBuffer.getHandle(), item.getHandle());
+            Boolean b = MaaFramework.buffer().MaaStringListBufferAppend(stringListBuffer.getHandle(), item.getHandle()).getValue();
             log.info("append result: {}, value: {}", b, item.getValue());
         });
 
 
-        MaaStringBufferHandle firstHandle = MaaFramework.buffer().MaaGetStringListAt(stringListBuffer.getHandle(), 0);
+        MaaStringBufferHandle firstHandle = MaaFramework.buffer().MaaStringListBufferAt(stringListBuffer.getHandle(), new MaaSize(0));
         StringBuffer first = new StringBuffer(firstHandle);
         log.info("before destroy; index 0 value: {}", first.getValue());
 
         // 销毁原始 stringBuffer 影响不到 stringBufferList 的内容
-        MaaFramework.buffer().MaaDestroyStringBuffer(stringBufferList.get(0).getHandle());
+        MaaFramework.buffer().MaaStringBufferDestroy(stringBufferList.get(0).getHandle());
         log.info("after destroy; index 0 value: {}", first.getValue());
-        log.info("after destroy; index 0 value: {}", new StringBuffer(MaaFramework.buffer().MaaGetStringListAt(stringListBuffer.getHandle(), 0)).getValue());
+        log.info("after destroy; index 0 value: {}", new StringBuffer(MaaFramework.buffer().MaaStringListBufferAt(stringListBuffer.getHandle(), new MaaSize(0))).getValue());
 
         stringListBuffer.close();
     }

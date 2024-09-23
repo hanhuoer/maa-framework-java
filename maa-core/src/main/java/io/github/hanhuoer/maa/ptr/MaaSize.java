@@ -1,11 +1,12 @@
 package io.github.hanhuoer.maa.ptr;
 
-import com.sun.jna.ptr.LongByReference;
+import com.sun.jna.NativeLong;
+import com.sun.jna.ptr.NativeLongByReference;
 
 /**
  * @author H
  */
-public class MaaSize extends LongByReference {
+public class MaaSize extends NativeLong {
 
     public MaaSize() {
         super();
@@ -15,9 +16,22 @@ public class MaaSize extends LongByReference {
         super(value);
     }
 
-    public static void main(String[] args) {
-        MaaSize maaSize = new MaaSize();
-        System.out.println(maaSize.getValue());
-        System.out.println(new MaaSize(10L).getValue());
+    public static MaaSize valueOf(long value) {
+        return new MaaSize(value);
+    }
+
+    public long getValue() {
+        return this.longValue();
+    }
+
+    public static class Reference extends NativeLongByReference {
+
+        public Reference() {
+            super();
+        }
+
+        public Reference(NativeLong value) {
+            super(value);
+        }
     }
 }

@@ -12,39 +12,29 @@ public enum MaaMessageEnum {
 
     INVALID("Invalid"),
 
-    RESOURCE_STARTLOADING("Resource.StartLoading"),
-    RESOURCE_LOADINGCOMPLETED("Resource.LoadingCompleted"),
-    RESOURCE_LOADINGFAILED("Resource.LoadingFailed"),
+    RESOURCE_LOADING_STARTING("Resource.Loading.Starting"),
+    RESOURCE_LOADING_SUCCEEDED("Resource.Loading.Succeeded"),
+    RESOURCE_LOADING_FAILED("Resource.Loading.Failed"),
 
-    CONTROLLER_UUIDGOT("Controller.UUIDGot"),
-    CONTROLLER_UUIDGETFAILED("Controller.UUIDGetFailed"),
-    CONTROLLER_RESOLUTIONGOT("Controller.ResolutionGot"),
-    CONTROLLER_RESOLUTIONGETFAILED("Controller.ResolutionGetFailed"),
-    CONTROLLER_SCREENCAPINITED("Controller.ScreencapInited"),
-    CONTROLLER_SCREENCAPINITFAILED("Controller.ScreencapInitFailed"),
-    CONTROLLER_TOUCHINPUTINITED("Controller.TouchinputInited"),
-    CONTROLLER_TOUCHINPUTINITFAILED("Controller.TouchinputInitFailed"),
-    CONTROLLER_KEYINPUTINITED("Controller.KeyinputInited"),
-    CONTROLLER_KEYINPUTINITFAILED("Controller.KeyinputInitFailed"),
-    CONTROLLER_CONNECTSUCCESS("Controller.ConnectSuccess"),
-    CONTROLLER_CONNECTFAILED("Controller.ConnectFailed"),
-    CONTROLLER_ACTION_STARTED("Controller.Action.Started"),
-    CONTROLLER_ACTION_COMPLETED("Controller.Action.Completed"),
+    CONTROLLER_ACTION_STARTING("Controller.Action.Starting"),
+    CONTROLLER_ACTION_SUCCEEDED("Controller.Action.Succeeded"),
     CONTROLLER_ACTION_FAILED("Controller.Action.Failed"),
 
-    TASK_STARTED("Task.Started"),
-    TASK_COMPLETED("Task.Completed"),
-    TASK_FAILED("Task.Failed"),
-    TASK_FOCUS_READYTORUN("Task.Focus.ReadyToRun"),
-    TASK_FOCUS_RUNOUT("Task.Focus.Runout"),
-    TASK_FOCUS_COMPLETED("Task.Focus.Completed"),
-    TASK_DEBUG_READYTORUN("Task.Debug.ReadyToRun"),
-    TASK_DEBUG_RUNOUT("Task.Debug.Runout"),
-    TASK_DEBUG_COMPLETED("Task.Debug.Completed"),
-    TASK_DEBUG_LISTTORECOGNIZE("Task.Debug.ListToRecognize"),
-    TASK_DEBUG_RECOGNITIONRESULT("Task.Debug.RecognitionResult"),
-    TASK_DEBUG_HIT("Task.Debug.Hit"),
-    TASK_DEBUG_MISSALL("Task.Debug.MissAll"),
+    TASKER_TASK_STARTING("Tasker.Task.Starting"),
+    TASKER_TASK_SUCCEEDED("Tasker.Task.Succeeded"),
+    TASKER_TASK_FAILED("Tasker.Task.Failed"),
+
+    TASK_NEXTLIST_STARTING("Task.NextList.Starting"),
+    TASK_NEXTLIST_SUCCEEDED("Task.NextList.Succeeded"),
+    TASK_NEXTLIST_FAILED("Task.NextList.Failed"),
+
+    TASK_RECOGNITION_STARTING("Task.Recognition.Starting"),
+    TASK_RECOGNITION_SUCCEEDED("Task.Recognition.Succeeded"),
+    TASK_RECOGNITION_FAILED("Task.Recognition.Failed"),
+
+    TASK_ACTION_STARTING("Task.Action.Starting"),
+    TASK_ACTION_SUCCEEDED("Task.Action.Succeeded"),
+    TASK_ACTION_FAILED("Task.Action.Failed"),
     ;
 
 
@@ -55,12 +45,6 @@ public enum MaaMessageEnum {
             if (item.value.equals(value)) return item;
         }
         return null;
-    }
-
-    public static void main(String[] args) {
-        MaaMessageEnum maaMessageEnum = MaaMessageEnum.of("Task.Debug.MissAll");
-        System.out.println(maaMessageEnum);
-
     }
 
 }

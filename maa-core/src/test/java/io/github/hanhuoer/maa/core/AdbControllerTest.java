@@ -1,8 +1,10 @@
 package io.github.hanhuoer.maa.core;
 
 import io.github.hanhuoer.maa.Maa;
-import io.github.hanhuoer.maa.callbak.MaaControllerCallback;
+import io.github.hanhuoer.maa.callbak.MaaNotificationCallback;
+import io.github.hanhuoer.maa.core.util.Future;
 import io.github.hanhuoer.maa.model.AdbInfo;
+import io.github.hanhuoer.maa.util.CollectionUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -53,28 +55,26 @@ class AdbControllerTest {
     }
 
     @Test
-    void testFind() {
-        List<AdbInfo> adbInfoList = AdbController.find("C:/Program Files/Tools/adb/platform-tools/adb.exe");
-        log.info("adb list: {}", adbInfoList);
-    }
-
-    @Test
     void testConnection() {
         List<AdbInfo> adbInfoList = AdbController.find();
+        if (CollectionUtils.isEmpty(adbInfoList)) {
+            return;
+        }
         AdbInfo adbInfo = adbInfoList.get(0);
 
-        MaaControllerCallback callback = (msg, detailsJson, callbackArg) -> {
+        MaaNotificationCallback maaNotificationCallback = (msg, detailsJson, callbackArg) -> {
             log.info("received callback: ********************************************");
             log.info("message: {}", msg);
             log.info("detailJson: {}", detailsJson);
             log.info("callbackArg: {}", callbackArg);
         };
-
-        AdbController adbController = new AdbController(adbInfo, callback, null);
+        AdbController adbController = new AdbController(adbInfo, maaNotificationCallback, null);
         log.info("adb controller: {}", adbController);
-        log.info("adb connected: {}", adbController.connected());
+//        log.info("adb connected: {}", adbController.connected());
 
         log.info("adb controller start connecting");
+        Future waiting = adbController.postConnection().waiting();
+//        Job job = adbController.postConnectionJob().waitJob();
         boolean connect = adbController.connect();
         log.info("adb connect result: {}", connect);
         log.info("adb connected: {}", adbController.connected());
@@ -87,14 +87,12 @@ class AdbControllerTest {
         List<AdbInfo> adbInfoList = AdbController.find();
         AdbInfo adbInfo = adbInfoList.get(0);
 
-        MaaControllerCallback callback = (msg, detailsJson, callbackArg) -> {
+        AdbController adbController = new AdbController(adbInfo, (msg, detailsJson, callbackArg) -> {
             log.info("received callback: ********************************************");
             log.info("message: {}", msg);
             log.info("detailJson: {}", detailsJson);
             log.info("callbackArg: {}", callbackArg);
-        };
-
-        AdbController adbController = new AdbController(adbInfo, callback, null);
+        }, null);
         log.info("adb controller: {}", adbController);
         log.info("adb connected: {}", adbController.connected());
 
@@ -116,14 +114,12 @@ class AdbControllerTest {
         List<AdbInfo> adbInfoList = AdbController.find();
         AdbInfo adbInfo = adbInfoList.get(0);
 
-        MaaControllerCallback callback = (msg, detailsJson, callbackArg) -> {
+        AdbController adbController = new AdbController(adbInfo, (msg, detailsJson, callbackArg) -> {
             log.info("received callback: ********************************************");
             log.info("message: {}", msg);
             log.info("detailJson: {}", detailsJson);
             log.info("callbackArg: {}", callbackArg);
-        };
-
-        AdbController adbController = new AdbController(adbInfo, callback, null);
+        }, null);
         log.info("adb controller: {}", adbController);
         log.info("adb connected: {}", adbController.connected());
 
@@ -144,14 +140,12 @@ class AdbControllerTest {
         List<AdbInfo> adbInfoList = AdbController.find();
         AdbInfo adbInfo = adbInfoList.get(0);
 
-        MaaControllerCallback callback = (msg, detailsJson, callbackArg) -> {
+        AdbController adbController = new AdbController(adbInfo, (msg, detailsJson, callbackArg) -> {
             log.info("received callback: ********************************************");
             log.info("message: {}", msg);
             log.info("detailJson: {}", detailsJson);
             log.info("callbackArg: {}", callbackArg);
-        };
-
-        AdbController adbController = new AdbController(adbInfo, callback, null);
+        }, null);
         log.info("adb controller: {}", adbController);
         log.info("adb connected: {}", adbController.connected());
 

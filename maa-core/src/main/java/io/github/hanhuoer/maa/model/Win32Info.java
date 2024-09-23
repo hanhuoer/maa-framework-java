@@ -1,6 +1,6 @@
 package io.github.hanhuoer.maa.model;
 
-import io.github.hanhuoer.maa.ptr.MaaWin32Hwnd;
+import io.github.hanhuoer.maa.ptr.MaaToolkitDesktopWindowHandle;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -13,6 +13,6 @@ public class Win32Info {
 
     private String className;
     private String windowName;
-    private MaaWin32Hwnd hwnd;
+    private MaaToolkitDesktopWindowHandle handle;
 
 }

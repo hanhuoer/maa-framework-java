@@ -61,6 +61,14 @@
             <groupId>io.github.hanhuoer</groupId>
             <artifactId>maa-windows-x86_64</artifactId>
         </dependency>
+        <dependency>
+            <groupId>io.github.hanhuoer</groupId>
+            <artifactId>maa-android-aarch64</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.github.hanhuoer</groupId>
+            <artifactId>maa-android-x86_64</artifactId>
+        </dependency>
     </dependencies>
 
 </project>

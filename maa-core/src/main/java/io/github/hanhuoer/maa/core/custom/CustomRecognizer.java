@@ -1,9 +1,14 @@
 package io.github.hanhuoer.maa.core.custom;
 
-import io.github.hanhuoer.maa.ptr.*;
-import io.github.hanhuoer.maa.model.*;
+import io.github.hanhuoer.maa.model.Rect;
+import io.github.hanhuoer.maa.model.TaskDetail;
 import io.github.hanhuoer.maa.ptr.StringBuffer;
+import io.github.hanhuoer.maa.ptr.*;
+import io.github.hanhuoer.maa.ptr.base.MaaBool;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
 import java.awt.image.BufferedImage;
@@ -16,44 +21,44 @@ import java.io.IOException;
 @Accessors(chain = true)
 public abstract class CustomRecognizer {
 
-    private final MaaCustomRecognizerHandle handle;
+    private final MaaCustomRecognitionHandle handle;
 
     public CustomRecognizer() {
-        this(new MaaCustomRecognizerHandle());
+        this(new MaaCustomRecognitionHandle());
     }
 
-    private CustomRecognizer(MaaCustomRecognizerHandle handle) {
+    private CustomRecognizer(MaaCustomRecognitionHandle handle) {
         this.handle = handle;
-        handle.analyze = this::analyzeAgent;
+        handle.recognizer = this::analyzeAgent;
     }
 
     /**
      * analyze the given image.
      *
-     * @param context     the context.
-     * @param image       the image to analyze.
-     * @param taskName    the name of the task.
-     * @param customParam the custom recognition param from pipeline.
+     * @param context the context.
+     * @param arg     arg.
      * @return analyze result object.
      */
-    public abstract CustomRecognizerResult analyze(
-            SyncContext context,
-            BufferedImage image,
-            String taskName,
-            String customParam
-    );
+    public abstract AnalyzeResult analyze(Context context, AnalyzeArg arg);
 
 
-    public Boolean analyzeAgent(
-            MaaSyncContextHandle contextHandle,
+    public MaaBool analyzeAgent(
+            MaaContextHandle contextHandle,
+            MaaTaskId taskId,
+            String currentTaskName,
+            String customRecoName,
+            String customRecoParam,
             MaaImageBufferHandle imageHandle,
-            String taskName,
-            String customParam,
-            MaaTransparentArg arg,
-            MaaRectHandle outBoxHandle,
-            MaaStringBufferHandle outDetailHandle
+            MaaRectHandle roi,
+            MaaCallbackTransparentArg transparentArg,
+            MaaRectHandle outBox,
+            MaaStringBufferHandle outDetail
     ) {
-        SyncContext context = new SyncContext(contextHandle);
+        Context context = new Context(contextHandle);
+
+        TaskDetail taskDetail = context.tasker().getTaskDetail(taskId);
+        if (taskDetail == null) return MaaBool.FALSE;
+
         ImageBuffer imageBuffer = new ImageBuffer(imageHandle);
         BufferedImage image = null;
         try {
@@ -62,14 +67,52 @@ public abstract class CustomRecognizer {
             throw new RuntimeException(e);
         }
 
-        CustomRecognizerResult analyze = this.analyze(context, image, taskName, customParam);
+        RectBuffer roiBuffer = new RectBuffer(roi);
+        AnalyzeArg analyzeArg = new AnalyzeArg()
+                .setTaskDetail(taskDetail)
+                .setCurrentTaskName(currentTaskName)
+                .setCustomRecognitionName(customRecoName)
+                .setCustomRecognitionParam(customRecoParam)
+                .setImage(image)
+                .setRoi(roiBuffer.getValue());
 
-        RectBuffer rectBuffer = new RectBuffer(outBoxHandle);
-        rectBuffer.setValue(analyze.getBox());
-        StringBuffer stringBuffer = new StringBuffer(outDetailHandle);
-        stringBuffer.setValue(analyze.getDetail());
+        AnalyzeResult result = this.analyze(context, analyzeArg);
 
-        return analyze.isSuccess();
+        if (result.getBox() != null) {
+            RectBuffer rectBuffer = new RectBuffer(outBox);
+            rectBuffer.setValue(result.getBox());
+        }
+
+        StringBuffer stringBuffer = new StringBuffer(outDetail);
+        stringBuffer.setValue(result.getDetail());
+
+        return MaaBool.valueOf(result.getBox() != null);
+    }
+
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Accessors(chain = true)
+    public static class AnalyzeArg {
+
+        private TaskDetail taskDetail;
+        private String currentTaskName;
+        private String customRecognitionName;
+        private String customRecognitionParam;
+        private BufferedImage image;
+        private Rect roi;
+
+    }
+
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Accessors(chain = true)
+    public static class AnalyzeResult {
+
+        private Rect box;
+        private String detail;
+
     }
 
 }

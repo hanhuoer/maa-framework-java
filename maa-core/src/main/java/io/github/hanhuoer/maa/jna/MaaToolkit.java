@@ -3,11 +3,12 @@ package io.github.hanhuoer.maa.jna;
 import com.sun.jna.Library;
 import com.sun.jna.Native;
 import io.github.hanhuoer.maa.MaaOptions;
+import io.github.hanhuoer.maa.callbak.MaaCustomActionCallback;
+import io.github.hanhuoer.maa.callbak.MaaCustomRecognitionCallback;
+import io.github.hanhuoer.maa.callbak.MaaNotificationCallback;
 import io.github.hanhuoer.maa.loader.MaaLibraryLoader;
-import io.github.hanhuoer.maa.model.AdbInfo;
-import io.github.hanhuoer.maa.ptr.MaaInstanceHandle;
-import io.github.hanhuoer.maa.ptr.MaaStringBufferHandle;
-import io.github.hanhuoer.maa.ptr.MaaWin32Hwnd;
+import io.github.hanhuoer.maa.ptr.*;
+import io.github.hanhuoer.maa.ptr.base.MaaBool;
 import io.github.hanhuoer.maa.util.FileUtils;
 
 /**
@@ -18,9 +19,9 @@ public class MaaToolkit {
     private static volatile MaaToolkit INSTANCE;
 
     private MaaToolkitConfig config;
-    private MaaToolkitDevice device;
-    private MaaToolkitExecAgent execAgent;
-    private MaaToolkitWin32Window win32Window;
+    private MaaToolkitAdbDevice adbDevice;
+    private MaaToolkitProjectInterface projectInterface;
+    private MaaToolkitDesktopWindow desktopWindow;
 
 
     private MaaToolkit() {
@@ -39,41 +40,24 @@ public class MaaToolkit {
         return INSTANCE;
     }
 
-    public static AdbInfo getAdbDevice(Long index) {
-        checkMaaToolKit();
-
-        String deviceAdbPath = INSTANCE.device.MaaToolkitGetDeviceAdbPath(index);
-        String deviceAdbSerial = INSTANCE.device.MaaToolkitGetDeviceAdbSerial(index);
-        String deviceAdbConfig = INSTANCE.device.MaaToolkitGetDeviceAdbConfig(index);
-        String deviceName = INSTANCE.device.MaaToolkitGetDeviceName(index);
-        Integer deviceAdbControllerType = INSTANCE.device.MaaToolkitGetDeviceAdbControllerType(index);
-
-        return new AdbInfo()
-                .setPath(deviceAdbPath)
-                .setSerial(deviceAdbSerial)
-                .setConfig(deviceAdbConfig)
-                .setName(deviceName)
-                .setControllerType(deviceAdbControllerType);
-    }
-
     public static MaaToolkitConfig config() {
         checkMaaToolKit();
         return INSTANCE.config;
     }
 
-    public static MaaToolkitDevice device() {
+    public static MaaToolkitAdbDevice device() {
         checkMaaToolKit();
-        return INSTANCE.device;
+        return INSTANCE.adbDevice;
     }
 
-    public static MaaToolkitExecAgent execAgent() {
+    public static MaaToolkitProjectInterface projectInterface() {
         checkMaaToolKit();
-        return INSTANCE.execAgent;
+        return INSTANCE.projectInterface;
     }
 
-    public static MaaToolkitWin32Window win32Window() {
+    public static MaaToolkitDesktopWindow desktopWindow() {
         checkMaaToolKit();
-        return INSTANCE.win32Window;
+        return INSTANCE.desktopWindow;
     }
 
     public static void checkMaaToolKit() {
@@ -83,13 +67,13 @@ public class MaaToolkit {
         if (INSTANCE.config == null) {
             throw new RuntimeException("MaaToolKit.config can not be null.");
         }
-        if (INSTANCE.device == null) {
+        if (INSTANCE.adbDevice == null) {
             throw new RuntimeException("MaaToolKit.device can not be null.");
         }
-        if (INSTANCE.execAgent == null) {
+        if (INSTANCE.projectInterface == null) {
             throw new RuntimeException("MaaToolKit.execAgent can not be null.");
         }
-        if (INSTANCE.win32Window == null) {
+        if (INSTANCE.desktopWindow == null) {
             throw new RuntimeException("MaaToolKit.win32Window can not be null.");
         }
     }
@@ -97,9 +81,9 @@ public class MaaToolkit {
     private void init(MaaLibraryLoader nativeLoader, MaaOptions options) {
         String libPath = FileUtils.join(options.getLibDir(), nativeLoader.getMaaToolkitName()).getAbsolutePath();
         this.config = Native.load(libPath, MaaToolkitConfig.class);
-        this.device = Native.load(libPath, MaaToolkitDevice.class);
-        this.execAgent = Native.load(libPath, MaaToolkitExecAgent.class);
-        this.win32Window = Native.load(libPath, MaaToolkitWin32Window.class);
+        this.adbDevice = Native.load(libPath, MaaToolkitAdbDevice.class);
+        this.projectInterface = Native.load(libPath, MaaToolkitProjectInterface.class);
+        this.desktopWindow = Native.load(libPath, MaaToolkitDesktopWindow.class);
     }
 
     /**
@@ -109,169 +93,98 @@ public class MaaToolkit {
      */
     public interface MaaToolkitConfig extends Library {
 
-        /**
-         * @param userPath user path
-         * @param param    value like "{}"
-         */
-        Boolean MaaToolkitInitOptionConfig(String userPath, String param);
-
-        /**
-         * @deprecated
-         */
-        Boolean MaaToolkitInit();
-
-        /**
-         * @deprecated don't use it.
-         */
-        Boolean MaaToolkitUninit();
-
-    }
-
-
-    /**
-     * MaaToolkitDevice.h File Reference
-     *
-     * @link <a href="https://maaxyz.github.io/MaaFramework/MaaToolkitDevice_8h.html">...</a>
-     */
-    public interface MaaToolkitDevice extends Library {
-
-        Long MaaToolkitFindDevice();
-
-        Long MaaToolkitFindDeviceWithAdb(String adb_path);
-
-        Boolean MaaToolkitPostFindDevice();
-
-        Boolean MaaToolkitPostFindDeviceWithAdb(String adb_path);
-
-        Boolean MaaToolkitIsFindDeviceCompleted();
-
-        Long MaaToolkitWaitForFindDeviceToComplete();
-
-        Long MaaToolkitGetDeviceCount();
-
-        String MaaToolkitGetDeviceName(Long index);
-
-        String MaaToolkitGetDeviceAdbPath(Long index);
-
-        String MaaToolkitGetDeviceAdbSerial(Long index);
-
-        /**
-         * @return MaaAdbControllerType
-         */
-        Integer MaaToolkitGetDeviceAdbControllerType(Long index);
-
-        String MaaToolkitGetDeviceAdbConfig(Long index);
+        MaaBool MaaToolkitConfigInitOption(String user_path, String default_json);
 
     }
 
     /**
-     * MaaToolkitExecAgent.h File Reference
+     * MaaToolkitAdbDevice.h File Reference
      *
-     * @link <a href="https://maaxyz.github.io/MaaFramework/MaaToolkitExecAgent_8h.html">...</a>
+     * @link <a href="https://maaxyz.github.io/MaaFramework/MaaToolkitAdbDevice_8h.html">...</a>
      */
-    public interface MaaToolkitExecAgent extends Library {
+    public interface MaaToolkitAdbDevice extends Library {
 
-        Boolean MaaToolkitRegisterCustomRecognizerExecutor(MaaInstanceHandle handle, String recognizer_name, String exec_path, String[] exec_params, long exec_param_size);
+        MaaToolkitAdbDeviceListHandle MaaToolkitAdbDeviceListCreate();
 
-        Boolean MaaToolkitUnregisterCustomRecognizerExecutor(MaaInstanceHandle handle, String recognizer_name);
+        void MaaToolkitAdbDeviceListDestroy(MaaToolkitAdbDeviceListHandle handle);
 
-        Boolean MaaToolkitClearCustomRecognizerExecutor(MaaInstanceHandle handle);
+        /**
+         * @param buffer out
+         */
+        MaaBool MaaToolkitAdbDeviceFind(MaaToolkitAdbDeviceListHandle buffer);
 
-        Boolean MaaToolkitRegisterCustomActionExecutor(MaaInstanceHandle handle, String action_name, String exec_path, String[] exec_params, long exec_param_size);
+        /**
+         * @param buffer out
+         */
+        MaaBool MaaToolkitAdbDeviceFindSpecified(String adb_path, MaaToolkitAdbDeviceListHandle buffer);
 
-        Boolean MaaToolkitUnregisterCustomActionExecutor(MaaInstanceHandle handle, String action_name);
+        MaaSize MaaToolkitAdbDeviceListSize(MaaToolkitAdbDeviceListHandle list);
 
-        Boolean MaaToolkitClearCustomActionExecutor(MaaInstanceHandle handle);
+        MaaToolkitAdbDeviceHandle MaaToolkitAdbDeviceListAt(MaaToolkitAdbDeviceListHandle list, MaaSize index);
+
+        String MaaToolkitAdbDeviceGetName(MaaToolkitAdbDeviceHandle device);
+
+        String MaaToolkitAdbDeviceGetAdbPath(MaaToolkitAdbDeviceHandle device);
+
+        String MaaToolkitAdbDeviceGetAddress(MaaToolkitAdbDeviceHandle device);
+
+        MaaAdbScreencapMethod MaaToolkitAdbDeviceGetScreencapMethods(MaaToolkitAdbDeviceHandle device);
+
+        MaaAdbInputMethod MaaToolkitAdbDeviceGetInputMethods(MaaToolkitAdbDeviceHandle device);
+
+        String MaaToolkitAdbDeviceGetConfig(MaaToolkitAdbDeviceHandle device);
 
     }
 
     /**
-     * MaaToolkitWin32Window.h File Reference
+     * MaaToolkitProjectInterface.h File Reference
      *
-     * @link <a href="https://maaxyz.github.io/MaaFramework/MaaToolkitWin32Window_8h.html">...</a>
+     * @link <a href="https://maaxyz.github.io/MaaFramework/MaaToolkitProjectInterface_8h.html">...</a>
      */
-    public interface MaaToolkitWin32Window extends Library {
+    public interface MaaToolkitProjectInterface extends Library {
+
+        void MaaToolkitProjectInterfaceRegisterCustomRecognition(long inst_id, String name,
+                                                                 MaaCustomRecognitionCallback recognizer,
+                                                                 MaaTransparentArg trans_arg);
+
+        void MaaToolkitProjectInterfaceRegisterCustomAction(long inst_id, String name,
+                                                            MaaCustomActionCallback action,
+                                                            MaaTransparentArg trans_arg);
+
+        MaaBool MaaToolkitProjectInterfaceRunCli(long inst_id,
+                                                 String resource_path, String user_path,
+                                                 MaaBool directly,
+                                                 MaaNotificationCallback callback,
+                                                 MaaCallbackTransparentArg callback_arg);
+
+    }
+
+    /**
+     * MaaToolkitDesktopWindow.h File Reference
+     *
+     * @link <a href="https://maaxyz.github.io/MaaFramework/MaaToolkitDesktopWindow_8h.html">...</a>
+     */
+    public interface MaaToolkitDesktopWindow extends Library {
+
+        MaaToolkitDesktopWindowListHandle MaaToolkitDesktopWindowListCreate();
+
+        void MaaToolkitDesktopWindowListDestroy(MaaToolkitDesktopWindowListHandle handle);
 
         /**
-         * Find a win32 window by class name and window name.
-         * <p>
-         * This function finds the function by exact match. See also MaaToolkitSearchWindow().
-         *
-         * @param class_name  The class name of the window. If passed an empty string, class name will not be filtered.
-         * @param window_name The window name of the window. If passed an empty string, window name will not be filtered.
-         * @return Integer The number of windows found that match the criteria. To get the corresponding
-         * window handle, use MaaToolkitGetWindow().
+         * @param buffer out
          */
-        Integer MaaToolkitFindWindow(String class_name, String window_name);
+        MaaBool MaaToolkitDesktopWindowFindAll(MaaToolkitDesktopWindowListHandle buffer);
 
-        /**
-         * Regex search a win32 window by class name and window name.
-         * <p>
-         * This function searches the function by regex search. See also MaaToolkitFindWindow().
-         *
-         * @param class_name  The class name regex of the window. If passed an empty string, class name will not be filtered.
-         * @param window_name The window name regex of the window. If passed an empty string, window name will not be filtered.
-         * @return Integer The number of windows found that match the criteria. To get the corresponding
-         * window handle, use MaaToolkitGetWindow().
-         */
-        Integer MaaToolkitSearchWindow(String class_name, String window_name);
+        MaaSize MaaToolkitDesktopWindowListSize(MaaToolkitDesktopWindowListHandle list);
 
-        /**
-         * List all windows.
-         *
-         * @return Integer The number of windows found. To get the corresponding window handle, use
-         */
-        Integer MaaToolkitListWindows();
+        MaaToolkitDesktopWindowHandle MaaToolkitDesktopWindowListAt(MaaToolkitDesktopWindowListHandle list, MaaSize index);
 
-        /**
-         * Get the window handle by index.
-         *
-         * @param index The 0-based index of the window. The index should not exceed the number of
-         *              windows found otherwise out_of_range exception will be thrown.
-         * @return MaaWin32Hwnd The window handle.
-         */
-        MaaWin32Hwnd MaaToolkitGetWindow(Integer index);
+        void MaaToolkitDesktopWindowGetHandle(MaaToolkitDesktopWindowHandle window);
 
-        /**
-         * Get the window handle of the window under the cursor. This uses the WindowFromPoint()
-         *
-         * @return MaaWin32Hwnd The window handle.
-         * <p>
-         * system API.
-         */
-        MaaWin32Hwnd MaaToolkitGetCursorWindow();
+        String MaaToolkitDesktopWindowGetClassName(MaaToolkitDesktopWindowHandle window);
 
-        /**
-         * Get the desktop window handle. This uses the GetDesktopWindow() system API.
-         *
-         * @return MaaWin32Hwnd The window handle.
-         */
-        MaaWin32Hwnd MaaToolkitGetDesktopWindow();
+        String MaaToolkitDesktopWindowGetWindowName(MaaToolkitDesktopWindowHandle window);
 
-        /**
-         * Get the foreground window handle. This uses the GetForegroundWindow() system API.
-         *
-         * @return MaaWin32Hwnd The window handle.
-         */
-        MaaWin32Hwnd MaaToolkitGetForegroundWindow();
-
-        /**
-         * Get the window class name by hwnd.
-         *
-         * @param hwnd   The window hwnd.
-         * @param buffer The output buffer.
-         * @return Boolean.
-         */
-        Boolean MaaToolkitGetWindowClassName(MaaWin32Hwnd hwnd, MaaStringBufferHandle buffer);
-
-        /**
-         * Get the window window name by hwnd.
-         *
-         * @param hwnd   The window hwnd.
-         * @param buffer The output buffer.
-         * @return Boolean.
-         */
-        Boolean MaaToolkitGetWindowWindowName(MaaWin32Hwnd hwnd, MaaStringBufferHandle buffer);
 
     }
 

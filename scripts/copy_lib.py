@@ -14,7 +14,9 @@ platform_arch_map = {
     'MAA-macos-aarch64': 'maa-macos-aarch64/src/main/resources/mac_aarch64',
     'MAA-macos-x86_64': 'maa-macos-x86_64/src/main/resources/mac_x86_64',
     'MAA-win-aarch64': 'maa-windows-aarch64/src/main/resources/win_aarch64',
-    'MAA-win-x86_64': 'maa-windows-x86_64/src/main/resources/win_x86_64'
+    'MAA-win-x86_64': 'maa-windows-x86_64/src/main/resources/win_x86_64',
+    'MAA-android-aarch64': 'maa-android-aarch64/src/main/resources/android_aarch64',
+    'MAA-android-x86_64': 'maa-android-x86_64/src/main/resources/android_x86_64'
 }
 
 def clear_all_directories(platform_arch_map):

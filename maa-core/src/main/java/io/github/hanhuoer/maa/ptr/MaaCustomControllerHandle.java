@@ -15,7 +15,6 @@ public class MaaCustomControllerHandle extends Structure {
 
     public MaaCustomControllerCallback.Connect connect;
     public MaaCustomControllerCallback.RequestUUID requestUUID;
-    public MaaCustomControllerCallback.RequestResolution requestResolution;
     public MaaCustomControllerCallback.StartApp startApp;
     public MaaCustomControllerCallback.StopApp stopApp;
     public MaaCustomControllerCallback.Screencap screencap;
@@ -32,7 +31,6 @@ public class MaaCustomControllerHandle extends Structure {
         return List.of(
                 "connect",
                 "requestUUID",
-                "requestResolution",
                 "startApp",
                 "stopApp",
                 "screencap",

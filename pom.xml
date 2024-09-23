@@ -56,6 +56,8 @@
         <module>maa-macos-x86_64</module>
         <module>maa-windows-aarch64</module>
         <module>maa-windows-x86_64</module>
+        <module>maa-android-aarch64</module>
+        <module>maa-android-x86_64</module>
     </modules>
 
     <properties>
@@ -66,11 +68,11 @@
 
         <!-- Maa Framework Java Version: current project -->
         <!-- https://github.com/hanhuoer/maa-framework-java -->
-        <revision>1.0.5</revision>
+        <revision>2.0.0</revision>
 
         <!-- Maa Framework Version: native lib -->
         <!-- https://github.com/MaaXYZ/MaaFramework -->
-        <maa.version>1.8.9</maa.version>
+        <maa.version>2.0.0</maa.version>
 
         <!-- Agent Version: minitouch/minicap/maatouch -->
         <!-- https://github.com/MaaXYZ/MaaAgentBinary -->
@@ -139,6 +141,16 @@
             <dependency>
                 <groupId>io.github.hanhuoer</groupId>
                 <artifactId>maa-windows-x86_64</artifactId>
+                <version>${maa.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.hanhuoer</groupId>
+                <artifactId>maa-android-aarch64</artifactId>
+                <version>${maa.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.hanhuoer</groupId>
+                <artifactId>maa-android-x86_64</artifactId>
                 <version>${maa.version}</version>
             </dependency>
 

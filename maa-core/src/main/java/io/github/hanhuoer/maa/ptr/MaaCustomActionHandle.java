@@ -11,11 +11,10 @@ import java.util.List;
 public class MaaCustomActionHandle extends Structure {
 
     public MaaCustomActionCallback.Run action;
-    public MaaCustomActionCallback.Stop stop;
 
     @Override
     protected List<String> getFieldOrder() {
-        return List.of("action", "stop");
+        return List.of("action");
     }
 
 }

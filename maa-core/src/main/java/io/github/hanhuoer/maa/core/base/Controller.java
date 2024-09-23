@@ -1,70 +1,76 @@
 package io.github.hanhuoer.maa.core.base;
 
 import com.sun.jna.Native;
-import io.github.hanhuoer.maa.callbak.MaaControllerCallback;
+import io.github.hanhuoer.maa.callbak.MaaNotificationCallback;
 import io.github.hanhuoer.maa.consts.MaaCtrlOptionEnum;
+import io.github.hanhuoer.maa.consts.MaaStatusEnum;
+import io.github.hanhuoer.maa.core.util.Future;
+import io.github.hanhuoer.maa.core.util.TaskFuture;
 import io.github.hanhuoer.maa.jna.MaaFramework;
-import io.github.hanhuoer.maa.ptr.ImageBuffer;
-import io.github.hanhuoer.maa.ptr.MaaCallbackTransparentArg;
-import io.github.hanhuoer.maa.ptr.MaaControllerHandle;
 import io.github.hanhuoer.maa.ptr.StringBuffer;
+import io.github.hanhuoer.maa.ptr.*;
+import io.github.hanhuoer.maa.ptr.base.MaaBool;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.Optional;
 
 /**
  * @author H
  */
 @Slf4j
-public abstract class Controller implements AutoCloseable {
+@Getter
+public class Controller implements AutoCloseable {
 
-    protected ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
-
-    @Getter
     protected MaaControllerHandle handle;
-    @Getter
-    protected MaaControllerCallback callback;
-    @Getter
+    private final Boolean own;
     protected MaaCallbackTransparentArg callbackArgs;
+    protected MaaNotificationCallback callback;
 
 
     protected Controller() {
-        this(null, null);
+        this(null, null, null);
     }
 
-    protected Controller(MaaControllerCallback callback, MaaCallbackTransparentArg callbackArgs) {
+    protected Controller(MaaControllerHandle handle) {
+        this(handle, null, null);
+    }
+
+    protected Controller(MaaNotificationCallback callback, MaaCallbackTransparentArg callbackArgs) {
+        this(null, callback, callbackArgs);
+    }
+
+    protected Controller(MaaControllerHandle handle, MaaNotificationCallback callback, MaaCallbackTransparentArg callbackArgs) {
         this.callback = callback;
         this.callbackArgs = callbackArgs;
+
+        if (handle == null) {
+            own = true;
+        } else {
+            this.handle = handle;
+            own = false;
+        }
     }
 
     @Override
     public void close() {
         if (handle == null) return;
+        if (!own) return;
         MaaFramework.controller().MaaControllerDestroy(handle);
         handle = null;
         if (log.isDebugEnabled()) log.debug("controller has bean destroyed.");
     }
 
     public boolean connect() {
-        return postConnect().join();
-    }
-
-    public CompletableFuture<Boolean> postConnect() {
-        return CompletableFuture.supplyAsync(() -> {
-            long ctrlId = MaaFramework.controller().MaaControllerPostConnection(handle);
-            MaaFramework.controller().MaaControllerWait(handle, ctrlId);
-            MaaFramework.controller().MaaControllerStatus(handle, ctrlId);
-            return true;
-        }, executor);
+        return postConnection().waiting().succeeded();
     }
 
     public boolean connected() {
-        return MaaFramework.controller().MaaControllerConnected(handle);
+        return Optional.ofNullable(MaaFramework.controller().MaaControllerConnected(handle))
+                .orElse(MaaBool.FALSE)
+                .getValue();
     }
 
     public BufferedImage screencap() {
@@ -74,7 +80,7 @@ public abstract class Controller implements AutoCloseable {
     public BufferedImage screencap(boolean capture) {
         Long ctrl;
         if (capture) {
-            Boolean captured = postScreencap().join();
+            boolean captured = postScreencap().waiting().succeeded();
             if (!captured) {
                 return null;
             }
@@ -82,7 +88,7 @@ public abstract class Controller implements AutoCloseable {
 
         ImageBuffer imageBuffer = new ImageBuffer();
 
-        Boolean ret = MaaFramework.controller().MaaControllerGetImage(handle, imageBuffer.getHandle());
+        Boolean ret = MaaFramework.controller().MaaControllerCachedImage(handle, imageBuffer.getHandle()).getValue();
         if (!Boolean.TRUE.equals(ret)) {
             return null;
         }
@@ -96,66 +102,143 @@ public abstract class Controller implements AutoCloseable {
         }
     }
 
-    public CompletableFuture<Boolean> postScreencap() {
-        return CompletableFuture.supplyAsync(() -> {
-            Long ctrl = MaaFramework.controller().MaaControllerPostScreencap(handle);
-            MaaFramework.controller().MaaControllerWait(handle, ctrl);
-            return status(ctrl);
-        }, executor);
+    public BufferedImage cachedImage() {
+        return screencap(false);
     }
 
     public boolean click(int x, int y) {
-        return postClick(x, y).join();
-    }
-
-    public CompletableFuture<Boolean> postClick(int x, int y) {
-        return CompletableFuture.supplyAsync(() -> {
-            Long ctrl = MaaFramework.controller().MaaControllerPostClick(handle, x, y);
-            return status(ctrl);
-        }, executor);
+        return postClick(x, y).waiting().succeeded();
     }
 
     public boolean swipe(int x1, int y1, int x2, int y2, int duration) {
-        return postSwipe(x1, y1, x2, y2, duration).join();
+        return postSwipe(x1, y1, x2, y2, duration).waiting().succeeded();
     }
 
-    public CompletableFuture<Boolean> postSwipe(int x1, int y1, int x2, int y2, int duration) {
-        return CompletableFuture.supplyAsync(() -> {
-            Long ctrl = MaaFramework.controller().MaaControllerPostSwipe(handle, x1, y1, x2, y2, duration);
-            return status(ctrl);
-        }, executor);
+    public Future postConnection() {
+        MaaCtrlId ctrl = MaaFramework.controller().MaaControllerPostConnection(handle);
+        return new Future(ctrl,
+                id -> MaaStatusEnum.of(this.status(id.getValue())),
+                id -> this.waiting(id.getValue()));
     }
 
-    public Controller setScreenshotTargetLongSide(int longSide) {
-        MaaFramework.controller().MaaControllerSetOption(
+    public Future postClick(int x, int y) {
+        MaaCtrlId ctrl = MaaFramework.controller().MaaControllerPostClick(handle, x, y);
+        return new Future(ctrl,
+                id -> MaaStatusEnum.of(this.status(id.getValue())),
+                id -> this.waiting(id.getValue()));
+    }
+
+    public Future postSwipe(int x1, int y1, int x2, int y2, int duration) {
+        MaaCtrlId ctrl = MaaFramework.controller().MaaControllerPostSwipe(handle, x1, y1, x2, y2, duration);
+        return new Future(ctrl,
+                id -> MaaStatusEnum.of(this.status(id.getValue())),
+                id -> this.waiting(id.getValue()));
+    }
+
+    public Future postPressKey(int keyCode) {
+        MaaCtrlId ctrl = MaaFramework.controller().MaaControllerPostPressKey(handle, keyCode);
+        return new Future(ctrl,
+                id -> MaaStatusEnum.of(this.status(id.getValue())),
+                id -> this.waiting(id.getValue()));
+    }
+
+    public Future postInputText(String text) {
+        MaaCtrlId ctrl = MaaFramework.controller().MaaControllerPostInputText(handle, text);
+        return new Future(ctrl,
+                id -> MaaStatusEnum.of(this.status(id.getValue())),
+                id -> this.waiting(id.getValue()));
+    }
+
+    public Future postStartApp(String intent) {
+        MaaCtrlId ctrl = MaaFramework.controller().MaaControllerPostStartApp(handle, intent);
+        return new Future(ctrl,
+                id -> MaaStatusEnum.of(this.status(id.getValue())),
+                id -> this.waiting(id.getValue()));
+    }
+
+    public Future postStopApp(String intent) {
+        MaaCtrlId ctrl = MaaFramework.controller().MaaControllerPostStopApp(handle, intent);
+        return new Future(ctrl,
+                id -> MaaStatusEnum.of(this.status(id.getValue())),
+                id -> this.waiting(id.getValue()));
+    }
+
+    public Future postTouchDown(int x, int y) {
+        return postTouchDown(x, y, 0, 1);
+    }
+
+    public Future postTouchDown(int x, int y, int contact, int pressure) {
+        MaaCtrlId ctrl = MaaFramework.controller().MaaControllerPostTouchDown(handle, x, y, contact, pressure);
+        return new Future(ctrl,
+                id -> MaaStatusEnum.of(this.status(id.getValue())),
+                id -> this.waiting(id.getValue()));
+    }
+
+    public Future postTouchMove(int x, int y) {
+        return postTouchMove(x, y, 0, 1);
+    }
+
+    public Future postTouchMove(int x, int y, int contact, int pressure) {
+        MaaCtrlId ctrl = MaaFramework.controller().MaaControllerPostTouchMove(handle, x, y, contact, pressure);
+        return new Future(ctrl,
+                id -> MaaStatusEnum.of(this.status(id.getValue())),
+                id -> this.waiting(id.getValue()));
+    }
+
+    public Future postTouchUp() {
+        return postTouchUp(0);
+    }
+
+    public Future postTouchUp(int contact) {
+        MaaCtrlId ctrl = MaaFramework.controller().MaaControllerPostTouchUp(handle, contact);
+        return new Future(ctrl,
+                id -> MaaStatusEnum.of(this.status(id.getValue())),
+                id -> this.waiting(id.getValue()));
+    }
+
+    public TaskFuture<BufferedImage> postScreencap() {
+        MaaCtrlId ctrl = MaaFramework.controller().MaaControllerPostScreencap(handle);
+        return new TaskFuture<>(ctrl,
+                id -> MaaStatusEnum.of(this.status(id.getValue())),
+                id -> this.waiting(id.getValue()),
+                id -> this.cachedImage());
+    }
+
+    public boolean setScreenshotTargetLongSide(int longSide) {
+        return Boolean.TRUE.equals(MaaFramework.controller().MaaControllerSetOption(
                 handle,
-                MaaCtrlOptionEnum.SCREENSHOT_TARGET_LONG_SIDE.getValue(),
-                longSide,
-                Native.getNativeSize(int.class)
-        );
-        return this;
+                new MaaCtrlOption(MaaCtrlOptionEnum.SCREENSHOT_TARGET_LONG_SIDE.getValue()),
+                new MaaOptionValue(longSide),
+                new MaaOptionValueSize(Native.getNativeSize(int.class))
+        ).getValue());
     }
 
-    public Controller setScreenshotTargetShortSide(int shortSide) {
-        MaaFramework.controller().MaaControllerSetOption(
+    public boolean setScreenshotTargetShortSide(int shortSide) {
+        return Boolean.TRUE.equals(MaaFramework.controller().MaaControllerSetOption(
                 handle,
-                MaaCtrlOptionEnum.SCREENSHOT_TARGET_SHORT_SIDE.getValue(),
-                shortSide,
-                Native.getNativeSize(int.class)
-        );
-        return this;
-    }
-
-    public boolean status(long maaId) {
-        return MaaFramework.controller().MaaControllerStatus(handle, maaId) > 0;
+                new MaaCtrlOption(MaaCtrlOptionEnum.SCREENSHOT_TARGET_SHORT_SIDE.getValue()),
+                new MaaOptionValue(shortSide),
+                new MaaOptionValueSize(Native.getNativeSize(int.class))
+        ).getValue());
     }
 
     public String uuid() {
         StringBuffer stringBuffer = new StringBuffer();
-        MaaFramework.controller().MaaControllerGetUUID(this.handle, stringBuffer.getHandle());
+        MaaBool maaBool = MaaFramework.controller().MaaControllerGetUUID(this.handle, stringBuffer.getHandle());
+        if (!Boolean.TRUE.equals(maaBool.getValue())) {
+            throw new RuntimeException("Failed to get UUID.");
+        }
         String uuid = stringBuffer.getValue();
         stringBuffer.close();
         return uuid;
+    }
+
+    private MaaStatus status(long maaId) {
+        return MaaFramework.controller().MaaControllerStatus(handle, new MaaCtrlId(maaId));
+    }
+
+    private MaaStatus waiting(long maaId) {
+        return MaaFramework.controller().MaaControllerWait(handle, new MaaCtrlId(maaId));
     }
 
 }

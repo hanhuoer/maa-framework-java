@@ -1,37 +1,36 @@
 package io.github.hanhuoer.maa.core.util;
 
 import io.github.hanhuoer.maa.consts.MaaStatusEnum;
+import io.github.hanhuoer.maa.ptr.MaaId;
 import lombok.Getter;
 
-import java.util.concurrent.CompletableFuture;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 /**
  * @author H
  */
 @Getter
-public abstract class Future {
+public class Future {
 
-    private final Long maaid;
-    private final Function<Long, MaaStatusEnum> statusFunc;
+    private final MaaId maaid;
+    private final Function<MaaId, MaaStatusEnum> statusFunc;
+    private final Consumer<MaaId> waitFunc;
 
-    public Future(Long maaid, Function<Long, MaaStatusEnum> statusFunc) {
+
+    public Future(MaaId maaid, Function<MaaId, MaaStatusEnum> statusFunc, Consumer<MaaId> waitFunc) {
         this.maaid = maaid;
         this.statusFunc = statusFunc;
+        this.waitFunc = waitFunc;
     }
 
-    public CompletableFuture<Boolean> waitForCompletion() {
-        return CompletableFuture.supplyAsync(() -> {
-            try {
-                while (!status().done()) {
-                    Thread.sleep(0);
-                }
-                return success();
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                return false;
-            }
-        });
+    public long getId() {
+        return maaid.getValue();
+    }
+
+    public Future waiting() {
+        waitFunc.accept(maaid);
+        return this;
     }
 
     public Status status() {
@@ -42,12 +41,12 @@ public abstract class Future {
         return status().done();
     }
 
-    public boolean success() {
-        return status().success();
+    public boolean succeeded() {
+        return status().succeeded();
     }
 
-    public boolean failure() {
-        return status().failure();
+    public boolean failed() {
+        return status().failed();
     }
 
     public boolean pending() {

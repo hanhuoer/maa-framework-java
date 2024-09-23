@@ -2,6 +2,7 @@ package io.github.hanhuoer.maa.callbak;
 
 import com.sun.jna.Callback;
 import io.github.hanhuoer.maa.ptr.*;
+import io.github.hanhuoer.maa.ptr.base.MaaBool;
 
 /**
  * @author H
@@ -9,19 +10,20 @@ import io.github.hanhuoer.maa.ptr.*;
 public interface MaaCustomRecognitionCallback extends Callback {
 
     /**
-     * struct MaaCustomRecognizerAPI.MaaBool (*analyze)
-     *
-     * @param outBoxHandle    output
-     * @param outDetailHandle output
+     * @param outBox    output
+     * @param outDetail output
      */
-    Boolean analyze(
-            MaaSyncContextHandle contextHandle,
+    MaaBool analyze(
+            MaaContextHandle contextHandle,
+            MaaTaskId maaTaskId,
+            String currentTaskName,
+            String customRecognitionName,
+            String customRecognitionParam,
             MaaImageBufferHandle imageHandle,
-            String taskName,
-            String customParam,
-            MaaTransparentArg arg,
-            MaaRectHandle outBoxHandle,
-            MaaStringBufferHandle outDetailHandle
+            MaaRectHandle roi,
+            MaaCallbackTransparentArg transparentArg,
+            MaaRectHandle outBox,
+            MaaStringBufferHandle outDetail
     );
 
 }

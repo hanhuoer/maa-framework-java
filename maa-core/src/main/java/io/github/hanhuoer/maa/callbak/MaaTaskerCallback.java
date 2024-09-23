@@ -6,8 +6,8 @@ import io.github.hanhuoer.maa.ptr.MaaCallbackTransparentArg;
 /**
  * @author H
  */
-public interface MaaAPICallback extends Callback {
+public interface MaaTaskerCallback extends Callback {
 
-    void callback(String msg, String detailsJson, MaaCallbackTransparentArg callbackArg);
+    void callback(String message, String detailsJson, MaaCallbackTransparentArg callbackArg);
 
 }

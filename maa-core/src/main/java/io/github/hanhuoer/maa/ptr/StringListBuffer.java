@@ -30,7 +30,7 @@ public class StringListBuffer implements AutoCloseable {
             this.handle = handle;
             own = false;
         } else {
-            this.handle = MaaFramework.buffer().MaaCreateStringListBuffer();
+            this.handle = MaaFramework.buffer().MaaStringListBufferCreate();
             own = true;
         }
     }
@@ -39,16 +39,16 @@ public class StringListBuffer implements AutoCloseable {
     public void close() {
         if (this.handle == null) return;
         if (!this.own) return;
-        MaaFramework.buffer().MaaDestroyStringListBuffer(this.handle);
+        MaaFramework.buffer().MaaStringListBufferDestroy(this.handle);
     }
 
     public List<String> getValue() {
-        Long count = MaaFramework.buffer().MaaGetStringListSize(this.handle);
+        Long count = MaaFramework.buffer().MaaStringListBufferSize(this.handle).getValue();
         if (count == null || count == 0) return new ArrayList<>();
 
         return LongStream.rangeClosed(0, count)
                 .mapToObj(i -> {
-                    MaaStringBufferHandle maaStringBufferHandle = MaaFramework.buffer().MaaGetStringListAt(this.handle, i);
+                    MaaStringBufferHandle maaStringBufferHandle = MaaFramework.buffer().MaaStringListBufferAt(this.handle, new MaaSize(i));
                     StringBuffer stringBuffer = new StringBuffer(maaStringBufferHandle);
                     String value = stringBuffer.getValue();
                     stringBuffer.close();
@@ -64,7 +64,7 @@ public class StringListBuffer implements AutoCloseable {
             StringBuffer stringBuffer = new StringBuffer();
             stringBuffer.setValue(item);
 
-            Boolean appendResult = MaaFramework.buffer().MaaStringListAppend(this.handle, stringBuffer.getHandle());
+            Boolean appendResult = MaaFramework.buffer().MaaStringListBufferAppend(this.handle, stringBuffer.getHandle()).getValue();
             stringBuffer.close();
             if (!Boolean.TRUE.equals(appendResult)) return false;
         }
@@ -75,21 +75,21 @@ public class StringListBuffer implements AutoCloseable {
     public boolean append(String value) {
         StringBuffer stringBuffer = new StringBuffer();
         stringBuffer.setValue(value);
-        Boolean appendResult = MaaFramework.buffer().MaaStringListAppend(this.handle, stringBuffer.getHandle());
+        Boolean appendResult = MaaFramework.buffer().MaaStringListBufferAppend(this.handle, stringBuffer.getHandle()).getValue();
         stringBuffer.close();
         return Boolean.TRUE.equals(appendResult);
     }
 
     public boolean empty() {
-        return MaaFramework.buffer().MaaIsStringListEmpty(this.handle);
+        return MaaFramework.buffer().MaaStringListBufferIsEmpty(this.handle).getValue();
     }
 
     public boolean remove(int index) {
-        return MaaFramework.buffer().MaaStringListRemove(this.handle, index);
+        return MaaFramework.buffer().MaaStringListBufferRemove(this.handle, new MaaSize(index)).getValue();
     }
 
     public boolean clear() {
-        return MaaFramework.buffer().MaaClearStringList(this.handle);
+        return MaaFramework.buffer().MaaStringListBufferClear(this.handle).getValue();
     }
 
 }

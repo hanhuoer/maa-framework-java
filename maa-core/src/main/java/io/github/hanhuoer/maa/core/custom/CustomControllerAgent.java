@@ -21,7 +21,6 @@ public abstract class CustomControllerAgent {
         this.handle = new MaaCustomControllerHandle();
         this.handle.connect = this::connectAgent;
         this.handle.requestUUID = this::requestUuidAgent;
-        this.handle.requestResolution = this::requestResolutionAgent;
         this.handle.startApp = this::startAppAgent;
         this.handle.stopApp = this::stopAppAgent;
         this.handle.screencap = this::screencapAgent;
@@ -37,8 +36,6 @@ public abstract class CustomControllerAgent {
     public abstract boolean connect();
 
     public abstract String requestUuid();
-
-    public abstract int[] requestResolution();
 
     public abstract boolean startApp(String intent);
 
@@ -72,20 +69,6 @@ public abstract class CustomControllerAgent {
         StringBuffer stringBuffer = new StringBuffer(bufferHandle);
 
         stringBuffer.setValue(uuid);
-        return true;
-    }
-
-    public boolean requestResolutionAgent(MaaTransparentArg arg, IntByReference width, IntByReference height) {
-
-        int[] ints = this.requestResolution();
-
-        if (ints == null || ints.length != 2) {
-            return false;
-        }
-
-        width.setValue(ints[0]);
-        height.setValue(ints[1]);
-
         return true;
     }
 

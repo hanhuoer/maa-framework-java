@@ -25,7 +25,7 @@ public class RectBuffer implements AutoCloseable {
             this.handle = handle;
             own = false;
         } else {
-            this.handle = MaaFramework.buffer().MaaCreateRectBuffer();
+            this.handle = MaaFramework.buffer().MaaRectCreate();
             own = true;
         }
     }
@@ -34,14 +34,14 @@ public class RectBuffer implements AutoCloseable {
     public void close() {
         if (this.handle == null) return;
         if (!this.own) return;
-        MaaFramework.buffer().MaaDestroyRectBuffer(this.handle);
+        MaaFramework.buffer().MaaRectDestroy(this.handle);
     }
 
     public Rect getValue() {
-        Integer x = MaaFramework.buffer().MaaGetRectX(this.handle);
-        Integer y = MaaFramework.buffer().MaaGetRectY(this.handle);
-        Integer w = MaaFramework.buffer().MaaGetRectW(this.handle);
-        Integer h = MaaFramework.buffer().MaaGetRectH(this.handle);
+        Integer x = MaaFramework.buffer().MaaRectGetX(this.handle);
+        Integer y = MaaFramework.buffer().MaaRectGetY(this.handle);
+        Integer w = MaaFramework.buffer().MaaRectGetW(this.handle);
+        Integer h = MaaFramework.buffer().MaaRectGetH(this.handle);
 
         return new Rect()
                 .setX(x)
@@ -51,24 +51,24 @@ public class RectBuffer implements AutoCloseable {
     }
 
     public boolean setValue(Rect rect) {
-        return MaaFramework.buffer().MaaSetRect(
-                handle, rect.getX(), rect.getY(), rect.getW(), rect.getH());
+        return MaaFramework.buffer().MaaRectSet(
+                handle, rect.getX(), rect.getY(), rect.getW(), rect.getH()).getValue();
     }
 
     public boolean setValue(int[] array) {
         if (array.length != 4) {
             throw new IllegalArgumentException("Array must have 4 elements");
         }
-        return MaaFramework.buffer().MaaSetRect(
-                handle, array[0], array[1], array[2], array[3]);
+        return MaaFramework.buffer().MaaRectSet(
+                handle, array[0], array[1], array[2], array[3]).getValue();
     }
 
     public boolean setValue(List<Integer> list) {
         if (list.size() != 4) {
             throw new IllegalArgumentException("List must have 4 elements");
         }
-        return MaaFramework.buffer().MaaSetRect(
-                handle, list.get(0), list.get(1), list.get(2), list.get(3));
+        return MaaFramework.buffer().MaaRectSet(
+                handle, list.get(0), list.get(1), list.get(2), list.get(3)).getValue();
     }
 
 }

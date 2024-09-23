@@ -1,11 +1,11 @@
 package io.github.hanhuoer.maa;
 
+import io.github.hanhuoer.maa.core.base.Tasker;
 import io.github.hanhuoer.maa.exception.LoadException;
-import io.github.hanhuoer.maa.loader.AgentLibraryLoader;
-import io.github.hanhuoer.maa.loader.MaaLibraryLoader;
-import io.github.hanhuoer.maa.core.base.Instance;
 import io.github.hanhuoer.maa.jna.MaaFramework;
 import io.github.hanhuoer.maa.jna.MaaToolkit;
+import io.github.hanhuoer.maa.loader.AgentLibraryLoader;
+import io.github.hanhuoer.maa.loader.MaaLibraryLoader;
 import io.github.hanhuoer.maa.util.StringUtils;
 import lombok.Getter;
 import lombok.SneakyThrows;
@@ -14,6 +14,8 @@ import lombok.extern.slf4j.Slf4j;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -139,10 +141,17 @@ public class Maa {
                     loaderClassName = props.getProperty("maa.mac-x86_64");
                 }
             } else if (osName.contains("linux")) {
+                String env;
+                if (checkIfAndroid()) {
+                    env = "android";
+                } else {
+                    env = "linux";
+                }
+
                 if (osArch.contains("x86") || osArch.contains("amd64")) {
-                    loaderClassName = props.getProperty("maa.linux-x86_64");
+                    loaderClassName = props.getProperty(String.format("maa.%s-x86_64", env));
                 } else if (osArch.contains("arm") || osArch.contains("arch64")) {
-                    loaderClassName = props.getProperty("maa.linux-aarch64");
+                    loaderClassName = props.getProperty(String.format("maa.%s-aarch64", env));
                 }
             }
             if (loaderClassName != null) {
@@ -152,6 +161,41 @@ public class Maa {
             log.error("Failed to get native loader: {}", e.getMessage());
         }
         return null;
+    }
+
+    /**
+     * <a href="https://developer.android.com/reference/java/lang/System#getProperties()">...</a>
+     *
+     * @return true if android.
+     */
+    private static boolean checkIfAndroid() {
+
+        try {
+            Class.forName("android.os.Build");
+            return true;
+        } catch (ClassNotFoundException e) {
+            // return false;
+        }
+
+        List<String> propertyList = List.of(
+                "java.vendor",
+                "java.vendor.url",
+                "java.specification.vendor",
+                "java.vm.vendor",
+                "java.vm.specification.vendor",
+                "java.home",
+                "java.io.tmpdir"
+        );
+        for (String property : propertyList) {
+            if (Optional.ofNullable(System.getProperty(property))
+                    .orElse("")
+                    .toLowerCase()
+                    .contains("android")) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -176,27 +220,27 @@ public class Maa {
      */
     private void loadGlobalSetting() {
         if (StringUtils.hasText(options.getLogDir())) {
-            boolean result = Instance.setLogDir(options.getLogDir());
+            boolean result = Tasker.setLogDir(options.getLogDir());
             log.info("[maa] set logDir: {}, result: {}", options.getLogDir(), result);
         }
         if (options.getRecording() != null) {
-            boolean result = Instance.setRecording(options.getRecording());
+            boolean result = Tasker.setRecording(options.getRecording());
             log.info("[maa] set recording: {}, result: {}", options.getRecording(), result);
         }
         if (options.getDebugMessage() != null) {
-            boolean result = Instance.setDebugMessage(options.getDebugMessage());
+            boolean result = Tasker.setDebugMessage(options.getDebugMessage());
             log.info("[maa] set debugMessage: {}, result: {}", options.getDebugMessage(), result);
         }
         if (options.getSaveDraw() != null) {
-            boolean result = Instance.setSaveDraw(options.getSaveDraw());
+            boolean result = Tasker.setSaveDraw(options.getSaveDraw());
             log.info("[maa] set saveDraw: {}, result: {}", options.getSaveDraw(), result);
         }
         if (options.getStdoutLevel() != null) {
-            boolean result = Instance.setStdoutLevel(options.getStdoutLevel());
+            boolean result = Tasker.setStdoutLevel(options.getStdoutLevel());
             log.info("[maa] set stdoutLevel: {}, result: {}", options.getStdoutLevel(), result);
         }
         if (options.getShowHitDraw() != null) {
-            boolean result = Instance.setShowHitDraw(options.getShowHitDraw());
+            boolean result = Tasker.setShowHitDraw(options.getShowHitDraw());
             log.info("[maa] set showHitDraw: {}, result: {}", options.getShowHitDraw(), result);
         }
     }

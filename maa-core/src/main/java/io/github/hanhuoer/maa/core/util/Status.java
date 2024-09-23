@@ -13,15 +13,15 @@ public class Status {
     }
 
     public boolean done() {
-        return status == MaaStatusEnum.SUCCESS || status == MaaStatusEnum.FAILURE;
+        return status == MaaStatusEnum.SUCCEEDED || status == MaaStatusEnum.FAILED;
     }
 
-    public boolean success() {
-        return status == MaaStatusEnum.SUCCESS;
+    public boolean succeeded() {
+        return status == MaaStatusEnum.SUCCEEDED;
     }
 
-    public boolean failure() {
-        return status == MaaStatusEnum.FAILURE;
+    public boolean failed() {
+        return status == MaaStatusEnum.FAILED;
     }
 
     public boolean pending() {

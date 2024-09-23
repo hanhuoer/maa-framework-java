@@ -1,18 +1,17 @@
 package io.github.hanhuoer.maa.core.base;
 
-import io.github.hanhuoer.maa.MaaWindowsAarch64LibraryLoader;
-import io.github.hanhuoer.maa.loader.LibraryLoader;
 import io.github.hanhuoer.maa.Maa;
-import io.github.hanhuoer.maa.callbak.MaaResourceCallback;
+import io.github.hanhuoer.maa.MaaWindowsAarch64LibraryLoader;
 import io.github.hanhuoer.maa.jna.MaaFramework;
-import io.github.hanhuoer.maa.ptr.StringBuffer;
+import io.github.hanhuoer.maa.loader.LibraryLoader;
+import io.github.hanhuoer.maa.ptr.StringListBuffer;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.concurrent.CompletableFuture;
+import java.util.List;
 
 @Slf4j
 class ResourceTest {
@@ -31,14 +30,12 @@ class ResourceTest {
     void setUp() {
         maa = Maa.create();
 
-        MaaResourceCallback callback = (msg, detailsJson, callbackArg) -> {
+        resource = new Resource((msg, detailsJson, callbackArg) -> {
             log.info("received callback: ********************************************");
             log.info("message: {}", msg);
             log.info("detailJson: {}", detailsJson);
             log.info("callbackArg: {}", callbackArg);
-        };
-
-        resource = new Resource(callback, null);
+        }, null);
     }
 
     @AfterEach
@@ -54,9 +51,8 @@ class ResourceTest {
 
     @Test
     void load() {
-        CompletableFuture<Boolean> load = resource.load("./resources/resource");
-        Boolean join = load.join();
-        log.info("load result: {}", join);
+        Boolean load = resource.load("./resources/resource");
+        log.info("load result: {}", load);
     }
 
     @Test
@@ -67,9 +63,8 @@ class ResourceTest {
     void loaded() {
         log.info("loaded: {}", resource.loaded());
 
-        CompletableFuture<Boolean> load = resource.load("./resources/resource");
-        Boolean join = load.join();
-        log.info("load result: {}", join);
+        Boolean load = resource.load("./resources/resource");
+        log.info("load result: {}", load);
 
         log.info("loaded: {}", resource.loaded());
     }
@@ -85,18 +80,17 @@ class ResourceTest {
 
     @Test
     void loadAndGetTest() {
-        CompletableFuture<Boolean> load = resource.load("./resources/resource");
-        Boolean join = load.join();
+        Boolean load = resource.load("./resources/resource");
 
-        try (StringBuffer stringBuffer = new StringBuffer()) {
+        try (StringListBuffer stringBuffer = new StringListBuffer()) {
             Boolean getResult = MaaFramework.resource().MaaResourceGetTaskList(
                     resource.getHandle(),
                     stringBuffer.getHandle()
-            );
+            ).getValue();
 
             log.info("get task list result: {}", getResult);
 
-            String value = stringBuffer.getValue();
+            List<String> value = stringBuffer.getValue();
             log.info("get task list value: {}", value);
         } catch (Exception e) {
             throw new RuntimeException(e);

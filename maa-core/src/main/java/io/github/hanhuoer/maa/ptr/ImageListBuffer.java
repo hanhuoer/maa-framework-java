@@ -28,7 +28,7 @@ public class ImageListBuffer implements AutoCloseable {
             this.handle = handle;
             this.own = false;
         } else {
-            this.handle = MaaFramework.buffer().MaaCreateImageListBuffer();
+            this.handle = MaaFramework.buffer().MaaImageListBufferCreate();
             this.own = true;
         }
 
@@ -41,15 +41,16 @@ public class ImageListBuffer implements AutoCloseable {
     public void close() {
         if (this.handle == null) return;
         if (!this.own) return;
-        MaaFramework.buffer().MaaDestroyImageListBuffer(this.handle);
+        MaaFramework.buffer().MaaImageListBufferDestroy(this.handle);
     }
 
     public List<BufferedImage> getValue() throws IOException {
-        Long count = MaaFramework.buffer().MaaGetImageListSize(this.handle);
+        MaaSize count = MaaFramework.buffer().MaaImageListBufferSize(this.handle);
         List<BufferedImage> result = new ArrayList<>();
 
-        for (int i = 0; i < count; i++) {
-            MaaImageBufferHandle maaImageBufferHandle = MaaFramework.buffer().MaaGetImageListAt(this.handle, i);
+        for (long i = 0; i < count.getValue(); i++) {
+            MaaSize maaSize = new MaaSize(i);
+            MaaImageBufferHandle maaImageBufferHandle = MaaFramework.buffer().MaaImageListBufferAt(this.handle, maaSize);
             BufferedImage img = new ImageBuffer(maaImageBufferHandle).getValue();
             result.add(img);
         }
@@ -63,7 +64,8 @@ public class ImageListBuffer implements AutoCloseable {
         for (BufferedImage bufferedImage : value) {
             ImageBuffer imageBuffer = new ImageBuffer();
             imageBuffer.setValue(bufferedImage);
-            Boolean appendResult = MaaFramework.buffer().MaaImageListAppend(this.handle, imageBuffer.getHandle());
+            Boolean appendResult = MaaFramework.buffer().MaaImageListBufferAppend(this.handle, imageBuffer.getHandle())
+                    .getValue();
             if (!Boolean.TRUE.equals(appendResult)) return false;
         }
 
@@ -73,15 +75,15 @@ public class ImageListBuffer implements AutoCloseable {
     public boolean append(BufferedImage value) {
         ImageBuffer imageBuffer = new ImageBuffer();
         imageBuffer.setValue(value);
-        return Boolean.TRUE.equals(MaaFramework.buffer().MaaImageListAppend(this.handle, imageBuffer.getHandle()));
+        return Boolean.TRUE.equals(MaaFramework.buffer().MaaImageListBufferAppend(this.handle, imageBuffer.getHandle()).getValue());
     }
 
     public boolean remove(int index) {
-        return Boolean.TRUE.equals(MaaFramework.buffer().MaaImageListRemove(this.handle, index));
+        return Boolean.TRUE.equals(MaaFramework.buffer().MaaImageListBufferRemove(this.handle, MaaSize.valueOf(index)).getValue());
     }
 
     public boolean clear() {
-        return Boolean.TRUE.equals(MaaFramework.buffer().MaaClearImageList(this.handle));
+        return Boolean.TRUE.equals(MaaFramework.buffer().MaaImageListBufferClear(this.handle).getValue());
     }
 
 }

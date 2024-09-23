@@ -2,12 +2,12 @@ package io.github.hanhuoer.maa.jna;
 
 import com.sun.jna.Library;
 import com.sun.jna.Native;
-import io.github.hanhuoer.maa.loader.MaaLibraryLoader;
 import io.github.hanhuoer.maa.MaaOptions;
-import io.github.hanhuoer.maa.callbak.MaaControllerCallback;
-import io.github.hanhuoer.maa.callbak.MaaInstanceCallback;
-import io.github.hanhuoer.maa.callbak.MaaResourceCallback;
+import io.github.hanhuoer.maa.callbak.MaaNotificationCallback;
+import io.github.hanhuoer.maa.loader.MaaLibraryLoader;
 import io.github.hanhuoer.maa.ptr.*;
+import io.github.hanhuoer.maa.ptr.base.MaaBool;
+import io.github.hanhuoer.maa.ptr.base.MaaLong;
 import io.github.hanhuoer.maa.util.FileUtils;
 import lombok.Getter;
 
@@ -22,8 +22,8 @@ public class MaaFramework {
     protected MaaBuffer buffer;
     protected MaaUtility utility;
     protected MaaResource resource;
-    protected MaaInstance instance;
-    protected MaaSyncContext syncContext;
+    protected MaaTasker tasker;
+    protected MaaContext context;
 
     private MaaFramework() {
     }
@@ -65,14 +65,14 @@ public class MaaFramework {
         return INSTANCE.resource;
     }
 
-    public static MaaInstance instance() {
+    public static MaaTasker tasker() {
         checkMaaFramework();
-        return INSTANCE.instance;
+        return INSTANCE.tasker;
     }
 
-    public static MaaSyncContext syncContext() {
+    public static MaaContext context() {
         checkMaaFramework();
-        return INSTANCE.syncContext;
+        return INSTANCE.context;
     }
 
     public static void checkMaaFramework() {
@@ -91,10 +91,10 @@ public class MaaFramework {
         if (INSTANCE.resource == null) {
             throw new RuntimeException("MaaFramework.resource can not be null.");
         }
-        if (INSTANCE.instance == null) {
-            throw new RuntimeException("MaaFramework.instance can not be null.");
+        if (INSTANCE.tasker == null) {
+            throw new RuntimeException("MaaFramework.tasker can not be null.");
         }
-        if (INSTANCE.syncContext == null) {
+        if (INSTANCE.context == null) {
             throw new RuntimeException("MaaFramework.syncContext can not be null.");
         }
     }
@@ -112,8 +112,8 @@ public class MaaFramework {
         buffer = Native.load(libPath, MaaBuffer.class);
         utility = Native.load(libPath, MaaUtility.class);
         resource = Native.load(libPath, MaaResource.class);
-        instance = Native.load(libPath, MaaInstance.class);
-        syncContext = Native.load(libPath, MaaSyncContext.class);
+        tasker = Native.load(libPath, MaaTasker.class);
+        context = Native.load(libPath, MaaContext.class);
     }
 
     /**
@@ -123,86 +123,70 @@ public class MaaFramework {
      */
     public interface MaaController extends Library {
 
-        /**
-         * @deprecated use {@link #MaaAdbControllerCreateV2(String, String, int, String, String, MaaControllerCallback, MaaCallbackTransparentArg)} instead.
-         */
-        MaaControllerHandle MaaAdbControllerCreate(String adb_path, String address, int type, String config, MaaControllerCallback callback, MaaCallbackTransparentArg callback_arg);
+        MaaControllerHandle MaaAdbControllerCreate(String adb_path, String address,
+                                                   MaaAdbScreencapMethod screencap_methods,
+                                                   MaaAdbInputMethod input_methods,
+                                                   String config,
+                                                   String agent_path,
+                                                   MaaNotificationCallback callback, MaaCallbackTransparentArg callback_arg);
 
-        MaaControllerHandle MaaAdbControllerCreateV2(String adb_path, String address, int type, String config, String agent_path, MaaControllerCallback callback, MaaCallbackTransparentArg callback_arg);
+        MaaControllerHandle MaaWin32ControllerCreate(MaaToolkitDesktopWindowHandle hWnd,
+                                                     MaaWin32ScreencapMethod screencap_method,
+                                                     MaaWin32InputMethod input_method,
+                                                     MaaNotificationCallback callback, MaaCallbackTransparentArg callback_arg);
 
-        /**
-         * @param hWnd         MaaWin32Hwnd
-         * @param type         MaaWin32ControllerType
-         * @param callback     MaaControllerCallback
-         * @param callback_arg MaaCallbackTransparentArg
-         * @return MaaControllerHandle
-         */
-        MaaControllerHandle MaaWin32ControllerCreate(MaaWin32Hwnd hWnd, int type, MaaControllerCallback callback, MaaCallbackTransparentArg callback_arg);
+        MaaControllerHandle MaaCustomControllerCreate(MaaCustomControllerHandle handle, MaaTransparentArg handle_arg,
+                                                      MaaNotificationCallback callback, MaaCallbackTransparentArg callback_arg);
 
-        /**
-         * @param handle MaaCustomControllerHandle
-         */
-        MaaControllerHandle MaaCustomControllerCreate(MaaCustomControllerHandle handle, MaaTransparentArg handle_arg, MaaControllerCallback callback, MaaCallbackTransparentArg callback_arg);
-
-        /**
-         * @param type MaaThriftControllerType
-         */
-        MaaControllerHandle MaaThriftControllerCreate(MaaThriftControllerType type, String host, int port, String config, MaaControllerCallback callback, MaaCallbackTransparentArg callback_arg);
-
-        /**
-         * @param type MaaDbgControllerType
-         */
-        MaaControllerHandle MaaDbgControllerCreate(String read_path, String write_path, int type, String config, MaaControllerCallback callback, MaaCallbackTransparentArg callback_arg);
+        MaaControllerHandle MaaDbgControllerCreate(String read_path, String write_path,
+                                                   MaaDbgControllerType type, String config,
+                                                   MaaNotificationCallback callback, MaaCallbackTransparentArg callback_arg);
 
         void MaaControllerDestroy(MaaControllerHandle controllerHandle);
 
-        Long MaaControllerSetOption(MaaControllerHandle ctrl, int key, int value, int value_size);
+        /**
+         * @param value byte array, int*, char*, bool*
+         */
+        MaaBool MaaControllerSetOption(MaaControllerHandle ctrl, MaaCtrlOption key,
+                                       MaaOptionValue value, MaaOptionValueSize value_size);
+
+        MaaCtrlId MaaControllerPostConnection(MaaControllerHandle ctrl);
+
+        MaaCtrlId MaaControllerPostClick(MaaControllerHandle ctrl, int x, int y);
+
+        MaaCtrlId MaaControllerPostSwipe(MaaControllerHandle ctrl, int x1, int y1, int x2, int y2, int duration);
+
+        MaaCtrlId MaaControllerPostPressKey(MaaControllerHandle ctrl, int keycode);
+
+        MaaCtrlId MaaControllerPostInputText(MaaControllerHandle ctrl, String text);
+
+        MaaCtrlId MaaControllerPostStartApp(MaaControllerHandle ctrl, String intent);
+
+        MaaCtrlId MaaControllerPostStopApp(MaaControllerHandle ctrl, String intent);
+
+        MaaCtrlId MaaControllerPostTouchDown(MaaControllerHandle ctrl, int contact, int x, int y, int pressure);
+
+        MaaCtrlId MaaControllerPostTouchMove(MaaControllerHandle ctrl, int contact, int x, int y, int pressure);
+
+        MaaCtrlId MaaControllerPostTouchUp(MaaControllerHandle ctrl, int contact);
+
+        MaaCtrlId MaaControllerPostScreencap(MaaControllerHandle ctrl);
+
+        MaaStatus MaaControllerStatus(MaaControllerHandle ctrl, MaaCtrlId id);
+
+        MaaStatus MaaControllerWait(MaaControllerHandle ctrl, MaaCtrlId id);
+
+        MaaBool MaaControllerConnected(MaaControllerHandle ctrl);
 
         /**
-         * @param ctrl MaaControllerHandle
-         * @return typedef int64_t MaaId
+         * @param buffer out
          */
-        Long MaaControllerPostConnection(MaaControllerHandle ctrl);
-
-        Long MaaControllerPostClick(MaaControllerHandle ctrl, int x, int y);
-
-        Long MaaControllerPostSwipe(MaaControllerHandle ctrl, int x1, int y1, int x2, int y2, int duration);
-
-        Long MaaControllerPostPressKey(MaaControllerHandle ctrl, int keycode);
-
-        Long MaaControllerPostInputText(MaaControllerHandle ctrl, String text);
-
-        Long MaaControllerPostStartApp(MaaControllerHandle ctrl, String intent);
-
-        Long MaaControllerPostStopApp(MaaControllerHandle ctrl, String intent);
-
-        Long MaaControllerPostTouchDown(MaaControllerHandle ctrl, int contact, int x, int y, int pressure);
-
-        Long MaaControllerPostTouchMove(MaaControllerHandle ctrl, int contact, int x, int y, int pressure);
-
-        Long MaaControllerPostTouchUp(MaaControllerHandle ctrl, int contact);
-
-        Long MaaControllerPostScreencap(MaaControllerHandle ctrl);
+        MaaBool MaaControllerCachedImage(MaaControllerHandle ctrl, MaaImageBufferHandle buffer);
 
         /**
-         * @param ctrl    MaaControllerHandle
-         * @param ctrl_id MaaCtrlId id
-         * @return typedef int32_t MaaStatus
+         * @param buffer out
          */
-        Integer MaaControllerStatus(MaaControllerHandle ctrl, long ctrl_id);
-
-        /**
-         * @param controller_handle MaaControllerHandle
-         * @param ctrl_id           MaaCtrlId id
-         * @return typedef int32_t MaaStatus
-         */
-        Integer MaaControllerWait(MaaControllerHandle controller_handle, long ctrl_id);
-
-        Boolean MaaControllerConnected(MaaControllerHandle ctrl);
-
-        Boolean MaaControllerGetImage(MaaControllerHandle ctrl, MaaImageBufferHandle buffer);
-
-        Boolean MaaControllerGetUUID(MaaControllerHandle ctrl, MaaStringBufferHandle buffer);
+        MaaBool MaaControllerGetUUID(MaaControllerHandle ctrl, MaaStringBufferHandle buffer);
 
     }
 
@@ -213,99 +197,93 @@ public class MaaFramework {
      */
     public interface MaaBuffer extends Library {
 
-        MaaStringBufferHandle MaaCreateStringBuffer();
+        MaaStringBufferHandle MaaStringBufferCreate();
 
-        void MaaDestroyStringBuffer(MaaStringBufferHandle handle);
+        void MaaStringBufferDestroy(MaaStringBufferHandle handle);
 
-        Boolean MaaIsStringEmpty(MaaStringBufferHandle handle);
+        MaaBool MaaStringBufferIsEmpty(MaaStringBufferHandle handle);
 
-        Boolean MaaClearString(MaaStringBufferHandle handle);
+        MaaBool MaaStringBufferClear(MaaStringBufferHandle handle);
 
-        String MaaGetString(MaaStringBufferHandle handle);
+        String MaaStringBufferGet(MaaStringBufferHandle handle);
 
-        Long MaaGetStringSize(MaaStringBufferHandle handle);
+        MaaSize MaaStringBufferSize(MaaStringBufferHandle handle);
 
-        Boolean MaaSetString(MaaStringBufferHandle handle, String str);
+        MaaBool MaaStringBufferSet(MaaStringBufferHandle handle, String str);
 
-        Boolean MaaSetStringEx(MaaStringBufferHandle handle, String str, long size);
+        MaaBool MaaStringBufferSetEx(MaaStringBufferHandle handle, String str, MaaSize size);
 
-        MaaStringListBufferHandle MaaCreateStringListBuffer();
+        MaaStringListBufferHandle MaaStringListBufferCreate();
 
-        void MaaDestroyStringListBuffer(MaaStringListBufferHandle handle);
+        void MaaStringListBufferDestroy(MaaStringListBufferHandle handle);
 
-        Boolean MaaIsStringListEmpty(MaaStringListBufferHandle handle);
+        MaaBool MaaStringListBufferIsEmpty(MaaStringListBufferHandle handle);
 
-        Boolean MaaClearStringList(MaaStringListBufferHandle handle);
+        MaaSize MaaStringListBufferSize(MaaStringListBufferHandle handle);
 
-        Long MaaGetStringListSize(MaaStringListBufferHandle handle);
+        MaaStringBufferHandle MaaStringListBufferAt(MaaStringListBufferHandle handle, MaaSize index);
 
-        MaaStringBufferHandle MaaGetStringListAt(MaaStringListBufferHandle handle, long index);
+        MaaBool MaaStringListBufferAppend(MaaStringListBufferHandle handle, MaaStringBufferHandle value);
 
-        Boolean MaaStringListAppend(MaaStringListBufferHandle handle, MaaStringBufferHandle value);
+        MaaBool MaaStringListBufferRemove(MaaStringListBufferHandle handle, MaaSize index);
 
-        Boolean MaaStringListRemove(MaaStringListBufferHandle handle, long index);
+        MaaBool MaaStringListBufferClear(MaaStringListBufferHandle handle);
 
-        MaaImageBufferHandle MaaCreateImageBuffer();
+        MaaImageBufferHandle MaaImageBufferCreate();
 
-        void MaaDestroyImageBuffer(MaaImageBufferHandle handle);
+        void MaaImageBufferDestroy(MaaImageBufferHandle handle);
 
-        Boolean MaaIsImageEmpty(MaaImageBufferHandle handle);
+        MaaBool MaaImageBufferIsEmpty(MaaImageBufferHandle handle);
 
-        Boolean MaaClearImage(MaaImageBufferHandle handle);
+        MaaBool MaaImageBufferClear(MaaImageBufferHandle handle);
 
-        MaaImageRawData MaaGetImageRawData(MaaImageBufferHandle handle);
+        MaaImageRawData MaaImageBufferGetRawData(MaaImageBufferHandle handle);
 
-        Integer MaaGetImageWidth(MaaImageBufferHandle handle);
+        Integer MaaImageBufferWidth(MaaImageBufferHandle handle);
 
-        Integer MaaGetImageHeight(MaaImageBufferHandle handle);
+        Integer MaaImageBufferHeight(MaaImageBufferHandle handle);
 
-        Integer MaaGetImageType(MaaImageBufferHandle handle);
+        Integer MaaImageBufferChannels(MaaImageBufferHandle handle);
 
-        Boolean MaaSetImageRawData(MaaImageBufferHandle handle, MaaImageRawData data, int width, int height, int type);
+        Integer MaaImageBufferType(MaaImageBufferHandle handle);
 
-        MaaImageEncodedData MaaGetImageEncoded(MaaImageBufferHandle handle);
+        MaaBool MaaImageBufferSetRawData(MaaImageBufferHandle handle, MaaImageRawData data, int width, int height, int type);
 
-        Long MaaGetImageEncodedSize(MaaImageBufferHandle handle);
+        MaaImageEncodedData MaaImageBufferGetEncoded(MaaImageBufferHandle handle);
 
-        Boolean MaaSetImageEncoded(MaaImageBufferHandle handle, MaaImageRawData data, long size);
+        MaaSize MaaImageBufferGetEncodedSize(MaaImageBufferHandle handle);
 
-        MaaImageListBufferHandle MaaCreateImageListBuffer();
+        MaaBool MaaImageBufferSetEncoded(MaaImageBufferHandle handle, MaaImageEncodedData data, MaaSize size);
 
-        void MaaDestroyImageListBuffer(MaaImageListBufferHandle handle);
+        MaaImageListBufferHandle MaaImageListBufferCreate();
 
-        Boolean MaaIsImageListEmpty(MaaImageListBufferHandle handle);
+        void MaaImageListBufferDestroy(MaaImageListBufferHandle handle);
 
-        Boolean MaaClearImageList(MaaImageListBufferHandle handle);
+        MaaBool MaaImageListBufferIsEmpty(MaaImageListBufferHandle handle);
 
-        Long MaaGetImageListSize(MaaImageListBufferHandle handle);
+        MaaSize MaaImageListBufferSize(MaaImageListBufferHandle handle);
 
-        MaaImageBufferHandle MaaGetImageListAt(MaaImageListBufferHandle handle, long size);
+        MaaImageBufferHandle MaaImageListBufferAt(MaaImageListBufferHandle handle, MaaSize size);
 
-        Boolean MaaImageListAppend(MaaImageListBufferHandle handle, MaaImageBufferHandle value);
+        MaaBool MaaImageListBufferAppend(MaaImageListBufferHandle handle, MaaImageBufferHandle value);
 
-        Boolean MaaImageListRemove(MaaImageListBufferHandle handle, long size);
+        MaaBool MaaImageListBufferRemove(MaaImageListBufferHandle handle, MaaSize size);
 
-        MaaRectHandle MaaCreateRectBuffer();
+        MaaBool MaaImageListBufferClear(MaaImageListBufferHandle handle);
 
-        void MaaDestroyRectBuffer(MaaRectHandle handle);
+        MaaRectHandle MaaRectCreate();
 
-        Integer MaaGetRectX(MaaRectHandle handle);
+        void MaaRectDestroy(MaaRectHandle handle);
 
-        Integer MaaGetRectY(MaaRectHandle handle);
+        Integer MaaRectGetX(MaaRectHandle handle);
 
-        Integer MaaGetRectW(MaaRectHandle handle);
+        Integer MaaRectGetY(MaaRectHandle handle);
 
-        Integer MaaGetRectH(MaaRectHandle handle);
+        Integer MaaRectGetW(MaaRectHandle handle);
 
-        Boolean MaaSetRect(MaaRectHandle handle, int x, int y, int w, int h);
+        Integer MaaRectGetH(MaaRectHandle handle);
 
-        Boolean MaaSetRectX(MaaRectHandle handle, int value);
-
-        Boolean MaaSetRectY(MaaRectHandle handle, int value);
-
-        Boolean MaaSetRectW(MaaRectHandle handle, int value);
-
-        Boolean MaaSetRectH(MaaRectHandle handle, int value);
+        MaaBool MaaRectSet(MaaRectHandle handle, int x, int y, int w, int h);
 
     }
 
@@ -319,29 +297,7 @@ public class MaaFramework {
 
         String MaaVersion();
 
-        /**
-         * @param key      MaaGlobalOption
-         * @param value    MaaOptionValue
-         * @param val_size MaaOptionValueSize
-         * @return MaaBool
-         */
-        Boolean MaaSetGlobalOption(int key, MaaOptionValue value, long val_size);
-
-        Boolean MaaQueryRecognitionDetail(long reco_id,
-                                          MaaStringBufferHandle name,
-                                          MaaBool hit,
-                                          MaaRectHandle hit_box,
-                                          MaaStringBufferHandle detail_json,
-                                          MaaImageBufferHandle raw,
-                                          MaaImageListBufferHandle draws);
-
-        Boolean MaaQueryNodeDetail(long node_id, MaaStringBufferHandle name, MaaRecoId reco_id, MaaBool run_completed);
-
-        /**
-         * @param node_id_list      output
-         * @param node_id_list_size input and output
-         */
-        Boolean MaaQueryTaskDetail(long task_id, MaaStringBufferHandle entry, MaaNodeIdArr node_id_list, MaaSize node_id_list_size);
+        MaaBool MaaSetGlobalOption(MaaGlobalOption key, MaaOptionValue value, MaaOptionValueSize val_size);
 
     }
 
@@ -353,28 +309,38 @@ public class MaaFramework {
      */
     public interface MaaResource extends Library {
 
-        MaaResourceHandle MaaResourceCreate(MaaResourceCallback callback, MaaCallbackTransparentArg callback_arg);
+        MaaResourceHandle MaaResourceCreate(MaaNotificationCallback callback, MaaCallbackTransparentArg callback_arg);
 
         void MaaResourceDestroy(MaaResourceHandle res);
 
-        /**
-         * @param path resource path
-         */
-        Long MaaResourcePostPath(MaaResourceHandle res, String path);
+        MaaBool MaaResourceRegisterCustomRecognition(MaaResourceHandle res, String name, MaaCustomRecognitionHandle recognizer, MaaTransparentArg trans_arg);
 
-        Boolean MaaResourceClear(MaaResourceHandle res);
+        MaaBool MaaResourceUnregisterCustomRecognition(MaaResourceHandle res, String name);
+
+        MaaBool MaaResourceClearCustomRecognition(MaaResourceHandle res);
+
+        MaaBool
+        MaaResourceRegisterCustomAction(MaaResourceHandle res, String name, MaaCustomActionHandle action, MaaTransparentArg trans_arg);
+
+        MaaBool MaaResourceUnregisterCustomAction(MaaResourceHandle res, String name);
+
+        MaaBool MaaResourceClearCustomAction(MaaResourceHandle res);
+
+        MaaResId MaaResourcePostPath(MaaResourceHandle res, String path);
+
+        MaaBool MaaResourceClear(MaaResourceHandle res);
 
         /**
          * @param id resource id
          */
-        Integer MaaResourceStatus(MaaResourceHandle res, long id);
+        MaaStatus MaaResourceStatus(MaaResourceHandle res, MaaResId id);
 
         /**
          * @param id resource id
          */
-        Integer MaaResourceWait(MaaResourceHandle res, long id);
+        MaaStatus MaaResourceWait(MaaResourceHandle res, MaaResId id);
 
-        Boolean MaaResourceLoaded(MaaResourceHandle res);
+        MaaBool MaaResourceLoaded(MaaResourceHandle res);
 
         /**
          * Set options for a given resource.
@@ -388,163 +354,140 @@ public class MaaFramework {
          * @param val_size MaaOptionValueSize The size of the option value.
          * @return Whether the option is set successfully.
          */
-        Boolean MaaResourceSetOption(MaaResourceHandle res, int key, MaaOptionValue value, long val_size);
+        MaaBool MaaResourceSetOption(MaaResourceHandle res, MaaResOption key, MaaOptionValue value, MaaOptionValueSize val_size);
 
         /**
          * Get the hash of the resource.
          *
-         * @param buffer The buffer where the hash will be written to.
+         * @param buffer out, the buffer where the hash will be written to.
          */
-        Boolean MaaResourceGetHash(MaaResourceHandle res, MaaStringBufferHandle buffer);
+        MaaBool MaaResourceGetHash(MaaResourceHandle res, MaaStringBufferHandle buffer);
 
         /**
          * Get the task list of the resource.
          *
-         * @param buffer The buffer where the task list will be written to.
+         * @param buffer out, the buffer where the task list will be written to.
          */
-        Boolean MaaResourceGetTaskList(MaaResourceHandle res, MaaStringBufferHandle buffer);
+        MaaBool MaaResourceGetTaskList(MaaResourceHandle res, MaaStringListBufferHandle buffer);
 
     }
 
 
     /**
-     * MaaInstance.h File Reference
+     * MaaTasker.h File Reference
      *
-     * @link <a href="https://maaxyz.github.io/MaaFramework/MaaInstance_8h.html">...</a>
+     * @link <a href="https://maaxyz.github.io/MaaFramework/MaaTasker_8h.html">...</a>
      */
-    public interface MaaInstance extends Library {
+    public interface MaaTasker extends Library {
 
-        MaaInstanceHandle MaaCreate(MaaInstanceCallback maaAPICallback, MaaCallbackTransparentArg MaaTransparentArg);
+        MaaTaskerHandle MaaTaskerCreate(MaaNotificationCallback callback, MaaCallbackTransparentArg callback_arg);
 
-        void MaaDestroy(MaaInstanceHandle controllerHandle);
-
-        /**
-         * @param key      MaaInstOption
-         * @param value    MaaOptionValue
-         * @param val_size MaaOptionValueSize
-         */
-        Boolean MaaSetOption(MaaInstanceHandle inst, int key, MaaOptionValue value, long val_size);
-
-        Boolean MaaBindResource(MaaInstanceHandle inst, MaaResourceHandle res);
-
-        Boolean MaaBindController(MaaInstanceHandle inst, MaaControllerHandle ctrl);
-
-        Boolean MaaInited(MaaInstanceHandle inst);
+        void MaaTaskerDestroy(MaaTaskerHandle tasker);
 
         /**
-         * @param recognizer MaaCustomRecognizerHandle
+         * @param value in, byte array, int*, char*, bool*
          */
-        Boolean MaaRegisterCustomRecognizer(MaaInstanceHandle inst, String name, MaaCustomRecognizerHandle recognizer, MaaTransparentArg recognizer_arg);
+        MaaBool MaaTaskerSetOption(MaaTaskerHandle tasker, MaaTaskerOption key,
+                                   MaaOptionValue value, MaaOptionValueSize val_size);
 
-        Boolean MaaUnregisterCustomRecognizer(MaaInstanceHandle inst, String name);
+        MaaBool MaaTaskerBindResource(MaaTaskerHandle tasker, MaaResourceHandle res);
 
-        Boolean MaaClearCustomRecognizer(MaaInstanceHandle inst);
+        MaaBool MaaTaskerBindController(MaaTaskerHandle tasker, MaaControllerHandle ctrl);
+
+        MaaBool MaaTaskerInited(MaaTaskerHandle tasker);
+
+        MaaTaskId MaaTaskerPostPipeline(MaaTaskerHandle tasker, String entry, String pipeline_override);
+
+//        MaaTaskId MaaTaskerPostRecognition(MaaTaskerHandle tasker, String entry, String pipeline_override);
+
+//        MaaTaskId MaaTaskerPostAction(MaaTaskerHandle tasker, String entry, String pipeline_override);
+
+        MaaStatus MaaTaskerStatus(MaaTaskerHandle tasker, MaaTaskId id);
+
+        MaaStatus MaaTaskerWait(MaaTaskerHandle tasker, MaaTaskId id);
+
+        MaaBool MaaTaskerRunning(MaaTaskerHandle tasker);
+
+        MaaBool MaaTaskerPostStop(MaaTaskerHandle tasker);
+
+        MaaResourceHandle MaaTaskerGetResource(MaaTaskerHandle tasker);
+
+        MaaControllerHandle MaaTaskerGetController(MaaTaskerHandle tasker);
+
+        MaaBool MaaTaskerClearCache(MaaTaskerHandle tasker);
 
         /**
-         * @param action MaaCustomActionHandle
+         * @param name        out
+         * @param algorithm   out
+         * @param hit         out
+         * @param box         out
+         * @param detail_json out
+         * @param raw         out, only valid in debug mode
+         * @param draws       out, only valid in debug mode
          */
-        Boolean MaaRegisterCustomAction(MaaInstanceHandle inst, String name, MaaCustomActionHandle action, MaaTransparentArg action_arg);
-
-        Boolean MaaUnregisterCustomAction(MaaInstanceHandle inst, String name);
-
-        Boolean MaaClearCustomAction(MaaInstanceHandle inst);
+        MaaBool MaaTaskerGetRecognitionDetail(MaaTaskerHandle tasker,
+                                              MaaRecoId reco_id,
+                                              MaaStringBufferHandle name,
+                                              MaaStringBufferHandle algorithm,
+                                              MaaBool hit,
+                                              MaaRectHandle box,
+                                              MaaStringBufferHandle detail_json,
+                                              MaaImageBufferHandle raw,
+                                              MaaImageListBufferHandle draws);
 
         /**
-         * @return task id
+         * @param name      out
+         * @param reco_id   out
+         * @param completed out
          */
-        Long MaaPostTask(MaaInstanceHandle inst, String entry, String param);
-
-        Long MaaPostRecognition(MaaInstanceHandle inst, String entry, String param);
-
-        Long MaaPostAction(MaaInstanceHandle inst, String entry, String param);
+        MaaBool MaaTaskerGetNodeDetail(MaaTaskerHandle tasker,
+                                       MaaNodeId node_id,
+                                       MaaStringBufferHandle name,
+                                       MaaRecoId.Reference reco_id,
+                                       MaaBool completed);
 
         /**
-         * @param id MaaTaskId
+         * @param node_id_list      out, array
+         * @param node_id_list_size in, out
          */
-        Boolean MaaSetTaskParam(MaaInstanceHandle inst, long id, String param);
+        MaaBool MaaTaskerGetTaskDetail(MaaTaskerHandle tasker,
+                                       MaaTaskId task_id,
+                                       MaaStringBufferHandle entry,
+                                       MaaNodeIdArr node_id_list,
+                                       MaaSize.Reference node_id_list_size);
 
         /**
-         * @param id MaaTaskId
-         * @return MaaStatus
+         * @param[out] latest_id
          */
-        Integer MaaTaskStatus(MaaInstanceHandle inst, long id);
-
-        /**
-         * @param taskId MaaTaskId
-         */
-        Integer MaaWaitTask(MaaInstanceHandle inst, long taskId);
-
-        Boolean MaaTaskAllFinished(MaaInstanceHandle inst);
-
-        Boolean MaaRunning(MaaInstanceHandle inst);
-
-        Boolean MaaPostStop(MaaInstanceHandle inst);
-
-        /**
-         * @deprecated use  {@link #MaaPostStop(MaaInstanceHandle)}  instead.
-         */
-        Boolean MaaStop(MaaInstanceHandle inst);
-
-        MaaResourceHandle MaaGetResource(MaaInstanceHandle inst);
-
-        MaaControllerHandle MaaGetController(MaaInstanceHandle inst);
+        MaaBool MaaTaskerGetLatestNode(MaaTaskerHandle tasker, String task_name,/* out */ MaaLong.Reference latest_id);
 
     }
 
 
     /**
-     * MaaSyncContext.h File Reference
+     * MaaContext.h File Reference
      *
-     * @link <a href="https://maaxyz.github.io/MaaFramework/MaaSyncContext_8h.html">...</a>
+     * @link <a href="https://maaxyz.github.io/MaaFramework/MaaContext_8h.html">...</a>
      */
-    public interface MaaSyncContext extends Library {
+    public interface MaaContext extends Library {
 
-        Boolean MaaSyncContextRunTask(MaaSyncContextHandle sync_context, String task_name, String param);
+        MaaTaskId MaaContextRunPipeline(MaaContextHandle context, String entry, String pipeline_override);
 
-        Boolean MaaSyncContextRunRecognition(MaaSyncContextHandle sync_context,
-                                             MaaImageBufferHandle image,
-                                             String task_name,
-                                             String task_param,
-                                             MaaRectHandle out_box /* out */,
-                                             MaaStringBufferHandle out_detail /* out */);
+        MaaRecoId MaaContextRunRecognition(MaaContextHandle context, String entry, String pipeline_override, MaaImageBufferHandle image);
 
-        Boolean MaaSyncContextRunAction(MaaSyncContextHandle sync_context,
-                                        String task_name, String task_param,
-                                        MaaRectHandle cur_box,
-                                        String cur_rec_detail);
+        MaaNodeId MaaContextRunAction(MaaContextHandle context, String entry, String pipeline_override,
+                                      MaaRectHandle box, String reco_detail);
 
-        Boolean MaaSyncContextClick(MaaSyncContextHandle sync_context, int x, int y);
+        MaaBool MaaContextOverridePipeline(MaaContextHandle context, String pipeline_override);
 
-        Boolean MaaSyncContextSwipe(MaaSyncContextHandle sync_context,
-                                    int x1, int y1,
-                                    int x2, int y2,
-                                    int duration);
+        MaaBool MaaContextOverrideNext(MaaContextHandle context, String name, MaaStringListBufferHandle next_list);
 
-        Boolean MaaSyncContextPressKey(MaaSyncContextHandle sync_context, int keycode);
+        MaaTaskId MaaContextGetTaskId(MaaContextHandle context);
 
-        Boolean MaaSyncContextInputText(MaaSyncContextHandle sync_context, String text);
+        MaaTaskerHandle MaaContextGetTasker(MaaContextHandle context);
 
-        Boolean MaaSyncContextTouchDown(MaaSyncContextHandle sync_context,
-                                        int contact,
-                                        int x,
-                                        int y,
-                                        int pressure);
+        MaaContextHandle MaaContextClone(MaaContextHandle context);
 
-        Boolean MaaSyncContextTouchMove(MaaSyncContextHandle sync_context,
-                                        int contact,
-                                        int x,
-                                        int y,
-                                        int pressure);
-
-        Boolean MaaSyncContextTouchUp(MaaSyncContextHandle sync_context, int contact);
-
-        Boolean MaaSyncContextScreencap(MaaSyncContextHandle sync_context, MaaImageBufferHandle out_image);
-
-        /**
-         * @param sync_context sync context
-         * @param out_image    out image
-         */
-        Boolean MaaSyncContextCachedImage(MaaSyncContextHandle sync_context, MaaImageBufferHandle out_image);
     }
 
 }

@@ -29,7 +29,7 @@ public class ImageBuffer implements AutoCloseable {
             this.handle = handle;
             this.own = false;
         } else {
-            this.handle = MaaFramework.buffer().MaaCreateImageBuffer();
+            this.handle = MaaFramework.buffer().MaaImageBufferCreate();
             this.own = true;
         }
 
@@ -41,18 +41,18 @@ public class ImageBuffer implements AutoCloseable {
     @Override
     public void close() {
         if (this.handle != null && this.own) {
-            MaaFramework.buffer().MaaDestroyImageBuffer(this.handle);
+            MaaFramework.buffer().MaaImageBufferDestroy(this.handle);
         }
     }
 
     public BufferedImage getValue() throws IOException {
-        MaaImageRawData rawData = MaaFramework.buffer().MaaGetImageRawData(this.handle);
+        MaaImageRawData rawData = MaaFramework.buffer().MaaImageBufferGetRawData(this.handle);
         if (rawData == null) {
             return null;
         }
 
-        int width = MaaFramework.buffer().MaaGetImageWidth(this.handle);
-        int height = MaaFramework.buffer().MaaGetImageHeight(this.handle);
+        int width = MaaFramework.buffer().MaaImageBufferWidth(this.handle);
+        int height = MaaFramework.buffer().MaaImageBufferHeight(this.handle);
 
         int pixels = width * height * 3;
 
@@ -87,14 +87,14 @@ public class ImageBuffer implements AutoCloseable {
 
         MaaImageRawData maaImageRawData = new MaaImageRawData();
         maaImageRawData.setPointer(data);
-        return MaaFramework.buffer().MaaSetImageRawData(this.handle, maaImageRawData, width, height, 16); // CV_8UC3
+        return MaaFramework.buffer().MaaImageBufferSetRawData(this.handle, maaImageRawData, width, height, 16).getValue(); // CV_8UC3
     }
 
     public boolean isEmpty() {
-        return MaaFramework.buffer().MaaIsImageEmpty(this.handle);
+        return MaaFramework.buffer().MaaImageBufferIsEmpty(this.handle).getValue();
     }
 
     public boolean clear() {
-        return MaaFramework.buffer().MaaClearImage(this.handle);
+        return MaaFramework.buffer().MaaImageBufferClear(this.handle).getValue();
     }
 }
