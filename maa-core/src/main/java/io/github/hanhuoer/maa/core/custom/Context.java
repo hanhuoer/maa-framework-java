@@ -38,8 +38,52 @@ public class Context {
         this.tasker = new Tasker(taskerHandle);
     }
 
+    /**
+     * @since 2.0.0
+     * @deprecated use runPipeline instead.
+     */
+    public TaskDetail runTask(String entry) {
+        return runTask(entry, "{}");
+    }
+
+    /**
+     * @since 2.0.0
+     * @deprecated use runPipeline instead.
+     */
+    public TaskDetail runTask(String entry, Map<String, Object> pipelineOverride) {
+        return runTask(entry, JSONObject.toJSONString(pipelineOverride));
+    }
+
+    /**
+     * @since 2.0.0
+     * @deprecated use runPipeline instead.
+     */
+    public TaskDetail runTask(String entry, JSONObject pipelineOverride) {
+        return runTask(entry, pipelineOverride.toString());
+    }
+
+    /**
+     * @since 2.0.0
+     * @deprecated use runPipeline instead.
+     */
+    public TaskDetail runTask(String entry, String pipelineOverride) {
+        return runPipeline(entry, pipelineOverride);
+    }
+
+    public TaskDetail runPipeline(String entry) {
+        return runPipeline(entry, "{}");
+    }
+
     public TaskDetail runPipeline(String entry, Map<String, Object> pipelineOverride) {
-        MaaTaskId maaTaskId = MaaFramework.context().MaaContextRunPipeline(this.handle, entry, JSONObject.toJSONString(pipelineOverride));
+        return runPipeline(entry, JSONObject.toJSONString(pipelineOverride));
+    }
+
+    public TaskDetail runPipeline(String entry, JSONObject pipelineOverride) {
+        return runPipeline(entry, pipelineOverride.toString());
+    }
+
+    public TaskDetail runPipeline(String entry, String pipelineOverride) {
+        MaaTaskId maaTaskId = MaaFramework.context().MaaContextRunPipeline(this.handle, entry, pipelineOverride);
         if (maaTaskId == null) {
             return null;
         }
@@ -47,12 +91,24 @@ public class Context {
         return tasker.getTaskDetail(maaTaskId);
     }
 
+    public RecognitionDetail runRecognition(String entry, BufferedImage image) {
+        return runRecognition(entry, "{}", image);
+    }
+
     public RecognitionDetail runRecognition(String entry, Map<String, Object> pipelineOverride, BufferedImage image) {
+        return runRecognition(entry, JSONObject.toJSONString(pipelineOverride), image);
+    }
+
+    public RecognitionDetail runRecognition(String entry, JSONObject pipelineOverride, BufferedImage image) {
+        return runRecognition(entry, pipelineOverride.toString(), image);
+    }
+
+    public RecognitionDetail runRecognition(String entry, String pipelineOverride, BufferedImage image) {
         MaaRecoId maaRecoId;
         try (ImageBuffer imageBuffer = new ImageBuffer()) {
             imageBuffer.setValue(image);
             maaRecoId = MaaFramework.context().MaaContextRunRecognition(this.handle,
-                    entry, JSONObject.toJSONString(pipelineOverride), imageBuffer.getHandle());
+                    entry, pipelineOverride, imageBuffer.getHandle());
         }
         if (maaRecoId == null) {
             return null;
@@ -61,20 +117,24 @@ public class Context {
         return tasker.getTaskDetail(maaRecoId);
     }
 
-    public NodeDetail runAction(String entry, List<Integer> box, String recoDetail, Map<String, Object> pipelineOverride) {
-        return runAction(entry, new Rect(box), recoDetail, pipelineOverride);
-    }
-
-    public NodeDetail runAction(String entry, int[] box, String recoDetail, Map<String, Object> pipelineOverride) {
-        return runAction(entry, new Rect(box), recoDetail, pipelineOverride);
+    public NodeDetail runAction(String entry, Rect box, String recoDetail) {
+        return runAction(entry, box, recoDetail, "{}");
     }
 
     public NodeDetail runAction(String entry, Rect box, String recoDetail, Map<String, Object> pipelineOverride) {
+        return runAction(entry, box, recoDetail, JSONObject.toJSONString(pipelineOverride));
+    }
+
+    public NodeDetail runAction(String entry, Rect box, String recoDetail, JSONObject pipelineOverride) {
+        return runAction(entry, box, recoDetail, pipelineOverride.toString());
+    }
+
+    public NodeDetail runAction(String entry, Rect box, String recoDetail, String pipelineOverride) {
         MaaNodeId maaNodeId;
         try (RectBuffer rectBuffer = new RectBuffer()) {
             rectBuffer.setValue(box);
             maaNodeId = MaaFramework.context().MaaContextRunAction(this.handle,
-                    entry, JSONObject.toJSONString(pipelineOverride), rectBuffer.getHandle(), recoDetail);
+                    entry, pipelineOverride, rectBuffer.getHandle(), recoDetail);
         }
         if (maaNodeId == null) {
             return null;
@@ -84,9 +144,17 @@ public class Context {
     }
 
     public boolean overridePipeline(Map<String, Object> pipelineOverride) {
+        return overridePipeline(JSONObject.toJSONString(pipelineOverride));
+    }
+
+    public boolean overridePipeline(JSONObject pipelineOverride) {
+        return overridePipeline(pipelineOverride.toString());
+    }
+
+    public boolean overridePipeline(String pipelineOverride) {
         return MaaBool.TRUE.equals(
                 MaaFramework.context().MaaContextOverridePipeline(
-                        this.handle, JSONObject.toJSONString(pipelineOverride)
+                        this.handle, pipelineOverride
                 )
         );
     }

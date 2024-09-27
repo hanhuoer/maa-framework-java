@@ -193,6 +193,42 @@ public class Tasker implements AutoCloseable {
         return MaaBool.TRUE.equals(maaBool);
     }
 
+    /**
+     * @since 2.0.0
+     * @deprecated use pipeline instead.
+     */
+    @Deprecated
+    public TaskDetail runTask(String entry) {
+        return postPipeline(entry).waiting().get();
+    }
+
+    /**
+     * @since 2.0.0
+     * @deprecated use pipeline instead.
+     */
+    @Deprecated
+    public TaskDetail runTask(String entry, Map<String, Object> pipelineOverride) {
+        return postPipeline(entry, pipelineOverride).waiting().get();
+    }
+
+    /**
+     * @since 2.0.0
+     * @deprecated use pipeline instead.
+     */
+    @Deprecated
+    public TaskDetail runTask(String entry, JSONObject pipelineOverride) {
+        return postPipeline(entry, pipelineOverride).waiting().get();
+    }
+
+    /**
+     * @since 2.0.0
+     * @deprecated use pipeline instead.
+     */
+    @Deprecated
+    public TaskDetail runTask(String entry, String pipelineOverride) {
+        return postPipeline(entry, pipelineOverride).waiting().get();
+    }
+
     public TaskDetail pipeline(String entry) {
         return postPipeline(entry).waiting().get();
     }

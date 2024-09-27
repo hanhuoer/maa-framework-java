@@ -105,6 +105,14 @@ public abstract class CustomAction implements MaaCustomActionCallback {
             return Boolean.TRUE.equals(success);
         }
 
+        public static RunResult success() {
+            return new RunResult().setSuccess(true);
+        }
+
+        public static RunResult failed() {
+            return new RunResult().setSuccess(false);
+        }
+
     }
 
 
