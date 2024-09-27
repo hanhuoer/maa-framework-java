@@ -6,16 +6,15 @@ import io.github.hanhuoer.maa.consts.MaaCtrlOptionEnum;
 import io.github.hanhuoer.maa.consts.MaaStatusEnum;
 import io.github.hanhuoer.maa.core.util.Future;
 import io.github.hanhuoer.maa.core.util.TaskFuture;
+import io.github.hanhuoer.maa.define.StringBuffer;
+import io.github.hanhuoer.maa.define.*;
+import io.github.hanhuoer.maa.define.base.MaaBool;
 import io.github.hanhuoer.maa.jna.MaaFramework;
-import io.github.hanhuoer.maa.ptr.StringBuffer;
-import io.github.hanhuoer.maa.ptr.*;
-import io.github.hanhuoer.maa.ptr.base.MaaBool;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.util.Optional;
 
 /**
  * @author H
@@ -68,9 +67,10 @@ public class Controller implements AutoCloseable {
     }
 
     public boolean connected() {
-        return Optional.ofNullable(MaaFramework.controller().MaaControllerConnected(handle))
-                .orElse(MaaBool.FALSE)
-                .getValue();
+        MaaBool value = MaaFramework.controller().MaaControllerConnected(handle);
+        if (value == null)
+            return false;
+        return MaaBool.TRUE.equals(value);
     }
 
     public BufferedImage screencap() {
@@ -88,8 +88,8 @@ public class Controller implements AutoCloseable {
 
         ImageBuffer imageBuffer = new ImageBuffer();
 
-        Boolean ret = MaaFramework.controller().MaaControllerCachedImage(handle, imageBuffer.getHandle()).getValue();
-        if (!Boolean.TRUE.equals(ret)) {
+        MaaBool ret = MaaFramework.controller().MaaControllerCachedImage(handle, imageBuffer.getHandle());
+        if (!MaaBool.TRUE.equals(ret)) {
             return null;
         }
 
@@ -205,27 +205,27 @@ public class Controller implements AutoCloseable {
     }
 
     public boolean setScreenshotTargetLongSide(int longSide) {
-        return Boolean.TRUE.equals(MaaFramework.controller().MaaControllerSetOption(
+        return MaaBool.TRUE.equals(MaaFramework.controller().MaaControllerSetOption(
                 handle,
                 new MaaCtrlOption(MaaCtrlOptionEnum.SCREENSHOT_TARGET_LONG_SIDE.getValue()),
                 new MaaOptionValue(longSide),
                 new MaaOptionValueSize(Native.getNativeSize(int.class))
-        ).getValue());
+        ));
     }
 
     public boolean setScreenshotTargetShortSide(int shortSide) {
-        return Boolean.TRUE.equals(MaaFramework.controller().MaaControllerSetOption(
+        return MaaBool.TRUE.equals(MaaFramework.controller().MaaControllerSetOption(
                 handle,
                 new MaaCtrlOption(MaaCtrlOptionEnum.SCREENSHOT_TARGET_SHORT_SIDE.getValue()),
                 new MaaOptionValue(shortSide),
                 new MaaOptionValueSize(Native.getNativeSize(int.class))
-        ).getValue());
+        ));
     }
 
     public String uuid() {
         StringBuffer stringBuffer = new StringBuffer();
         MaaBool maaBool = MaaFramework.controller().MaaControllerGetUUID(this.handle, stringBuffer.getHandle());
-        if (!Boolean.TRUE.equals(maaBool.getValue())) {
+        if (!MaaBool.TRUE.equals(maaBool)) {
             throw new RuntimeException("Failed to get UUID.");
         }
         String uuid = stringBuffer.getValue();

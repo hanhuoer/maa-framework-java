@@ -25,7 +25,7 @@ public class OfficialSample {
         MaaOptions options = new MaaOptions();
         Maa maa = Maa.create(options);
 
-        List<AdbInfo> deviceList = AdbController.find();
+        List<AdbInfo> deviceList = AdbController.find("/Users/yuanshaokang/Library/Android/sdk/platform-tools/adb");
         if (CollectionUtils.isEmpty(deviceList)) {
             System.out.println("No ADB device found.");
             return;

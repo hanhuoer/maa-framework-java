@@ -22,5 +22,6 @@ public class MaaOptions {
     private MaaLoggingLevelEunm stdoutLevel = MaaLoggingLevelEunm.INFO;
     private Boolean showHitDraw = Boolean.FALSE;
     private Boolean debugMessage = Boolean.FALSE;
+    private Boolean killAdbOnShutdown = Boolean.TRUE;
 
 }

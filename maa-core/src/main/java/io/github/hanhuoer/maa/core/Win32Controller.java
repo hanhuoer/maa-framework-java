@@ -4,12 +4,11 @@ import io.github.hanhuoer.maa.callbak.MaaNotificationCallback;
 import io.github.hanhuoer.maa.consts.MaaWin32InputMethodEnum;
 import io.github.hanhuoer.maa.consts.MaaWin32ScreencapMethodEnum;
 import io.github.hanhuoer.maa.core.base.Controller;
+import io.github.hanhuoer.maa.define.*;
+import io.github.hanhuoer.maa.define.base.MaaBool;
 import io.github.hanhuoer.maa.jna.MaaFramework;
 import io.github.hanhuoer.maa.jna.MaaToolkit;
 import io.github.hanhuoer.maa.model.Win32Info;
-import io.github.hanhuoer.maa.ptr.StringBuffer;
-import io.github.hanhuoer.maa.ptr.*;
-import io.github.hanhuoer.maa.ptr.base.MaaBool;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Collections;
@@ -79,21 +78,11 @@ public class Win32Controller extends Controller {
     }
 
     private static String getClassName(MaaToolkitDesktopWindowHandle handle) {
-        try (StringBuffer classNameBuffer = new StringBuffer()) {
-            MaaToolkit.desktopWindow().MaaToolkitDesktopWindowGetClassName(handle);
-            return classNameBuffer.getValue();
-        } catch (Exception e) {
-            return null;
-        }
+        return MaaToolkit.desktopWindow().MaaToolkitDesktopWindowGetClassName(handle);
     }
 
     private static String getWindowName(MaaToolkitDesktopWindowHandle handle) {
-        try (StringBuffer windowNameBuffer = new StringBuffer()) {
-            MaaToolkit.desktopWindow().MaaToolkitDesktopWindowGetWindowName(handle);
-            return windowNameBuffer.getValue();
-        } catch (Exception e) {
-            return null;
-        }
+        return MaaToolkit.desktopWindow().MaaToolkitDesktopWindowGetWindowName(handle);
     }
 
 

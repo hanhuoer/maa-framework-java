@@ -1,8 +1,9 @@
 package io.github.hanhuoer.maa.core.util;
 
 import io.github.hanhuoer.maa.consts.MaaStatusEnum;
-import io.github.hanhuoer.maa.ptr.MaaId;
+import io.github.hanhuoer.maa.define.MaaId;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -11,6 +12,7 @@ import java.util.function.Function;
  * @author H
  */
 @Getter
+@Slf4j
 public class Future {
 
     private final MaaId maaid;
@@ -29,6 +31,7 @@ public class Future {
     }
 
     public Future waiting() {
+        log.debug("waiting: {}", Thread.currentThread());
         waitFunc.accept(maaid);
         return this;
     }

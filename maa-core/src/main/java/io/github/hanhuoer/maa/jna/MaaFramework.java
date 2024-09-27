@@ -3,11 +3,13 @@ package io.github.hanhuoer.maa.jna;
 import com.sun.jna.Library;
 import com.sun.jna.Native;
 import io.github.hanhuoer.maa.MaaOptions;
+import io.github.hanhuoer.maa.callbak.MaaCustomActionCallback;
+import io.github.hanhuoer.maa.callbak.MaaCustomRecognitionCallback;
 import io.github.hanhuoer.maa.callbak.MaaNotificationCallback;
+import io.github.hanhuoer.maa.define.*;
+import io.github.hanhuoer.maa.define.base.MaaBool;
+import io.github.hanhuoer.maa.define.base.MaaLong;
 import io.github.hanhuoer.maa.loader.MaaLibraryLoader;
-import io.github.hanhuoer.maa.ptr.*;
-import io.github.hanhuoer.maa.ptr.base.MaaBool;
-import io.github.hanhuoer.maa.ptr.base.MaaLong;
 import io.github.hanhuoer.maa.util.FileUtils;
 import lombok.Getter;
 
@@ -313,14 +315,14 @@ public class MaaFramework {
 
         void MaaResourceDestroy(MaaResourceHandle res);
 
-        MaaBool MaaResourceRegisterCustomRecognition(MaaResourceHandle res, String name, MaaCustomRecognitionHandle recognizer, MaaTransparentArg trans_arg);
+        MaaBool MaaResourceRegisterCustomRecognition(MaaResourceHandle res, String name, MaaCustomRecognitionCallback recognizer, MaaTransparentArg trans_arg);
 
         MaaBool MaaResourceUnregisterCustomRecognition(MaaResourceHandle res, String name);
 
         MaaBool MaaResourceClearCustomRecognition(MaaResourceHandle res);
 
         MaaBool
-        MaaResourceRegisterCustomAction(MaaResourceHandle res, String name, MaaCustomActionHandle action, MaaTransparentArg trans_arg);
+        MaaResourceRegisterCustomAction(MaaResourceHandle res, String name, MaaCustomActionCallback action, MaaTransparentArg trans_arg);
 
         MaaBool MaaResourceUnregisterCustomAction(MaaResourceHandle res, String name);
 
@@ -397,10 +399,6 @@ public class MaaFramework {
         MaaBool MaaTaskerInited(MaaTaskerHandle tasker);
 
         MaaTaskId MaaTaskerPostPipeline(MaaTaskerHandle tasker, String entry, String pipeline_override);
-
-//        MaaTaskId MaaTaskerPostRecognition(MaaTaskerHandle tasker, String entry, String pipeline_override);
-
-//        MaaTaskId MaaTaskerPostAction(MaaTaskerHandle tasker, String entry, String pipeline_override);
 
         MaaStatus MaaTaskerStatus(MaaTaskerHandle tasker, MaaTaskId id);
 

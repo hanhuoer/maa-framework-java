@@ -1,10 +1,11 @@
 package io.github.hanhuoer.maa.core.custom;
 
+import io.github.hanhuoer.maa.callbak.MaaCustomRecognitionCallback;
+import io.github.hanhuoer.maa.define.StringBuffer;
+import io.github.hanhuoer.maa.define.*;
+import io.github.hanhuoer.maa.define.base.MaaBool;
 import io.github.hanhuoer.maa.model.Rect;
 import io.github.hanhuoer.maa.model.TaskDetail;
-import io.github.hanhuoer.maa.ptr.StringBuffer;
-import io.github.hanhuoer.maa.ptr.*;
-import io.github.hanhuoer.maa.ptr.base.MaaBool;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
@@ -19,17 +20,18 @@ import java.io.IOException;
  */
 @Getter
 @Accessors(chain = true)
-public abstract class CustomRecognizer {
+public abstract class CustomRecognizer implements MaaCustomRecognitionCallback {
 
-    private final MaaCustomRecognitionHandle handle;
+    private static final Boolean DEFAULT_TASK_DETAIL_SKIP_ENABLED = true;
+    private final Boolean taskDetailSkipEnabled;
 
     public CustomRecognizer() {
-        this(new MaaCustomRecognitionHandle());
+        this(DEFAULT_TASK_DETAIL_SKIP_ENABLED);
     }
 
-    private CustomRecognizer(MaaCustomRecognitionHandle handle) {
-        this.handle = handle;
-        handle.recognizer = this::analyzeAgent;
+    private CustomRecognizer(Boolean taskDetailSkipEnabled) {
+        if (taskDetailSkipEnabled == null) taskDetailSkipEnabled = DEFAULT_TASK_DETAIL_SKIP_ENABLED;
+        this.taskDetailSkipEnabled = taskDetailSkipEnabled;
     }
 
     /**
@@ -42,7 +44,8 @@ public abstract class CustomRecognizer {
     public abstract AnalyzeResult analyze(Context context, AnalyzeArg arg);
 
 
-    public MaaBool analyzeAgent(
+    @Override
+    public MaaBool analyze(
             MaaContextHandle contextHandle,
             MaaTaskId taskId,
             String currentTaskName,
@@ -57,7 +60,9 @@ public abstract class CustomRecognizer {
         Context context = new Context(contextHandle);
 
         TaskDetail taskDetail = context.tasker().getTaskDetail(taskId);
-        if (taskDetail == null) return MaaBool.FALSE;
+        if (taskDetailSkipEnabled) {
+            if (taskDetail == null) return MaaBool.FALSE;
+        }
 
         ImageBuffer imageBuffer = new ImageBuffer(imageHandle);
         BufferedImage image = null;

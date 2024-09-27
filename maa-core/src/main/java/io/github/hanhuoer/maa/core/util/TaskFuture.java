@@ -1,7 +1,7 @@
 package io.github.hanhuoer.maa.core.util;
 
 import io.github.hanhuoer.maa.consts.MaaStatusEnum;
-import io.github.hanhuoer.maa.ptr.MaaId;
+import io.github.hanhuoer.maa.define.MaaId;
 
 import java.util.function.Consumer;
 import java.util.function.Function;

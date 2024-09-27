@@ -1,6 +1,6 @@
 package io.github.hanhuoer.maa.consts;
 
-import io.github.hanhuoer.maa.ptr.MaaGlobalOption;
+import io.github.hanhuoer.maa.define.MaaGlobalOption;
 import lombok.Getter;
 
 /**

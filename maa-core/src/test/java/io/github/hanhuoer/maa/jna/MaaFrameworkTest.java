@@ -7,8 +7,8 @@ import io.github.hanhuoer.maa.MaaAndroidAarch64LibraryLoader;
 import io.github.hanhuoer.maa.MaaLinuxAarch64LibraryLoader;
 import io.github.hanhuoer.maa.MaaMacAarch64LibraryLoader;
 import io.github.hanhuoer.maa.MaaWindowsAarch64LibraryLoader;
+import io.github.hanhuoer.maa.define.MaaToolkitAdbDeviceListHandle;
 import io.github.hanhuoer.maa.loader.MaaLibraryLoader;
-import io.github.hanhuoer.maa.ptr.MaaToolkitAdbDeviceListHandle;
 import io.github.hanhuoer.maa.util.FileUtils;
 
 public class MaaFrameworkTest {

@@ -1,11 +1,11 @@
 package io.github.hanhuoer.maa.callbak;
 
 import com.sun.jna.Callback;
-import com.sun.jna.ptr.IntByReference;
-import io.github.hanhuoer.maa.ptr.MaaImageBufferHandle;
-import io.github.hanhuoer.maa.ptr.MaaStringBufferHandle;
-import io.github.hanhuoer.maa.ptr.MaaStringView;
-import io.github.hanhuoer.maa.ptr.MaaTransparentArg;
+import io.github.hanhuoer.maa.define.MaaImageBufferHandle;
+import io.github.hanhuoer.maa.define.MaaStringBufferHandle;
+import io.github.hanhuoer.maa.define.MaaStringView;
+import io.github.hanhuoer.maa.define.MaaTransparentArg;
+import io.github.hanhuoer.maa.define.base.MaaInteger;
 
 /**
  * MaaCustomController.h MaaCustomControllerCallbacks
@@ -39,7 +39,7 @@ public interface MaaCustomControllerCallback {
          * @param height output
          */
         Boolean callback(MaaTransparentArg handleArg,
-                         IntByReference width, IntByReference height);
+                         MaaInteger width, MaaInteger height);
 
     }
 
@@ -66,46 +66,46 @@ public interface MaaCustomControllerCallback {
 
     interface Click extends Callback {
 
-        Boolean callback(IntByReference x, IntByReference y, MaaTransparentArg handleArg);
+        Boolean callback(MaaInteger x, MaaInteger y, MaaTransparentArg handleArg);
 
     }
 
     interface Swipe extends Callback {
 
-        Boolean callback(IntByReference x1, IntByReference y1,
-                         IntByReference x2, IntByReference y2,
-                         IntByReference duration,
+        Boolean callback(MaaInteger x1, MaaInteger y1,
+                         MaaInteger x2, MaaInteger y2,
+                         MaaInteger duration,
                          MaaTransparentArg handleArg);
 
     }
 
     interface TouchDown extends Callback {
 
-        Boolean callback(IntByReference contact,
-                         IntByReference x, IntByReference y,
-                         IntByReference pressure,
+        Boolean callback(MaaInteger contact,
+                         MaaInteger x, MaaInteger y,
+                         MaaInteger pressure,
                          MaaTransparentArg handleArg);
 
     }
 
     interface TouchMove extends Callback {
 
-        Boolean callback(IntByReference contact,
-                         IntByReference x, IntByReference y,
-                         IntByReference pressure,
+        Boolean callback(MaaInteger contact,
+                         MaaInteger x, MaaInteger y,
+                         MaaInteger pressure,
                          MaaTransparentArg handleArg);
 
     }
 
     interface TouchUp extends Callback {
 
-        Boolean callback(IntByReference contact, MaaTransparentArg handleArg);
+        Boolean callback(MaaInteger contact, MaaTransparentArg handleArg);
 
     }
 
     interface PressKey extends Callback {
 
-        Boolean callback(IntByReference keycode, MaaTransparentArg handleArg);
+        Boolean callback(MaaInteger keycode, MaaTransparentArg handleArg);
 
     }
 

@@ -1,6 +1,6 @@
 package io.github.hanhuoer.maa.consts;
 
-import io.github.hanhuoer.maa.ptr.MaaResOption;
+import io.github.hanhuoer.maa.define.MaaResOption;
 import lombok.Getter;
 
 /**

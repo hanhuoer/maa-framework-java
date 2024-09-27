@@ -72,7 +72,7 @@
 
         <!-- Maa Framework Version: native lib -->
         <!-- https://github.com/MaaXYZ/MaaFramework -->
-        <maa.version>2.0.0</maa.version>
+        <maa.version>2.0.3</maa.version>
 
         <!-- Agent Version: minitouch/minicap/maatouch -->
         <!-- https://github.com/MaaXYZ/MaaAgentBinary -->

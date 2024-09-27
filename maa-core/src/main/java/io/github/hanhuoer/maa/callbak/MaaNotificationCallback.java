@@ -1,7 +1,7 @@
 package io.github.hanhuoer.maa.callbak;
 
 import com.sun.jna.Callback;
-import io.github.hanhuoer.maa.ptr.MaaCallbackTransparentArg;
+import io.github.hanhuoer.maa.define.MaaCallbackTransparentArg;
 
 /**
  * @author H

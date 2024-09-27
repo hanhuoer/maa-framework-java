@@ -12,8 +12,10 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Properties;
@@ -55,10 +57,41 @@ public class Maa {
                     INSTANCE = new Maa();
 
                     INSTANCE.init(options);
+                    shutdownHandle(options);
                 }
             }
         }
         return INSTANCE;
+    }
+
+    /**
+     * shutdown handle.
+     *
+     * @param options maa options.
+     */
+    public static void shutdownHandle(MaaOptions options) {
+        String osName = System.getProperty("os.name").toLowerCase();
+        if (options.getKillAdbOnShutdown()) {
+
+            List<String> commands = new ArrayList<>();
+            if (osName.contains("win")) {
+                commands.addAll(List.of("taskkill", "/F", "/IM", "adb.exe"));
+            } else {
+                commands.addAll(List.of("pkill", "adb"));
+            }
+
+            log.info("adb killer registered.");
+            Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+                ProcessBuilder pb = new ProcessBuilder(commands);
+                try {
+                    log.info("killing adb process.");
+                    pb.start();
+                    log.info("adb process has been killed.");
+                } catch (IOException e) {
+                    log.error("Failed to kill adb process: {}", e.getMessage(), e);
+                }
+            }));
+        }
     }
 
     @SneakyThrows

@@ -5,11 +5,11 @@ import io.github.hanhuoer.maa.callbak.MaaNotificationCallback;
 import io.github.hanhuoer.maa.consts.MaaAdbInputMethodEnum;
 import io.github.hanhuoer.maa.consts.MaaAdbScreencapMethodEnum;
 import io.github.hanhuoer.maa.core.base.Controller;
+import io.github.hanhuoer.maa.define.*;
+import io.github.hanhuoer.maa.define.base.MaaBool;
 import io.github.hanhuoer.maa.jna.MaaFramework;
 import io.github.hanhuoer.maa.jna.MaaToolkit;
 import io.github.hanhuoer.maa.model.AdbInfo;
-import io.github.hanhuoer.maa.ptr.*;
-import io.github.hanhuoer.maa.ptr.base.MaaBool;
 import io.github.hanhuoer.maa.util.FileUtils;
 import io.github.hanhuoer.maa.util.StringUtils;
 import lombok.Getter;
@@ -107,7 +107,7 @@ public class AdbController extends Controller {
         }
 
         try {
-            if (Boolean.FALSE.equals(maaBool.getValue())) {
+            if (MaaBool.FALSE.equals(maaBool)) {
                 return Collections.emptyList();
             }
             MaaSize maaSize = MaaToolkit.device().MaaToolkitAdbDeviceListSize(buffer);

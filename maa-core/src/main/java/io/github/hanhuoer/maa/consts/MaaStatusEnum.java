@@ -1,6 +1,6 @@
 package io.github.hanhuoer.maa.consts;
 
-import io.github.hanhuoer.maa.ptr.MaaStatus;
+import io.github.hanhuoer.maa.define.MaaStatus;
 import lombok.Getter;
 
 import java.util.function.Function;

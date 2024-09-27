@@ -1,8 +1,8 @@
 package io.github.hanhuoer.maa.core.custom;
 
-import com.sun.jna.ptr.IntByReference;
-import io.github.hanhuoer.maa.ptr.StringBuffer;
-import io.github.hanhuoer.maa.ptr.*;
+import io.github.hanhuoer.maa.define.StringBuffer;
+import io.github.hanhuoer.maa.define.*;
+import io.github.hanhuoer.maa.define.base.MaaInteger;
 import io.github.hanhuoer.maa.util.StringUtils;
 import lombok.Getter;
 
@@ -12,6 +12,7 @@ import java.awt.image.BufferedImage;
  * @author H
  */
 @Getter
+@Deprecated
 public abstract class CustomControllerAgent {
 
     private MaaCustomControllerHandle handle;
@@ -91,37 +92,37 @@ public abstract class CustomControllerAgent {
         return true;
     }
 
-    public boolean clickAgent(IntByReference x, IntByReference y,
+    public boolean clickAgent(MaaInteger x, MaaInteger y,
                               MaaTransparentArg arg) {
         return this.click(x.getValue(), y.getValue());
     }
 
-    public boolean swipeAgent(IntByReference x1, IntByReference y1,
-                              IntByReference x2, IntByReference y2,
-                              IntByReference duration,
+    public boolean swipeAgent(MaaInteger x1, MaaInteger y1,
+                              MaaInteger x2, MaaInteger y2,
+                              MaaInteger duration,
                               MaaTransparentArg arg) {
         return this.swipe(x1.getValue(), y1.getValue(), x2.getValue(), y2.getValue());
     }
 
-    public boolean touchDownAgent(IntByReference contact,
-                                  IntByReference x, IntByReference y,
-                                  IntByReference pressure,
+    public boolean touchDownAgent(MaaInteger contact,
+                                  MaaInteger x, MaaInteger y,
+                                  MaaInteger pressure,
                                   MaaTransparentArg arg) {
         return this.touchDown(contact.getValue(), x.getValue(), y.getValue(), pressure.getValue());
     }
 
-    public boolean touchMoveAgent(IntByReference contact,
-                                  IntByReference x, IntByReference y,
-                                  IntByReference pressure,
+    public boolean touchMoveAgent(MaaInteger contact,
+                                  MaaInteger x, MaaInteger y,
+                                  MaaInteger pressure,
                                   MaaTransparentArg arg) {
         return this.touchMove(contact.getValue(), x.getValue(), y.getValue(), pressure.getValue());
     }
 
-    public boolean touchUpAgent(IntByReference contact, MaaTransparentArg arg) {
+    public boolean touchUpAgent(MaaInteger contact, MaaTransparentArg arg) {
         return this.touchUp(contact.getValue());
     }
 
-    public boolean pressKeyAgent(IntByReference keycode, MaaTransparentArg arg) {
+    public boolean pressKeyAgent(MaaInteger keycode, MaaTransparentArg arg) {
         return this.pressKey(keycode.getValue());
     }
 

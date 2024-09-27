@@ -1,6 +1,6 @@
 package io.github.hanhuoer.maa.consts;
 
-import io.github.hanhuoer.maa.ptr.MaaAdbScreencapMethod;
+import io.github.hanhuoer.maa.define.MaaAdbScreencapMethod;
 import lombok.Getter;
 
 /**
@@ -21,7 +21,7 @@ public enum MaaAdbScreencapMethodEnum {
     MINICAP_STREAM(1 << 5),
     EMULATOR_EXTRAS(1 << 6),
     ALL(~NULL.value),
-    DEFAULT(ALL.value & (~MINICAP_DIRECT.value)),
+    DEFAULT(ALL.value & (~RAW_BY_NETCAT.value) & (~MINICAP_DIRECT.value)),
     ;
 
     private final long value;

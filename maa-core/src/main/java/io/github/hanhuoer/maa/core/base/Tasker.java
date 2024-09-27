@@ -7,14 +7,14 @@ import io.github.hanhuoer.maa.consts.MaaLoggingLevelEunm;
 import io.github.hanhuoer.maa.consts.MaaRecognitionAlgorithmEnum;
 import io.github.hanhuoer.maa.consts.MaaStatusEnum;
 import io.github.hanhuoer.maa.core.util.TaskFuture;
+import io.github.hanhuoer.maa.define.StringBuffer;
+import io.github.hanhuoer.maa.define.*;
+import io.github.hanhuoer.maa.define.base.MaaBool;
+import io.github.hanhuoer.maa.define.base.MaaLong;
 import io.github.hanhuoer.maa.jna.MaaFramework;
 import io.github.hanhuoer.maa.model.NodeDetail;
 import io.github.hanhuoer.maa.model.RecognitionDetail;
 import io.github.hanhuoer.maa.model.TaskDetail;
-import io.github.hanhuoer.maa.ptr.StringBuffer;
-import io.github.hanhuoer.maa.ptr.*;
-import io.github.hanhuoer.maa.ptr.base.MaaBool;
-import io.github.hanhuoer.maa.ptr.base.MaaLong;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
@@ -33,9 +33,7 @@ public class Tasker implements AutoCloseable {
 
     @Getter
     private MaaTaskerHandle handle;
-    @Getter
     private Controller controller;
-    @Getter
     private Resource resource;
     @Getter
     private boolean own;
@@ -71,9 +69,7 @@ public class Tasker implements AutoCloseable {
         MaaBool maaBool = MaaFramework.utility().MaaSetGlobalOption(
                 MaaGlobalOptionEnum.LOG_DIR.value(), maaOptionValue, maaOptionValue.getMaaOptionValueSize()
         );
-        return Boolean.TRUE.equals(
-                maaBool.getValue()
-        );
+        return MaaBool.TRUE.equals(maaBool);
     }
 
     public static boolean setSaveDraw(boolean saveDraw) {
@@ -152,7 +148,7 @@ public class Tasker implements AutoCloseable {
 
     public boolean bindResource(@NonNull Resource resource) {
         MaaBool maaBool = MaaFramework.tasker().MaaTaskerBindResource(this.handle, resource.getHandle());
-        boolean equals = Boolean.TRUE.equals(maaBool.getValue());
+        boolean equals = MaaBool.TRUE.equals(maaBool);
         if (equals) {
             this.resource = resource;
         }
@@ -161,7 +157,7 @@ public class Tasker implements AutoCloseable {
 
     public boolean bindController(@NonNull Controller controller) {
         MaaBool maaBool = MaaFramework.tasker().MaaTaskerBindController(this.handle, controller.getHandle());
-        boolean equals = Boolean.TRUE.equals(maaBool.getValue());
+        boolean equals = MaaBool.TRUE.equals(maaBool);
         if (equals) {
             this.controller = controller;
         }
@@ -173,7 +169,8 @@ public class Tasker implements AutoCloseable {
         if (resourceHandle == null)
             throw new RuntimeException("Failed to get resource.");
 
-        return new Resource(resourceHandle);
+        resource = new Resource(resourceHandle);
+        return resource;
     }
 
     public Controller controller() {
@@ -181,7 +178,8 @@ public class Tasker implements AutoCloseable {
         if (controllerHandle == null)
             throw new RuntimeException("Failed to get controller.");
 
-        return new Controller(controllerHandle);
+        controller = new Controller(controllerHandle);
+        return controller;
     }
 
     /**
@@ -190,7 +188,25 @@ public class Tasker implements AutoCloseable {
      * @return true if the tasker is inited, false otherwise.
      */
     public boolean inited() {
-        return Boolean.TRUE.equals(MaaFramework.tasker().MaaTaskerInited(this.handle).getValue());
+//        if (controller == null || resource == null) return false;
+        MaaBool maaBool = MaaFramework.tasker().MaaTaskerInited(this.handle);
+        return MaaBool.TRUE.equals(maaBool);
+    }
+
+    public TaskDetail pipeline(String entry) {
+        return postPipeline(entry).waiting().get();
+    }
+
+    public TaskDetail pipeline(String entry, Map<String, Object> pipelineOverride) {
+        return postPipeline(entry, pipelineOverride).waiting().get();
+    }
+
+    public TaskDetail pipeline(String entry, JSONObject pipelineOverride) {
+        return postPipeline(entry, pipelineOverride).waiting().get();
+    }
+
+    public TaskDetail pipeline(String entry, String pipelineOverride) {
+        return postPipeline(entry, pipelineOverride).waiting().get();
     }
 
     public TaskFuture<TaskDetail> postPipeline(String entry) {
@@ -201,44 +217,20 @@ public class Tasker implements AutoCloseable {
         return postPipeline(entry, JSONObject.toJSONString(pipelineOverride));
     }
 
+    public TaskFuture<TaskDetail> postPipeline(String entry, JSONObject pipelineOverride) {
+        return postPipeline(entry, pipelineOverride.toString());
+    }
+
     public TaskFuture<TaskDetail> postPipeline(String entry, String pipelineOverride) {
         MaaTaskId maaTaskId = MaaFramework.tasker()
                 .MaaTaskerPostPipeline(this.handle, entry, pipelineOverride);
         return this.genTaskJob(maaTaskId);
     }
 
-//    public TaskFuture<TaskDetail> postRecognition(String entry) {
-//        return postRecognition(entry, "{}");
-//    }
-//
-//    public TaskFuture<TaskDetail> postRecognition(String entry, Map<String, Object> pipelineOverride) {
-//        return postRecognition(entry, JSONObject.toJSONString(pipelineOverride));
-//    }
-//
-//    public TaskFuture<TaskDetail> postRecognition(String entry, String pipelineOverride) {
-//        MaaTaskId maaTaskId = MaaFramework.tasker()
-//                .MaaTaskerPostRecognition(this.handle, entry, JSONObject.toJSONString(pipelineOverride));
-//        return this.genTaskJob(maaTaskId);
-//    }
-
-//    public TaskFuture<TaskDetail> postAction(String entry) {
-//        return postAction(entry, "{}");
-//    }
-//
-//    public TaskFuture<TaskDetail> postAction(String entry, Map<String, Object> pipelineOverride) {
-//        return postAction(entry, JSONObject.toJSONString(pipelineOverride));
-//    }
-//
-//    public TaskFuture<TaskDetail> postAction(String entry, String pipelineOverride) {
-//        MaaTaskId maaTaskId = MaaFramework.tasker()
-//                .MaaTaskerPostAction(this.handle, entry, pipelineOverride);
-//        return this.genTaskJob(maaTaskId);
-//    }
-
     public NodeDetail getLatestNode(String name) {
         MaaLong.Reference latestId = new MaaLong.Reference();
         MaaBool maaBool = MaaFramework.tasker().MaaTaskerGetLatestNode(this.handle, name, latestId);
-        if (!Boolean.TRUE.equals(maaBool.getValue())) {
+        if (!MaaBool.TRUE.equals(maaBool)) {
             return null;
         }
 
@@ -246,8 +238,8 @@ public class Tasker implements AutoCloseable {
     }
 
     public boolean clearCache() {
-        return Boolean.TRUE.equals(
-                MaaFramework.tasker().MaaTaskerClearCache(this.handle).getValue()
+        return MaaBool.TRUE.equals(
+                MaaFramework.tasker().MaaTaskerClearCache(this.handle)
         );
     }
 
@@ -292,7 +284,7 @@ public class Tasker implements AutoCloseable {
      * @return true if running else false.
      */
     public boolean running() {
-        return Boolean.TRUE.equals(MaaFramework.tasker().MaaTaskerRunning(this.handle).getValue());
+        return MaaBool.TRUE.equals(MaaFramework.tasker().MaaTaskerRunning(this.handle));
     }
 
     public RecognitionDetail getRecognitionDetail(long recoId) {
@@ -320,7 +312,7 @@ public class Tasker implements AutoCloseable {
                 draws.getHandle()
         );
 
-        boolean ret = Boolean.TRUE.equals(maaBool.getValue());
+        boolean ret = MaaBool.TRUE.equals(maaBool);
         if (!ret) return null;
 
         BufferedImage rawImage = null;
@@ -342,7 +334,7 @@ public class Tasker implements AutoCloseable {
                 .setRecoId(recoId.getValue())
                 .setName(name.getValue())
                 .setAlgorithm(algorithm)
-                .setHitBox(Boolean.TRUE.equals(hit.getValue()) ? box.getValue() : null)
+                .setHitBox(MaaBool.TRUE.equals(hit) ? box.getValue() : null)
                 .setRawDetail(detailJson.getValue())
                 .setRaw(rawImage)
                 .setDraws(drawList);
@@ -376,7 +368,7 @@ public class Tasker implements AutoCloseable {
                 completed
         );
 
-        if (!Boolean.TRUE.equals(maaBool.getValue())) return null;
+        if (!MaaBool.TRUE.equals(maaBool)) return null;
 
         RecognitionDetail recognition = this.getRecognitionDetail(recoId.getValue().longValue());
         if (recognition == null) return null;
@@ -407,15 +399,14 @@ public class Tasker implements AutoCloseable {
 
     public TaskDetail getTaskDetail(MaaTaskId taskId) {
         MaaSize.Reference size = new MaaSize.Reference();
+        StringBuffer entry = new StringBuffer();
 
         MaaBool maaBool = MaaFramework.tasker().MaaTaskerGetTaskDetail(
-                this.handle, taskId, null, null, size
+                this.handle, taskId, entry.getHandle(), null, size
         );
-        if (!Boolean.TRUE.equals(maaBool.getValue())) return null;
+        if (!MaaBool.TRUE.equals(maaBool)) return null;
 
-        StringBuffer entry = new StringBuffer();
         MaaNodeIdArr maaNodeIdArr = new MaaNodeIdArr(size.getValue().longValue());
-
         MaaBool ret = MaaFramework.tasker().MaaTaskerGetTaskDetail(
                 this.handle,
                 taskId,
@@ -423,7 +414,7 @@ public class Tasker implements AutoCloseable {
                 maaNodeIdArr,
                 size
         );
-        if (!Boolean.TRUE.equals(ret.getValue())) return null;
+        if (!MaaBool.TRUE.equals(ret)) return null;
 
         List<NodeDetail> nodeList = new ArrayList<>();
         for (int i = 0; i < size.getValue().longValue(); i++) {

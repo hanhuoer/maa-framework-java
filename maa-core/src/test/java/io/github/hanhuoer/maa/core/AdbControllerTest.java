@@ -1,8 +1,8 @@
 package io.github.hanhuoer.maa.core;
 
 import io.github.hanhuoer.maa.Maa;
+import io.github.hanhuoer.maa.MaaOptions;
 import io.github.hanhuoer.maa.callbak.MaaNotificationCallback;
-import io.github.hanhuoer.maa.core.util.Future;
 import io.github.hanhuoer.maa.model.AdbInfo;
 import io.github.hanhuoer.maa.util.CollectionUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -30,7 +30,9 @@ class AdbControllerTest {
 
     @BeforeEach
     void setUp() throws Exception {
-        maa = Maa.create();
+        MaaOptions options = new MaaOptions();
+        options.setKillAdbOnShutdown(true);
+        maa = Maa.create(options);
     }
 
     private static String bufferedImageToBase64(BufferedImage bufferedImage) {
@@ -56,7 +58,7 @@ class AdbControllerTest {
 
     @Test
     void testConnection() {
-        List<AdbInfo> adbInfoList = AdbController.find();
+        List<AdbInfo> adbInfoList = AdbController.find("J:/Program Files/Netease/MuMu Player 12/shell/adb.exe");
         if (CollectionUtils.isEmpty(adbInfoList)) {
             return;
         }
@@ -70,13 +72,11 @@ class AdbControllerTest {
         };
         AdbController adbController = new AdbController(adbInfo, maaNotificationCallback, null);
         log.info("adb controller: {}", adbController);
-//        log.info("adb connected: {}", adbController.connected());
+        log.info("adb connected: {}", adbController.connected());
 
         log.info("adb controller start connecting");
-        Future waiting = adbController.postConnection().waiting();
-//        Job job = adbController.postConnectionJob().waitJob();
-        boolean connect = adbController.connect();
-        log.info("adb connect result: {}", connect);
+//        adbController.postConnection().waiting();
+        adbController.connect();
         log.info("adb connected: {}", adbController.connected());
 
         log.info("...");
@@ -84,7 +84,7 @@ class AdbControllerTest {
 
     @Test
     void testClick() {
-        List<AdbInfo> adbInfoList = AdbController.find();
+        List<AdbInfo> adbInfoList = AdbController.find("J:/Program Files/Netease/MuMu Player 12/shell/adb.exe");
         AdbInfo adbInfo = adbInfoList.get(0);
 
         AdbController adbController = new AdbController(adbInfo, (msg, detailsJson, callbackArg) -> {
@@ -97,8 +97,8 @@ class AdbControllerTest {
         log.info("adb connected: {}", adbController.connected());
 
         log.info("adb controller start connecting");
-        boolean connect = adbController.connect();
-        log.info("adb connect result: {}", connect);
+//        boolean connect = adbController.connect();
+        adbController.postConnection().waiting();
         log.info("adb connected: {}", adbController.connected());
 
         log.info("adb click result: {}", adbController.click(150, 600));
@@ -124,11 +124,11 @@ class AdbControllerTest {
         log.info("adb connected: {}", adbController.connected());
 
         log.info("adb controller start connecting");
-        boolean connect = adbController.connect();
-        log.info("adb connect result: {}", connect);
+        adbController.postConnection().waiting();
         log.info("adb connected: {}", adbController.connected());
 
         log.info("adb swipe result: {}", adbController.swipe(450, 100, 450, 600, 1 * 1000));
+        log.info("continue...");
         log.info("adb swipe result: {}", adbController.swipe(100, 450, 600, 450, 5 * 1000));
 
         log.info("...");
@@ -150,8 +150,7 @@ class AdbControllerTest {
         log.info("adb connected: {}", adbController.connected());
 
         log.info("adb controller start connecting");
-        boolean connect = adbController.connect();
-        log.info("adb connect result: {}", connect);
+        adbController.postConnection().waiting();
         log.info("adb connected: {}", adbController.connected());
 
         BufferedImage screencap = adbController.screencap();

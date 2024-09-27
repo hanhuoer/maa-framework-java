@@ -6,9 +6,9 @@ import io.github.hanhuoer.maa.MaaOptions;
 import io.github.hanhuoer.maa.callbak.MaaCustomActionCallback;
 import io.github.hanhuoer.maa.callbak.MaaCustomRecognitionCallback;
 import io.github.hanhuoer.maa.callbak.MaaNotificationCallback;
+import io.github.hanhuoer.maa.define.*;
+import io.github.hanhuoer.maa.define.base.MaaBool;
 import io.github.hanhuoer.maa.loader.MaaLibraryLoader;
-import io.github.hanhuoer.maa.ptr.*;
-import io.github.hanhuoer.maa.ptr.base.MaaBool;
 import io.github.hanhuoer.maa.util.FileUtils;
 
 /**

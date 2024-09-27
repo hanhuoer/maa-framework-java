@@ -3,12 +3,13 @@ package io.github.hanhuoer.maa.core.custom;
 import com.alibaba.fastjson2.JSONObject;
 import io.github.hanhuoer.maa.core.base.Tasker;
 import io.github.hanhuoer.maa.core.util.TaskFuture;
+import io.github.hanhuoer.maa.define.*;
+import io.github.hanhuoer.maa.define.base.MaaBool;
 import io.github.hanhuoer.maa.jna.MaaFramework;
 import io.github.hanhuoer.maa.model.NodeDetail;
 import io.github.hanhuoer.maa.model.RecognitionDetail;
 import io.github.hanhuoer.maa.model.Rect;
 import io.github.hanhuoer.maa.model.TaskDetail;
-import io.github.hanhuoer.maa.ptr.*;
 import lombok.Getter;
 
 import java.awt.image.BufferedImage;
@@ -83,20 +84,20 @@ public class Context {
     }
 
     public boolean overridePipeline(Map<String, Object> pipelineOverride) {
-        return Boolean.TRUE.equals(
+        return MaaBool.TRUE.equals(
                 MaaFramework.context().MaaContextOverridePipeline(
                         this.handle, JSONObject.toJSONString(pipelineOverride)
-                ).getValue()
+                )
         );
     }
 
     public boolean overrideNext(String name, List<String> nextList) {
         try (StringListBuffer stringListBuffer = new StringListBuffer()) {
             stringListBuffer.setValue(nextList);
-            return Boolean.TRUE.equals(
+            return MaaBool.TRUE.equals(
                     MaaFramework.context().MaaContextOverrideNext(
                             this.handle, name, stringListBuffer.getHandle()
-                    ).getValue()
+                    )
             );
         }
     }

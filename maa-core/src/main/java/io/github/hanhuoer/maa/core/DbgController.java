@@ -3,10 +3,10 @@ package io.github.hanhuoer.maa.core;
 import io.github.hanhuoer.maa.callbak.MaaNotificationCallback;
 import io.github.hanhuoer.maa.consts.MaaDbgControllerTypeEnum;
 import io.github.hanhuoer.maa.core.base.Controller;
+import io.github.hanhuoer.maa.define.MaaCallbackTransparentArg;
+import io.github.hanhuoer.maa.define.MaaControllerHandle;
+import io.github.hanhuoer.maa.define.MaaDbgControllerType;
 import io.github.hanhuoer.maa.jna.MaaFramework;
-import io.github.hanhuoer.maa.ptr.MaaCallbackTransparentArg;
-import io.github.hanhuoer.maa.ptr.MaaControllerHandle;
-import io.github.hanhuoer.maa.ptr.MaaDbgControllerType;
 import lombok.extern.slf4j.Slf4j;
 
 /**

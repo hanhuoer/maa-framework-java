@@ -161,6 +161,7 @@ out
 /resources
 config
 debug
+screenshot
 /maa-core/resources/
 /maa/resources/
 /maa/config/

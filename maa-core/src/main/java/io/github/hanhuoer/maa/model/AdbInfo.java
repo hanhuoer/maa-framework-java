@@ -1,8 +1,8 @@
 package io.github.hanhuoer.maa.model;
 
-import io.github.hanhuoer.maa.ptr.MaaAdbInputMethod;
-import io.github.hanhuoer.maa.ptr.MaaAdbScreencapMethod;
-import io.github.hanhuoer.maa.ptr.MaaToolkitAdbDeviceHandle;
+import io.github.hanhuoer.maa.define.MaaAdbInputMethod;
+import io.github.hanhuoer.maa.define.MaaAdbScreencapMethod;
+import io.github.hanhuoer.maa.define.MaaToolkitAdbDeviceHandle;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

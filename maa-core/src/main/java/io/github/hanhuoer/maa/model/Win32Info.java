@@ -1,6 +1,6 @@
 package io.github.hanhuoer.maa.model;
 
-import io.github.hanhuoer.maa.ptr.MaaToolkitDesktopWindowHandle;
+import io.github.hanhuoer.maa.define.MaaToolkitDesktopWindowHandle;
 import lombok.Data;
 import lombok.experimental.Accessors;
 

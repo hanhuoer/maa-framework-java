@@ -1,10 +1,8 @@
 package io.github.hanhuoer.maa.core.base;
 
 import io.github.hanhuoer.maa.Maa;
-import io.github.hanhuoer.maa.MaaWindowsAarch64LibraryLoader;
+import io.github.hanhuoer.maa.define.StringListBuffer;
 import io.github.hanhuoer.maa.jna.MaaFramework;
-import io.github.hanhuoer.maa.loader.LibraryLoader;
-import io.github.hanhuoer.maa.ptr.StringListBuffer;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -22,8 +20,8 @@ class ResourceTest {
 
     @BeforeAll
     static void init() throws Exception {
-        LibraryLoader loader = new MaaWindowsAarch64LibraryLoader();
-        loader.loadLibrary();
+//        LibraryLoader loader = new MaaWindowsAarch64LibraryLoader();
+//        loader.loadLibrary();
     }
 
     @BeforeEach
@@ -91,7 +89,8 @@ class ResourceTest {
             log.info("get task list result: {}", getResult);
 
             List<String> value = stringBuffer.getValue();
-            log.info("get task list value: {}", value);
+//            log.info("get task list value: {}", value);
+            value.forEach(item -> log.info("item: {}", item));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

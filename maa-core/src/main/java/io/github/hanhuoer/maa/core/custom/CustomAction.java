@@ -1,10 +1,11 @@
 package io.github.hanhuoer.maa.core.custom;
 
+import io.github.hanhuoer.maa.callbak.MaaCustomActionCallback;
+import io.github.hanhuoer.maa.define.*;
+import io.github.hanhuoer.maa.define.base.MaaBool;
 import io.github.hanhuoer.maa.model.RecognitionDetail;
 import io.github.hanhuoer.maa.model.Rect;
 import io.github.hanhuoer.maa.model.TaskDetail;
-import io.github.hanhuoer.maa.ptr.*;
-import io.github.hanhuoer.maa.ptr.base.MaaBool;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
@@ -16,20 +17,30 @@ import lombok.experimental.Accessors;
  */
 @Getter
 @Accessors(chain = true)
-public abstract class CustomAction {
+public abstract class CustomAction implements MaaCustomActionCallback {
 
-    private final MaaCustomActionHandle handle;
+    private static final Boolean DEFAULT_TASK_SKIP_ENABLED = true;
+    private static final Boolean DEFAULT_RECOGNITION_SKIP_ENABLED = true;
+    private final Boolean taskDetailSkipEnabled;
+    private final Boolean recognitionDetailSkipEnabled;
 
 
     public CustomAction() {
-        this.handle = new MaaCustomActionHandle();
-        handle.action = this::runAgent;
+        this(DEFAULT_TASK_SKIP_ENABLED, DEFAULT_RECOGNITION_SKIP_ENABLED);
+    }
+
+    public CustomAction(Boolean taskDetailSkipEnabled, Boolean recognitionDetailSkipEnabled) {
+        if (taskDetailSkipEnabled == null) taskDetailSkipEnabled = DEFAULT_TASK_SKIP_ENABLED;
+        if (recognitionDetailSkipEnabled == null) recognitionDetailSkipEnabled = DEFAULT_RECOGNITION_SKIP_ENABLED;
+        this.taskDetailSkipEnabled = taskDetailSkipEnabled;
+        this.recognitionDetailSkipEnabled = recognitionDetailSkipEnabled;
     }
 
     public abstract RunResult run(Context context, RunArg arg);
 
 
-    public MaaBool runAgent(
+    @Override
+    public MaaBool run(
             MaaContextHandle contextHandle,
             MaaTaskId taskId,
             String currentTaskName,
@@ -42,10 +53,14 @@ public abstract class CustomAction {
         Context context = new Context(contextHandle);
 
         TaskDetail taskDetail = context.getTasker().getTaskDetail(taskId);
-        if (taskDetail == null) return MaaBool.FALSE;
+        if (taskDetailSkipEnabled) {
+            if (taskDetail == null) return MaaBool.FALSE;
+        }
 
         RecognitionDetail recognitionDetail = context.getTasker().getRecognitionDetail(recoId);
-        if (recognitionDetail == null) return MaaBool.FALSE;
+        if (recognitionDetailSkipEnabled) {
+            if (recognitionDetail == null) return MaaBool.FALSE;
+        }
 
         RectBuffer rectBuffer = new RectBuffer(boxHandle);
         Rect box = rectBuffer.getValue();

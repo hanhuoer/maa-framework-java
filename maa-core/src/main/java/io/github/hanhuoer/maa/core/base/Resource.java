@@ -5,10 +5,10 @@ import io.github.hanhuoer.maa.consts.MaaStatusEnum;
 import io.github.hanhuoer.maa.core.custom.CustomAction;
 import io.github.hanhuoer.maa.core.custom.CustomRecognizer;
 import io.github.hanhuoer.maa.core.util.Future;
+import io.github.hanhuoer.maa.define.StringBuffer;
+import io.github.hanhuoer.maa.define.*;
+import io.github.hanhuoer.maa.define.base.MaaBool;
 import io.github.hanhuoer.maa.jna.MaaFramework;
-import io.github.hanhuoer.maa.ptr.StringBuffer;
-import io.github.hanhuoer.maa.ptr.*;
-import io.github.hanhuoer.maa.ptr.base.MaaBool;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -95,14 +95,14 @@ public class Resource implements AutoCloseable {
     }
 
     public boolean loaded() {
-        return Boolean.TRUE.equals(
-                MaaFramework.resource().MaaResourceLoaded(this.handle).getValue()
+        return MaaBool.TRUE.equals(
+                MaaFramework.resource().MaaResourceLoaded(this.handle)
         );
     }
 
     public boolean clear() {
-        return Boolean.TRUE.equals(
-                MaaFramework.resource().MaaResourceClear(this.handle).getValue()
+        return MaaBool.TRUE.equals(
+                MaaFramework.resource().MaaResourceClear(this.handle)
         );
     }
 
@@ -120,14 +120,14 @@ public class Resource implements AutoCloseable {
             throw new IllegalArgumentException("Recognizer cannot be null");
         }
 
-        Boolean result = MaaFramework.resource().MaaResourceRegisterCustomRecognition(
+        MaaBool maaBool = MaaFramework.resource().MaaResourceRegisterCustomRecognition(
                 this.handle,
                 name,
-                recognizer.getHandle(),
+                recognizer,
                 null
-        ).getValue();
+        );
 
-        boolean equals = Boolean.TRUE.equals(result);
+        boolean equals = MaaBool.TRUE.equals(maaBool);
         if (equals) {
             customRecognizerMap.put(name, recognizer);
         }
@@ -142,14 +142,14 @@ public class Resource implements AutoCloseable {
             throw new IllegalArgumentException("Action cannot be null");
         }
 
-        Boolean result = MaaFramework.resource().MaaResourceRegisterCustomAction(
+        MaaBool result = MaaFramework.resource().MaaResourceRegisterCustomAction(
                 this.handle,
                 name,
-                action.getHandle(),
+                action,
                 null
-        ).getValue();
+        );
 
-        boolean equals = Boolean.TRUE.equals(result);
+        boolean equals = MaaBool.TRUE.equals(result);
         if (equals) {
             customActionHashMap.put(name, action);
         }
@@ -161,12 +161,12 @@ public class Resource implements AutoCloseable {
             throw new IllegalArgumentException("Recognizer name cannot be null or empty");
         }
 
-        Boolean result = MaaFramework.resource().MaaResourceUnregisterCustomRecognition(
+        MaaBool result = MaaFramework.resource().MaaResourceUnregisterCustomRecognition(
                 this.handle,
                 name
-        ).getValue();
+        );
 
-        boolean equals = Boolean.TRUE.equals(result);
+        boolean equals = MaaBool.TRUE.equals(result);
         if (equals) {
             customRecognizerMap.remove(name);
         }
@@ -178,12 +178,12 @@ public class Resource implements AutoCloseable {
             throw new IllegalArgumentException("Action name cannot be null or empty");
         }
 
-        Boolean result = MaaFramework.resource().MaaResourceUnregisterCustomAction(
+        MaaBool result = MaaFramework.resource().MaaResourceUnregisterCustomAction(
                 this.handle,
                 name
-        ).getValue();
+        );
 
-        boolean equals = Boolean.TRUE.equals(result);
+        boolean equals = MaaBool.TRUE.equals(result);
         if (equals) {
             customActionHashMap.remove(name);
         }
@@ -191,9 +191,9 @@ public class Resource implements AutoCloseable {
     }
 
     public boolean clearCustomRecognizer() {
-        Boolean result = MaaFramework.resource().MaaResourceClearCustomRecognition(this.handle).getValue();
+        MaaBool result = MaaFramework.resource().MaaResourceClearCustomRecognition(this.handle);
 
-        boolean equals = Boolean.TRUE.equals(result);
+        boolean equals = MaaBool.TRUE.equals(result);
         if (equals) {
             customRecognizerMap.clear();
         }
@@ -201,9 +201,9 @@ public class Resource implements AutoCloseable {
     }
 
     public boolean clearCustomAction() {
-        Boolean result = MaaFramework.resource().MaaResourceClearCustomAction(this.handle).getValue();
+        MaaBool result = MaaFramework.resource().MaaResourceClearCustomAction(this.handle);
 
-        boolean equals = Boolean.TRUE.equals(result);
+        boolean equals = MaaBool.TRUE.equals(result);
         if (equals) {
             customActionHashMap.clear();
         }
@@ -221,7 +221,7 @@ public class Resource implements AutoCloseable {
     public String hash() {
         try (StringBuffer buffer = new StringBuffer()) {
             MaaBool bool = MaaFramework.resource().MaaResourceGetHash(handle, buffer.getHandle());
-            if (!bool.getValue()) {
+            if (!MaaBool.TRUE.equals(bool)) {
                 throw new RuntimeException("Failed to get hash.");
             }
             return buffer.getValue();

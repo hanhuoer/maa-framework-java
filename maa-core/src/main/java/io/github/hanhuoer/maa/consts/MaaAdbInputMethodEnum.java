@@ -1,6 +1,6 @@
 package io.github.hanhuoer.maa.consts;
 
-import io.github.hanhuoer.maa.ptr.MaaAdbInputMethod;
+import io.github.hanhuoer.maa.define.MaaAdbInputMethod;
 import lombok.Getter;
 
 /**

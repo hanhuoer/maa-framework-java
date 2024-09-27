@@ -1,8 +1,8 @@
 package io.github.hanhuoer.maa.callbak;
 
 import com.sun.jna.Callback;
-import io.github.hanhuoer.maa.ptr.*;
-import io.github.hanhuoer.maa.ptr.base.MaaBool;
+import io.github.hanhuoer.maa.define.*;
+import io.github.hanhuoer.maa.define.base.MaaBool;
 
 /**
  * @author H
