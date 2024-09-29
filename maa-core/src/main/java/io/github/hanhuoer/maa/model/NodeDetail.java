@@ -16,7 +16,6 @@ public class NodeDetail {
 
     private Long nodeId;
     private String name;
-    private Long times;
     private Boolean completed;
     private RecognitionDetail recognition;
 

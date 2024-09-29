@@ -11,10 +11,12 @@ import io.github.hanhuoer.maa.core.util.TaskFuture;
 import io.github.hanhuoer.maa.model.AdbInfo;
 import io.github.hanhuoer.maa.model.Rect;
 import io.github.hanhuoer.maa.model.TaskDetail;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
 
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 class TaskerTest {
@@ -97,8 +99,7 @@ class TaskerTest {
     @Test
     void bind() {
         boolean bind = tasker.bind(resource, adbController);
-        assert bind;
-        log.info("bind result: {}", bind);
+        Assertions.assertTrue(bind);
     }
 
     @Test
@@ -361,5 +362,49 @@ class TaskerTest {
         }
     }
 
-    ;
+    @SneakyThrows
+    @Test
+    public void test_register() {
+        bind();
+
+        MyCustomAction customAction = new MyCustomAction();
+        MyCustomRecognizer customRecognizer = new MyCustomRecognizer();
+
+        boolean customActionResult = resource.registerAction("MyAct2", customAction);
+        Assertions.assertTrue(customActionResult);
+
+        boolean customRecognizerResult = resource.registerRecognizer("MyRec2", customRecognizer);
+        Assertions.assertTrue(customRecognizerResult);
+
+        Assertions.assertTrue(tasker.inited());
+
+        JSONObject customPipeline = getCustomPipeline();
+        TaskFuture<TaskDetail> customTaskFuture = tasker.postPipeline("custom_task_test", customPipeline);
+        customTaskFuture.waiting();
+        Assertions.assertTrue(customTaskFuture.done());
+
+        boolean customActionUnregister = resource.unregisterAction("MyAct2");
+        Assertions.assertTrue(customActionUnregister);
+
+        boolean customRecognizerUnregister = resource.unregisterRecognizer("MyRec2");
+        Assertions.assertTrue(customRecognizerUnregister);
+
+    }
+
+
+    private JSONObject getCustomPipeline() {
+        JSONObject pipelineJson = new JSONObject();
+        JSONObject taskJson = new JSONObject();
+
+        taskJson.put("recognition", "Custom");
+        taskJson.put("custom_recognition", "MyRec2");
+        taskJson.put("custom_recognition_param", new JSONObject(Map.of("param", "hi recognition")));
+
+        taskJson.put("action", "Custom");
+        taskJson.put("custom_action", "MyAct2");
+        taskJson.put("custom_action_param", new JSONObject(Map.of("param", "hi action")));
+
+        pipelineJson.put("custom_task_test", taskJson);
+        return pipelineJson;
+    }
 }

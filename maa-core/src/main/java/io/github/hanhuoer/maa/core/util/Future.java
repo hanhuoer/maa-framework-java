@@ -3,9 +3,9 @@ package io.github.hanhuoer.maa.core.util;
 import io.github.hanhuoer.maa.consts.MaaStatusEnum;
 import io.github.hanhuoer.maa.define.MaaId;
 import lombok.Getter;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.function.Consumer;
 import java.util.function.Function;
 
 /**
@@ -17,10 +17,10 @@ public class Future {
 
     private final MaaId maaid;
     private final Function<MaaId, MaaStatusEnum> statusFunc;
-    private final Consumer<MaaId> waitFunc;
+    private final Function<MaaId, Void> waitFunc;
 
 
-    public Future(MaaId maaid, Function<MaaId, MaaStatusEnum> statusFunc, Consumer<MaaId> waitFunc) {
+    public Future(MaaId maaid, Function<MaaId, MaaStatusEnum> statusFunc, Function<MaaId, Void> waitFunc) {
         this.maaid = maaid;
         this.statusFunc = statusFunc;
         this.waitFunc = waitFunc;
@@ -30,9 +30,14 @@ public class Future {
         return maaid.getValue();
     }
 
+    @SneakyThrows
     public Future waiting() {
-        log.debug("waiting: {}", Thread.currentThread());
-        waitFunc.accept(maaid);
+        waitFunc.apply(maaid);
+
+//        while (!status().done()) {
+//            Thread.sleep(0);
+//        }
+
         return this;
     }
 

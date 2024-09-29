@@ -2,6 +2,7 @@ package io.github.hanhuoer.maa.jna;
 
 import com.sun.jna.Library;
 import com.sun.jna.Native;
+import com.sun.jna.ptr.NativeLongByReference;
 import io.github.hanhuoer.maa.MaaOptions;
 import io.github.hanhuoer.maa.callbak.MaaCustomActionCallback;
 import io.github.hanhuoer.maa.callbak.MaaCustomRecognitionCallback;
@@ -404,7 +405,7 @@ public class MaaFramework {
 
         MaaStatus MaaTaskerWait(MaaTaskerHandle tasker, MaaTaskId id);
 
-        MaaBool MaaTaskerRunning(MaaTaskerHandle tasker);
+        Boolean MaaTaskerRunning(MaaTaskerHandle tasker);
 
         MaaBool MaaTaskerPostStop(MaaTaskerHandle tasker);
 
@@ -451,7 +452,7 @@ public class MaaFramework {
         MaaBool MaaTaskerGetTaskDetail(MaaTaskerHandle tasker,
                                        MaaTaskId task_id,
                                        MaaStringBufferHandle entry,
-                                       MaaNodeIdArr node_id_list,
+                                       NativeLongByReference[] node_id_list,
                                        MaaSize.Reference node_id_list_size);
 
         /**

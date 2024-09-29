@@ -45,6 +45,14 @@ public class ImageBuffer implements AutoCloseable {
         }
     }
 
+    public BufferedImage getValue(BufferedImage defaultValue) {
+        try {
+            return getValue();
+        } catch (IOException e) {
+            return defaultValue;
+        }
+    }
+
     public BufferedImage getValue() throws IOException {
         MaaImageRawData rawData = MaaFramework.buffer().MaaImageBufferGetRawData(this.handle);
         if (rawData == null) {

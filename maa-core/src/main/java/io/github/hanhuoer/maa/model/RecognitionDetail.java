@@ -2,7 +2,6 @@ package io.github.hanhuoer.maa.model;
 
 import com.alibaba.fastjson2.JSONObject;
 import io.github.hanhuoer.maa.consts.MaaRecognitionAlgorithmEnum;
-import io.github.hanhuoer.maa.model.algorithm.AlgorithmResult;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -23,35 +22,30 @@ public class RecognitionDetail {
 
     private Long recoId;
     private String name;
-    List<? extends AlgorithmResult> allResultList;
     private Rect hitBox;
-    List<? extends AlgorithmResult> filteredResultList;
-    AlgorithmResult bestResult;
+    private JSONObject bestResult;
+    private List<JSONObject> allResultList;
+    private List<JSONObject> filteredResultList;
     private MaaRecognitionAlgorithmEnum algorithm;
     private JSONObject rawDetailJson;
     private String rawDetail;
-    private BufferedImage raw;
-    private List<BufferedImage> draws;
+    private BufferedImage rawImage;
+    private List<BufferedImage> drawImages;
 
 
     public void parseRecognitionRawDetail() {
-        JSONObject rawDetail = JSONObject.parseObject(this.rawDetail);
-        this.rawDetailJson = rawDetail;
+        JSONObject rawDetailJson = JSONObject.parseObject(this.rawDetail);
+        this.rawDetailJson = rawDetailJson;
 
         this.allResultList = Collections.emptyList();
         this.filteredResultList = Collections.emptyList();
-        if (rawDetail == null || rawDetail.isEmpty()) {
+        if (rawDetailJson == null || rawDetailJson.isEmpty()) {
             return;
         }
 
-        Class<? extends AlgorithmResult> algorithmType = algorithm.getType();
-        if (algorithmType == null) {
-            return;
-        }
-
-        this.allResultList = rawDetail.getList("all", algorithmType);
-        this.filteredResultList = rawDetail.getList("filtered", algorithmType);
-        this.bestResult = rawDetail.getObject("best", algorithmType);
+        this.allResultList = rawDetailJson.getJSONArray("all").toList(JSONObject.class);
+        this.filteredResultList = rawDetailJson.getJSONArray("filtered").toList(JSONObject.class);
+        this.bestResult = rawDetailJson.getJSONObject("best");
     }
 
 }

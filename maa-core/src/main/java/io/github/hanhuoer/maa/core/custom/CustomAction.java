@@ -19,21 +19,8 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 public abstract class CustomAction implements MaaCustomActionCallback {
 
-    private static final Boolean DEFAULT_TASK_SKIP_ENABLED = true;
-    private static final Boolean DEFAULT_RECOGNITION_SKIP_ENABLED = true;
-    private final Boolean taskDetailSkipEnabled;
-    private final Boolean recognitionDetailSkipEnabled;
-
 
     public CustomAction() {
-        this(DEFAULT_TASK_SKIP_ENABLED, DEFAULT_RECOGNITION_SKIP_ENABLED);
-    }
-
-    public CustomAction(Boolean taskDetailSkipEnabled, Boolean recognitionDetailSkipEnabled) {
-        if (taskDetailSkipEnabled == null) taskDetailSkipEnabled = DEFAULT_TASK_SKIP_ENABLED;
-        if (recognitionDetailSkipEnabled == null) recognitionDetailSkipEnabled = DEFAULT_RECOGNITION_SKIP_ENABLED;
-        this.taskDetailSkipEnabled = taskDetailSkipEnabled;
-        this.recognitionDetailSkipEnabled = recognitionDetailSkipEnabled;
     }
 
     public abstract RunResult run(Context context, RunArg arg);
@@ -53,14 +40,10 @@ public abstract class CustomAction implements MaaCustomActionCallback {
         Context context = new Context(contextHandle);
 
         TaskDetail taskDetail = context.getTasker().getTaskDetail(taskId);
-        if (taskDetailSkipEnabled) {
-            if (taskDetail == null) return MaaBool.FALSE;
-        }
+        if (taskDetail == null) return MaaBool.FALSE;
 
         RecognitionDetail recognitionDetail = context.getTasker().getRecognitionDetail(recoId);
-        if (recognitionDetailSkipEnabled) {
-            if (recognitionDetail == null) return MaaBool.FALSE;
-        }
+        if (recognitionDetail == null) return MaaBool.FALSE;
 
         RectBuffer rectBuffer = new RectBuffer(boxHandle);
         Rect box = rectBuffer.getValue();

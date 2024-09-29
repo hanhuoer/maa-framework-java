@@ -118,49 +118,40 @@ public class Controller implements AutoCloseable {
         MaaCtrlId ctrl = MaaFramework.controller().MaaControllerPostConnection(handle);
         return new Future(ctrl,
                 id -> MaaStatusEnum.of(this.status(id.getValue())),
-                id -> this.waiting(id.getValue()));
+                id -> {
+                    this.waiting(id.getValue());
+                    return null;
+                });
     }
 
     public Future postClick(int x, int y) {
         MaaCtrlId ctrl = MaaFramework.controller().MaaControllerPostClick(handle, x, y);
-        return new Future(ctrl,
-                id -> MaaStatusEnum.of(this.status(id.getValue())),
-                id -> this.waiting(id.getValue()));
+        return genFuture(ctrl);
     }
 
     public Future postSwipe(int x1, int y1, int x2, int y2, int duration) {
         MaaCtrlId ctrl = MaaFramework.controller().MaaControllerPostSwipe(handle, x1, y1, x2, y2, duration);
-        return new Future(ctrl,
-                id -> MaaStatusEnum.of(this.status(id.getValue())),
-                id -> this.waiting(id.getValue()));
+        return genFuture(ctrl);
     }
 
     public Future postPressKey(int keyCode) {
         MaaCtrlId ctrl = MaaFramework.controller().MaaControllerPostPressKey(handle, keyCode);
-        return new Future(ctrl,
-                id -> MaaStatusEnum.of(this.status(id.getValue())),
-                id -> this.waiting(id.getValue()));
+        return genFuture(ctrl);
     }
 
     public Future postInputText(String text) {
         MaaCtrlId ctrl = MaaFramework.controller().MaaControllerPostInputText(handle, text);
-        return new Future(ctrl,
-                id -> MaaStatusEnum.of(this.status(id.getValue())),
-                id -> this.waiting(id.getValue()));
+        return genFuture(ctrl);
     }
 
     public Future postStartApp(String intent) {
         MaaCtrlId ctrl = MaaFramework.controller().MaaControllerPostStartApp(handle, intent);
-        return new Future(ctrl,
-                id -> MaaStatusEnum.of(this.status(id.getValue())),
-                id -> this.waiting(id.getValue()));
+        return genFuture(ctrl);
     }
 
     public Future postStopApp(String intent) {
         MaaCtrlId ctrl = MaaFramework.controller().MaaControllerPostStopApp(handle, intent);
-        return new Future(ctrl,
-                id -> MaaStatusEnum.of(this.status(id.getValue())),
-                id -> this.waiting(id.getValue()));
+        return genFuture(ctrl);
     }
 
     public Future postTouchDown(int x, int y) {
@@ -169,9 +160,7 @@ public class Controller implements AutoCloseable {
 
     public Future postTouchDown(int x, int y, int contact, int pressure) {
         MaaCtrlId ctrl = MaaFramework.controller().MaaControllerPostTouchDown(handle, x, y, contact, pressure);
-        return new Future(ctrl,
-                id -> MaaStatusEnum.of(this.status(id.getValue())),
-                id -> this.waiting(id.getValue()));
+        return genFuture(ctrl);
     }
 
     public Future postTouchMove(int x, int y) {
@@ -180,9 +169,7 @@ public class Controller implements AutoCloseable {
 
     public Future postTouchMove(int x, int y, int contact, int pressure) {
         MaaCtrlId ctrl = MaaFramework.controller().MaaControllerPostTouchMove(handle, x, y, contact, pressure);
-        return new Future(ctrl,
-                id -> MaaStatusEnum.of(this.status(id.getValue())),
-                id -> this.waiting(id.getValue()));
+        return genFuture(ctrl);
     }
 
     public Future postTouchUp() {
@@ -191,16 +178,17 @@ public class Controller implements AutoCloseable {
 
     public Future postTouchUp(int contact) {
         MaaCtrlId ctrl = MaaFramework.controller().MaaControllerPostTouchUp(handle, contact);
-        return new Future(ctrl,
-                id -> MaaStatusEnum.of(this.status(id.getValue())),
-                id -> this.waiting(id.getValue()));
+        return genFuture(ctrl);
     }
 
     public TaskFuture<BufferedImage> postScreencap() {
         MaaCtrlId ctrl = MaaFramework.controller().MaaControllerPostScreencap(handle);
         return new TaskFuture<>(ctrl,
                 id -> MaaStatusEnum.of(this.status(id.getValue())),
-                id -> this.waiting(id.getValue()),
+                id -> {
+                    this.waiting(id.getValue());
+                    return null;
+                },
                 id -> this.cachedImage());
     }
 
@@ -231,6 +219,15 @@ public class Controller implements AutoCloseable {
         String uuid = stringBuffer.getValue();
         stringBuffer.close();
         return uuid;
+    }
+
+    private Future genFuture(MaaCtrlId ctrl) {
+        return new Future(ctrl,
+                id -> MaaStatusEnum.of(this.status(id.getValue())),
+                id -> {
+                    this.waiting(id.getValue());
+                    return null;
+                });
     }
 
     private MaaStatus status(long maaId) {

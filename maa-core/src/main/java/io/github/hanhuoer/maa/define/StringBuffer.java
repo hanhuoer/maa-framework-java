@@ -44,10 +44,13 @@ public class StringBuffer implements AutoCloseable {
     public String getValue(boolean close) {
         if (this.handle == null) throw new RuntimeException("MaaStringBufferHandle is null");
         String value = MaaFramework.buffer().MaaStringBufferGet(this.handle);
-        Long valueLen = MaaFramework.buffer().MaaStringBufferSize(this.handle).getValue();
+//        Long valueLen = MaaFramework.buffer().MaaStringBufferSize(this.handle).getValue();
 //        return handle.getPointer().getString(valueLen - 1, StandardCharsets.UTF_8.name());
         if (close) {
             close();
+        }
+        if (value != null && value.equalsIgnoreCase("null")) {
+            return null;
         }
         return value;
     }

@@ -14,7 +14,6 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Consumer;
 import java.util.function.Function;
 
 /**
@@ -89,7 +88,10 @@ public class Resource implements AutoCloseable {
     public Future postPath(String path) {
         MaaId maaId = MaaFramework.resource().MaaResourcePostPath(this.handle, path);
         Function<MaaId, MaaStatusEnum> statusFunc = id -> MaaStatusEnum.of(this.status(id.getValue()));
-        Consumer<MaaId> waitFunc = id -> this.waiting(id.getValue());
+        Function<MaaId, Void> waitFunc = id -> {
+            this.waiting(id.getValue());
+            return null;
+        };
 
         return new Future(maaId, statusFunc, waitFunc);
     }

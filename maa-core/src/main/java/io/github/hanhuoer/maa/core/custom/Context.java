@@ -11,6 +11,7 @@ import io.github.hanhuoer.maa.model.RecognitionDetail;
 import io.github.hanhuoer.maa.model.Rect;
 import io.github.hanhuoer.maa.model.TaskDetail;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
 import java.awt.image.BufferedImage;
 import java.util.List;
@@ -20,6 +21,7 @@ import java.util.Map;
  * @author H
  */
 @Getter
+@Slf4j
 public class Context {
 
     private final MaaContextHandle handle;
@@ -95,26 +97,36 @@ public class Context {
         return runRecognition(entry, "{}", image);
     }
 
+    public RecognitionDetail runRecognition(String entry, BufferedImage image, Map<String, Object> pipelineOverride) {
+        return runRecognition(entry, pipelineOverride, image);
+    }
+
     public RecognitionDetail runRecognition(String entry, Map<String, Object> pipelineOverride, BufferedImage image) {
         return runRecognition(entry, JSONObject.toJSONString(pipelineOverride), image);
+    }
+
+    public RecognitionDetail runRecognition(String entry, BufferedImage image, JSONObject pipelineOverride) {
+        return runRecognition(entry, pipelineOverride, image);
     }
 
     public RecognitionDetail runRecognition(String entry, JSONObject pipelineOverride, BufferedImage image) {
         return runRecognition(entry, pipelineOverride.toString(), image);
     }
 
+    public RecognitionDetail runRecognition(String entry, BufferedImage image, String pipelineOverride) {
+        return runRecognition(entry, pipelineOverride, image);
+    }
+
     public RecognitionDetail runRecognition(String entry, String pipelineOverride, BufferedImage image) {
-        MaaRecoId maaRecoId;
-        try (ImageBuffer imageBuffer = new ImageBuffer()) {
-            imageBuffer.setValue(image);
-            maaRecoId = MaaFramework.context().MaaContextRunRecognition(this.handle,
-                    entry, pipelineOverride, imageBuffer.getHandle());
-        }
+        ImageBuffer imageBuffer = new ImageBuffer();
+        imageBuffer.setValue(image);
+        MaaRecoId maaRecoId = MaaFramework.context().MaaContextRunRecognition(this.handle,
+                entry, pipelineOverride, imageBuffer.getHandle());
         if (maaRecoId == null) {
             return null;
         }
 
-        return tasker.getTaskDetail(maaRecoId);
+        return tasker.getRecognitionDetail(maaRecoId);
     }
 
     public NodeDetail runAction(String entry, Rect box, String recoDetail) {
@@ -130,15 +142,13 @@ public class Context {
     }
 
     public NodeDetail runAction(String entry, Rect box, String recoDetail, String pipelineOverride) {
-        MaaNodeId maaNodeId;
-        try (RectBuffer rectBuffer = new RectBuffer()) {
-            rectBuffer.setValue(box);
-            maaNodeId = MaaFramework.context().MaaContextRunAction(this.handle,
-                    entry, pipelineOverride, rectBuffer.getHandle(), recoDetail);
-        }
-        if (maaNodeId == null) {
-            return null;
-        }
+        RectBuffer rectBuffer = new RectBuffer();
+        rectBuffer.setValue(box);
+        MaaNodeId maaNodeId = MaaFramework.context().MaaContextRunAction(this.handle,
+                entry, pipelineOverride, rectBuffer.getHandle(), recoDetail);
+        rectBuffer.close();
+
+        if (maaNodeId == null) return null;
 
         return tasker.getTaskDetail(maaNodeId);
     }
@@ -177,7 +187,7 @@ public class Context {
     public TaskFuture<TaskDetail> getTaskJob() {
         MaaTaskId maaTaskId = MaaFramework.context().MaaContextGetTaskId(this.handle);
         if (maaTaskId == null)
-            throw new RuntimeException("Task id is Null.");
+            throw new RuntimeException("Task id is null.");
 
         return this.tasker.genTaskJob(maaTaskId);
     }

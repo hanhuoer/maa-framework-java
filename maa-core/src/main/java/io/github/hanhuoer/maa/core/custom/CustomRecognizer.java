@@ -13,7 +13,6 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
 import java.awt.image.BufferedImage;
-import java.io.IOException;
 
 /**
  * @author H
@@ -22,16 +21,7 @@ import java.io.IOException;
 @Accessors(chain = true)
 public abstract class CustomRecognizer implements MaaCustomRecognitionCallback {
 
-    private static final Boolean DEFAULT_TASK_DETAIL_SKIP_ENABLED = true;
-    private final Boolean taskDetailSkipEnabled;
-
     public CustomRecognizer() {
-        this(DEFAULT_TASK_DETAIL_SKIP_ENABLED);
-    }
-
-    private CustomRecognizer(Boolean taskDetailSkipEnabled) {
-        if (taskDetailSkipEnabled == null) taskDetailSkipEnabled = DEFAULT_TASK_DETAIL_SKIP_ENABLED;
-        this.taskDetailSkipEnabled = taskDetailSkipEnabled;
     }
 
     /**
@@ -60,17 +50,10 @@ public abstract class CustomRecognizer implements MaaCustomRecognitionCallback {
         Context context = new Context(contextHandle);
 
         TaskDetail taskDetail = context.tasker().getTaskDetail(taskId);
-        if (taskDetailSkipEnabled) {
-            if (taskDetail == null) return MaaBool.FALSE;
-        }
+        if (taskDetail == null) return MaaBool.FALSE;
 
         ImageBuffer imageBuffer = new ImageBuffer(imageHandle);
-        BufferedImage image = null;
-        try {
-            image = imageBuffer.getValue();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        BufferedImage image = imageBuffer.getValue(null);
 
         RectBuffer roiBuffer = new RectBuffer(roi);
         AnalyzeArg analyzeArg = new AnalyzeArg()

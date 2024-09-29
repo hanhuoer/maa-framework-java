@@ -14,7 +14,7 @@ import java.util.List;
 @Getter
 public class LongArrayByReference extends ByReference {
 
-    protected static final int DATA_SIZE = Native.getNativeSize(long.class);
+    protected static final int DATA_SIZE = Native.LONG_SIZE;
     protected int count = 0;
 
 
