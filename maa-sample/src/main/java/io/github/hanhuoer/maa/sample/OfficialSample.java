@@ -8,7 +8,7 @@ import io.github.hanhuoer.maa.core.base.Resource;
 import io.github.hanhuoer.maa.core.base.Tasker;
 import io.github.hanhuoer.maa.core.custom.Context;
 import io.github.hanhuoer.maa.core.custom.CustomAction;
-import io.github.hanhuoer.maa.core.custom.CustomRecognizer;
+import io.github.hanhuoer.maa.core.custom.CustomRecognition;
 import io.github.hanhuoer.maa.core.util.Future;
 import io.github.hanhuoer.maa.core.util.TaskFuture;
 import io.github.hanhuoer.maa.model.AdbInfo;
@@ -65,7 +65,7 @@ public class OfficialSample {
         }
 
         System.out.println("Succeed to init MAA.");
-        resource.registerRecognizer("MyRec", new MyRecognizer());
+        resource.registerRecognition("MyRec", new MyRecognizer());
 //        resource.registerAction("MyAct", new MyAction());
 
 //        tasker.runTask("StartUpAndClickButton");
@@ -77,7 +77,7 @@ public class OfficialSample {
         System.out.println("End.");
     }
 
-    public static class MyRecognizer extends CustomRecognizer {
+    public static class MyRecognizer extends CustomRecognition {
 
         @Override
         public AnalyzeResult analyze(Context context, AnalyzeArg arg) {

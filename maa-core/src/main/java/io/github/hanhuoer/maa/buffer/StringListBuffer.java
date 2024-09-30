@@ -1,13 +1,16 @@
-package io.github.hanhuoer.maa.define;
+package io.github.hanhuoer.maa.buffer;
 
+import io.github.hanhuoer.maa.define.MaaSize;
+import io.github.hanhuoer.maa.define.MaaStringBufferHandle;
+import io.github.hanhuoer.maa.define.MaaStringListBufferHandle;
 import io.github.hanhuoer.maa.define.base.MaaBool;
 import io.github.hanhuoer.maa.jna.MaaFramework;
 import io.github.hanhuoer.maa.util.CollectionUtils;
 import lombok.Getter;
 
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.LongStream;
 
@@ -19,7 +22,7 @@ public class StringListBuffer implements AutoCloseable {
 
     private final MaaStringListBufferHandle handle;
     private final boolean own;
-    private final List<StringBuffer> stringBuffers = new LinkedList<>();
+    private boolean closed;
 
 
     public StringListBuffer() {
@@ -34,6 +37,7 @@ public class StringListBuffer implements AutoCloseable {
             this.handle = MaaFramework.buffer().MaaStringListBufferCreate();
             own = true;
         }
+        this.closed = false;
     }
 
     @Override
@@ -41,9 +45,15 @@ public class StringListBuffer implements AutoCloseable {
         if (this.handle == null) return;
         if (!this.own) return;
         MaaFramework.buffer().MaaStringListBufferDestroy(this.handle);
+        this.closed = true;
+    }
+
+    public List<String> getValue(List<String> defaultValue) {
+        return Objects.requireNonNullElse(getValue(), defaultValue);
     }
 
     public List<String> getValue() {
+        if (this.closed) return null;
         MaaSize maaSize = MaaFramework.buffer().MaaStringListBufferSize(this.handle);
         if (maaSize == null) return Collections.emptyList();
         long count = maaSize.getValue();
@@ -61,6 +71,7 @@ public class StringListBuffer implements AutoCloseable {
     }
 
     public boolean setValue(List<String> value) {
+        if (this.closed) return false;
         if (CollectionUtils.isEmpty(value)) return false;
 
         for (String item : value) {
@@ -76,6 +87,7 @@ public class StringListBuffer implements AutoCloseable {
     }
 
     public boolean append(String value) {
+        if (this.closed) return false;
         StringBuffer stringBuffer = new StringBuffer();
         stringBuffer.setValue(value);
         MaaBool appendResult = MaaFramework.buffer().MaaStringListBufferAppend(this.handle, stringBuffer.getHandle());
@@ -88,10 +100,12 @@ public class StringListBuffer implements AutoCloseable {
     }
 
     public boolean remove(int index) {
+        if (this.closed) return false;
         return MaaFramework.buffer().MaaStringListBufferRemove(this.handle, new MaaSize(index)).getValue();
     }
 
     public boolean clear() {
+        if (this.closed) return false;
         return MaaFramework.buffer().MaaStringListBufferClear(this.handle).getValue();
     }
 

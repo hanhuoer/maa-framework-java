@@ -1,10 +1,13 @@
-package io.github.hanhuoer.maa.define;
+package io.github.hanhuoer.maa.buffer;
 
+import io.github.hanhuoer.maa.define.MaaRectHandle;
+import io.github.hanhuoer.maa.define.base.MaaBool;
 import io.github.hanhuoer.maa.jna.MaaFramework;
 import io.github.hanhuoer.maa.model.Rect;
 import lombok.Getter;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @author H
@@ -14,6 +17,7 @@ public class RectBuffer implements AutoCloseable {
 
     private final MaaRectHandle handle;
     private final boolean own;
+    private boolean closed;
 
 
     public RectBuffer() {
@@ -28,6 +32,7 @@ public class RectBuffer implements AutoCloseable {
             this.handle = MaaFramework.buffer().MaaRectCreate();
             own = true;
         }
+        this.closed = false;
     }
 
     @Override
@@ -35,9 +40,15 @@ public class RectBuffer implements AutoCloseable {
         if (this.handle == null) return;
         if (!this.own) return;
         MaaFramework.buffer().MaaRectDestroy(this.handle);
+        this.closed = true;
+    }
+
+    public Rect getValue(Rect defaultValue) {
+        return Objects.requireNonNullElse(getValue(), defaultValue);
     }
 
     public Rect getValue() {
+        if (this.closed) return null;
         Integer x = MaaFramework.buffer().MaaRectGetX(this.handle);
         Integer y = MaaFramework.buffer().MaaRectGetY(this.handle);
         Integer w = MaaFramework.buffer().MaaRectGetW(this.handle);
@@ -51,24 +62,30 @@ public class RectBuffer implements AutoCloseable {
     }
 
     public boolean setValue(Rect rect) {
-        return MaaFramework.buffer().MaaRectSet(
-                handle, rect.getX(), rect.getY(), rect.getW(), rect.getH()).getValue();
+        return setValue(rect.getX(), rect.getY(), rect.getW(), rect.getH());
     }
 
     public boolean setValue(int[] array) {
         if (array.length != 4) {
             throw new IllegalArgumentException("Array must have 4 elements");
         }
-        return MaaFramework.buffer().MaaRectSet(
-                handle, array[0], array[1], array[2], array[3]).getValue();
+        return setValue(array[0], array[1], array[2], array[3]);
     }
 
     public boolean setValue(List<Integer> list) {
         if (list.size() != 4) {
             throw new IllegalArgumentException("List must have 4 elements");
         }
-        return MaaFramework.buffer().MaaRectSet(
-                handle, list.get(0), list.get(1), list.get(2), list.get(3)).getValue();
+        return setValue(list.get(0), list.get(1), list.get(2), list.get(3));
+    }
+
+    private boolean setValue(Integer x, Integer y, Integer w, Integer h) {
+        if (this.closed) return false;
+        if (x == null) throw new IllegalArgumentException("x can not be null.");
+        if (y == null) throw new IllegalArgumentException("y can not be null.");
+        if (w == null) throw new IllegalArgumentException("w can not be null.");
+        if (h == null) throw new IllegalArgumentException("h can not be null.");
+        return MaaBool.TRUE.equals(MaaFramework.buffer().MaaRectSet(handle, x, y, w, h));
     }
 
 }

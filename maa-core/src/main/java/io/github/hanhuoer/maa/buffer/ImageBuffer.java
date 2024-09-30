@@ -1,6 +1,8 @@
-package io.github.hanhuoer.maa.define;
+package io.github.hanhuoer.maa.buffer;
 
 import com.sun.jna.Memory;
+import io.github.hanhuoer.maa.define.MaaImageBufferHandle;
+import io.github.hanhuoer.maa.define.MaaImageRawData;
 import io.github.hanhuoer.maa.jna.MaaFramework;
 import lombok.Getter;
 
@@ -9,6 +11,7 @@ import java.awt.image.DataBufferByte;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.util.Objects;
 
 /**
  * @author H
@@ -18,6 +21,7 @@ public class ImageBuffer implements AutoCloseable {
 
     private final MaaImageBufferHandle handle;
     private final boolean own;
+    private boolean closed;
 
 
     public ImageBuffer() {
@@ -36,24 +40,27 @@ public class ImageBuffer implements AutoCloseable {
         if (this.handle == null) {
             throw new RuntimeException("Failed to create image buffer.");
         }
+        closed = false;
     }
 
     @Override
     public void close() {
-        if (this.handle != null && this.own) {
-            MaaFramework.buffer().MaaImageBufferDestroy(this.handle);
-        }
+        if (this.handle == null) return;
+        if (!this.own) return;
+        MaaFramework.buffer().MaaImageBufferDestroy(this.handle);
+        this.closed = true;
     }
 
     public BufferedImage getValue(BufferedImage defaultValue) {
         try {
-            return getValue();
+            return Objects.requireNonNullElse(getValue(), defaultValue);
         } catch (IOException e) {
             return defaultValue;
         }
     }
 
     public BufferedImage getValue() throws IOException {
+        if (closed) return null;
         MaaImageRawData rawData = MaaFramework.buffer().MaaImageBufferGetRawData(this.handle);
         if (rawData == null) {
             return null;
@@ -75,6 +82,7 @@ public class ImageBuffer implements AutoCloseable {
     }
 
     public boolean setValue(BufferedImage value) {
+        if (closed) return false;
         int width = value.getWidth();
         int height = value.getHeight();
 
@@ -103,6 +111,7 @@ public class ImageBuffer implements AutoCloseable {
     }
 
     public boolean clear() {
+        if (closed) return false;
         return MaaFramework.buffer().MaaImageBufferClear(this.handle).getValue();
     }
 }

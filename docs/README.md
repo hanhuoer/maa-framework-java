@@ -12,6 +12,14 @@
 </dependency>
 ```
 
+### V2
+
+| SDK   | MaaFramework |
+|-------|--------------|
+| 2.0.0 | 2.0.3        |
+
+### V1
+
 | SDK   | MaaFramework |
 |-------|--------------|
 | 1.0.0 | 1.8.8        |
@@ -21,6 +29,7 @@
 | 1.0.4 | 1.8.9        |
 | 1.0.5 | 1.8.9        |
 
+[V1 版本描述](https://github.com/hanhuoer/maa-framework-java/blob/v1/docs/README.md)
 
 ## MaaFramework 相关文档
 

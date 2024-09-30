@@ -1,12 +1,15 @@
 package io.github.hanhuoer.maa.core.base;
 
+import io.github.hanhuoer.maa.buffer.StringBuffer;
 import io.github.hanhuoer.maa.callbak.MaaNotificationCallback;
 import io.github.hanhuoer.maa.consts.MaaStatusEnum;
 import io.github.hanhuoer.maa.core.custom.CustomAction;
-import io.github.hanhuoer.maa.core.custom.CustomRecognizer;
+import io.github.hanhuoer.maa.core.custom.CustomRecognition;
 import io.github.hanhuoer.maa.core.util.Future;
-import io.github.hanhuoer.maa.define.StringBuffer;
-import io.github.hanhuoer.maa.define.*;
+import io.github.hanhuoer.maa.define.MaaCallbackTransparentArg;
+import io.github.hanhuoer.maa.define.MaaId;
+import io.github.hanhuoer.maa.define.MaaResId;
+import io.github.hanhuoer.maa.define.MaaResourceHandle;
 import io.github.hanhuoer.maa.define.base.MaaBool;
 import io.github.hanhuoer.maa.jna.MaaFramework;
 import lombok.Getter;
@@ -30,7 +33,7 @@ public class Resource implements AutoCloseable {
     private final MaaCallbackTransparentArg callbackArg;
     @Getter
     private final boolean own;
-    private final Map<String, CustomRecognizer> customRecognizerMap;
+    private final Map<String, CustomRecognition> customRecognitionMap;
     private final Map<String, CustomAction> customActionHashMap;
 
 
@@ -63,7 +66,7 @@ public class Resource implements AutoCloseable {
             throw new RuntimeException("Failed to create resource.");
         }
 
-        this.customRecognizerMap = new HashMap<>();
+        this.customRecognitionMap = new HashMap<>();
         this.customActionHashMap = new HashMap<>();
     }
 
@@ -108,13 +111,18 @@ public class Resource implements AutoCloseable {
         );
     }
 
+    @Deprecated
+    public boolean registerRecognizer(String name, CustomRecognition recognizer) {
+        return registerRecognition(name, recognizer);
+    }
+
     /**
      * register a custom recognizer.
      *
      * @param name       the name of the custom recognizer.
      * @param recognizer the custom recognizer.
      */
-    public boolean registerRecognizer(String name, CustomRecognizer recognizer) {
+    public boolean registerRecognition(String name, CustomRecognition recognizer) {
         if (name == null || name.isEmpty()) {
             throw new IllegalArgumentException("Recognizer name cannot be null or empty");
         }
@@ -131,7 +139,7 @@ public class Resource implements AutoCloseable {
 
         boolean equals = MaaBool.TRUE.equals(maaBool);
         if (equals) {
-            customRecognizerMap.put(name, recognizer);
+            customRecognitionMap.put(name, recognizer);
         }
         return equals;
     }
@@ -158,6 +166,11 @@ public class Resource implements AutoCloseable {
         return equals;
     }
 
+    public boolean unregisterRecognition(String name) {
+        return unregisterRecognizer(name);
+    }
+
+    @Deprecated
     public boolean unregisterRecognizer(String name) {
         if (name == null || name.isEmpty()) {
             throw new IllegalArgumentException("Recognizer name cannot be null or empty");
@@ -170,7 +183,7 @@ public class Resource implements AutoCloseable {
 
         boolean equals = MaaBool.TRUE.equals(result);
         if (equals) {
-            customRecognizerMap.remove(name);
+            customRecognitionMap.remove(name);
         }
         return equals;
     }
@@ -192,12 +205,17 @@ public class Resource implements AutoCloseable {
         return equals;
     }
 
+    @Deprecated
     public boolean clearCustomRecognizer() {
+        return clearCustomRecognition();
+    }
+
+    public boolean clearCustomRecognition() {
         MaaBool result = MaaFramework.resource().MaaResourceClearCustomRecognition(this.handle);
 
         boolean equals = MaaBool.TRUE.equals(result);
         if (equals) {
-            customRecognizerMap.clear();
+            customRecognitionMap.clear();
         }
         return equals;
     }

@@ -1,6 +1,7 @@
 package io.github.hanhuoer.maa.core.custom;
 
-import io.github.hanhuoer.maa.define.StringBuffer;
+import io.github.hanhuoer.maa.buffer.ImageBuffer;
+import io.github.hanhuoer.maa.buffer.StringBuffer;
 import io.github.hanhuoer.maa.define.*;
 import io.github.hanhuoer.maa.define.base.MaaInteger;
 import io.github.hanhuoer.maa.util.StringUtils;

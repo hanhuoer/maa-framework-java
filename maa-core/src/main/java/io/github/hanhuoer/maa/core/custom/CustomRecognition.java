@@ -1,7 +1,9 @@
 package io.github.hanhuoer.maa.core.custom;
 
+import io.github.hanhuoer.maa.buffer.ImageBuffer;
+import io.github.hanhuoer.maa.buffer.RectBuffer;
+import io.github.hanhuoer.maa.buffer.StringBuffer;
 import io.github.hanhuoer.maa.callbak.MaaCustomRecognitionCallback;
-import io.github.hanhuoer.maa.define.StringBuffer;
 import io.github.hanhuoer.maa.define.*;
 import io.github.hanhuoer.maa.define.base.MaaBool;
 import io.github.hanhuoer.maa.model.Rect;
@@ -19,9 +21,9 @@ import java.awt.image.BufferedImage;
  */
 @Getter
 @Accessors(chain = true)
-public abstract class CustomRecognizer implements MaaCustomRecognitionCallback {
+public abstract class CustomRecognition implements MaaCustomRecognitionCallback {
 
-    public CustomRecognizer() {
+    public CustomRecognition() {
     }
 
     /**

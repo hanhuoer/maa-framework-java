@@ -1,8 +1,9 @@
 package io.github.hanhuoer.maa.core;
 
+import io.github.hanhuoer.maa.buffer.ImageBuffer;
+import io.github.hanhuoer.maa.buffer.StringBuffer;
 import io.github.hanhuoer.maa.callbak.MaaNotificationCallback;
 import io.github.hanhuoer.maa.core.base.Controller;
-import io.github.hanhuoer.maa.define.StringBuffer;
 import io.github.hanhuoer.maa.define.*;
 import io.github.hanhuoer.maa.define.base.MaaInteger;
 import io.github.hanhuoer.maa.jna.MaaFramework;

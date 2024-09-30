@@ -1,5 +1,6 @@
-package io.github.hanhuoer.maa.define;
+package io.github.hanhuoer.maa.buffer;
 
+import io.github.hanhuoer.maa.define.MaaStringBufferHandle;
 import io.github.hanhuoer.maa.jna.MaaFramework;
 import lombok.Getter;
 
@@ -11,6 +12,7 @@ public class StringBuffer implements AutoCloseable {
 
     private final MaaStringBufferHandle handle;
     private final boolean own;
+    private boolean closed;
 
 
     public StringBuffer() {
@@ -25,6 +27,7 @@ public class StringBuffer implements AutoCloseable {
             this.handle = MaaFramework.buffer().MaaStringBufferCreate();
             own = true;
         }
+        closed = false;
     }
 
     @Override
@@ -32,6 +35,7 @@ public class StringBuffer implements AutoCloseable {
         if (this.handle == null) return;
         if (!this.own) return;
         MaaFramework.buffer().MaaStringBufferDestroy(this.handle);
+        closed = true;
     }
 
     public String getValue() {
@@ -39,14 +43,15 @@ public class StringBuffer implements AutoCloseable {
     }
 
     /**
-     * @param close true if auto close
+     * @param ifClose true if auto close.
      */
-    public String getValue(boolean close) {
+    public String getValue(boolean ifClose) {
+        if (closed) return null;
         if (this.handle == null) throw new RuntimeException("MaaStringBufferHandle is null");
         String value = MaaFramework.buffer().MaaStringBufferGet(this.handle);
 //        Long valueLen = MaaFramework.buffer().MaaStringBufferSize(this.handle).getValue();
 //        return handle.getPointer().getString(valueLen - 1, StandardCharsets.UTF_8.name());
-        if (close) {
+        if (ifClose) {
             close();
         }
         if (value != null && value.equalsIgnoreCase("null")) {
@@ -56,6 +61,7 @@ public class StringBuffer implements AutoCloseable {
     }
 
     public boolean setValue(String value) {
+        if (closed) return false;
         if (this.handle == null) throw new RuntimeException("MaaStringBufferHandle is null");
         return MaaFramework.buffer().MaaStringBufferSet(this.handle, value).getValue();
     }
@@ -66,6 +72,7 @@ public class StringBuffer implements AutoCloseable {
     }
 
     public boolean clear() {
+        if (closed) return false;
         if (this.handle == null) throw new RuntimeException("MaaStringBufferHandle is null");
         return MaaFramework.buffer().MaaStringBufferClear(this.handle).getValue();
     }

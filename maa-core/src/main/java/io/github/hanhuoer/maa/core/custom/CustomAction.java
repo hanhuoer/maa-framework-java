@@ -1,5 +1,6 @@
 package io.github.hanhuoer.maa.core.custom;
 
+import io.github.hanhuoer.maa.buffer.RectBuffer;
 import io.github.hanhuoer.maa.callbak.MaaCustomActionCallback;
 import io.github.hanhuoer.maa.define.*;
 import io.github.hanhuoer.maa.define.base.MaaBool;

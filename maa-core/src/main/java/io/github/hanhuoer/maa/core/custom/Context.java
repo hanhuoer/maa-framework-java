@@ -1,6 +1,9 @@
 package io.github.hanhuoer.maa.core.custom;
 
 import com.alibaba.fastjson2.JSONObject;
+import io.github.hanhuoer.maa.buffer.ImageBuffer;
+import io.github.hanhuoer.maa.buffer.RectBuffer;
+import io.github.hanhuoer.maa.buffer.StringListBuffer;
 import io.github.hanhuoer.maa.core.base.Tasker;
 import io.github.hanhuoer.maa.core.util.TaskFuture;
 import io.github.hanhuoer.maa.define.*;

@@ -1,12 +1,13 @@
 package io.github.hanhuoer.maa.core.base;
 
 import com.sun.jna.Native;
+import io.github.hanhuoer.maa.buffer.ImageBuffer;
+import io.github.hanhuoer.maa.buffer.StringBuffer;
 import io.github.hanhuoer.maa.callbak.MaaNotificationCallback;
 import io.github.hanhuoer.maa.consts.MaaCtrlOptionEnum;
 import io.github.hanhuoer.maa.consts.MaaStatusEnum;
 import io.github.hanhuoer.maa.core.util.Future;
 import io.github.hanhuoer.maa.core.util.TaskFuture;
-import io.github.hanhuoer.maa.define.StringBuffer;
 import io.github.hanhuoer.maa.define.*;
 import io.github.hanhuoer.maa.define.base.MaaBool;
 import io.github.hanhuoer.maa.jna.MaaFramework;
