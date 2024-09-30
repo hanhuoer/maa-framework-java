@@ -22,6 +22,8 @@ graph TD
         E4[macos-x86_64]
         E5[windows-aarch64]
         E6[windows-x86_64]
+        E7[android-aarch64]
+        E8[android-x86_64]
     end
 
     A --> B
@@ -33,6 +35,8 @@ graph TD
     D --> |Calls| E4
     D --> |Calls| E5
     D --> |Calls| E6
+    D -->|Calls| E7
+    D -->|Calls| E8
 ```
 
 ## 👏 项目特点
@@ -43,7 +47,9 @@ graph TD
 
 ## 🎉 快速开始
 
-[示例代码](maa-sample/README.md)
+- [示例代码](maa-sample/README.md)
+- [maa-framework-java-sample](https://github.com/hanhuoer/maa-framework-java-sample) 咸鱼之王脚本
+    - 咸鱼之王脚本示例：钓鱼、罐子、答题、挂机奖励等
 
 ### 1️⃣ 添加依赖
 
@@ -53,7 +59,7 @@ graph TD
 <dependency>
   <groupId>io.github.hanhuoer</groupId>
   <artifactId>maa-framework-java</artifactId>
-  <version>1.0.5</version>
+    <version>2.0.0</version>
 </dependency>
 ```
 
@@ -65,7 +71,7 @@ graph TD
 <dependency>
   <groupId>io.github.hanhuoer</groupId>
   <artifactId>maa-all</artifactId>
-  <version>1.0.5</version>
+    <version>2.0.0</version>
 </dependency>
 ```
 
@@ -82,19 +88,17 @@ public class Main {
         controller.connect();
         Resource resource = new Resource();
         resource.load("./resource");
-        Instance instance = new Instance();
-        boolean bind = instance.bind(controller, resource);
+        Tasker tasker = new Tasker();
+        boolean bind = tasker.bind(controller, resource);
         System.out.println("bind result: " + bind);
-        System.out.println(instance.inited());
+        System.out.println(tasker.inited());
+        tasker.close();
     }
 }
 ```
 
 >
 更多使用示例请参考 [使用示例](maa-sample)
-
-**游戏实战示例** [maa-framework-java-sample](https://github.com/hanhuoer/maa-framework-java-sample)
-
 
 ## 💻 开发指南
 
@@ -122,6 +126,8 @@ git clone https://github.com/hanhuoer/maa-framework-java.git
 - [macos-x86_64 - README.md](maa-macos-x86_64/src/main/resources/README.md)
 - [windows-aarch64 - README.md](maa-windows-aarch64/src/main/resources/README.md)
 - [windows-x86_64 - README.md](maa-windows-x86_64/src/main/resources/README.md)
+- [android-aarch64 - README.md](maa-android-aarch64/src/main/resources/README.md)
+- [android-x86_64 - README.md](maa-android-x86_64/src/main/resources/README.md)
 
 **方式二：通过脚本自动放置文件 【推荐】**
 
@@ -134,6 +140,8 @@ git clone https://github.com/hanhuoer/maa-framework-java.git
      │ MAA-macos-x86_64-version.zip
      │ MAA-win-aarch64-version.zip
      │ MAA-win-x86_64-version.zip
+     │ MAA-android-aarch64-version.zip
+     │ MAA-android-x86_64-version.zip
    ```
 2. 执行脚本 `python scripts/copy_lib.py`
    > 该脚本会清理目标文件夹，并将解压后的本地库复制过去
