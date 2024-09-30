@@ -6,7 +6,7 @@ import io.github.hanhuoer.maa.consts.MaaLoggingLevelEunm;
 import io.github.hanhuoer.maa.core.AdbController;
 import io.github.hanhuoer.maa.core.custom.Context;
 import io.github.hanhuoer.maa.core.custom.CustomAction;
-import io.github.hanhuoer.maa.core.custom.CustomRecognizer;
+import io.github.hanhuoer.maa.core.custom.CustomRecognition;
 import io.github.hanhuoer.maa.core.util.TaskFuture;
 import io.github.hanhuoer.maa.model.AdbInfo;
 import io.github.hanhuoer.maa.model.Rect;
@@ -55,6 +55,8 @@ class TaskerTest {
 
         log.info("adb controller start connecting");
         boolean connect = adbController.connect();
+        Assertions.assertTrue(connect);
+        Assertions.assertTrue(adbController.connected());
 
 //        assert connect;
 
@@ -65,12 +67,12 @@ class TaskerTest {
             log.info("[tasker] callbackArg: {}", callbackArg);
         }, null);
 
-        Tasker.setLogDir("./resources/debug");
-        Tasker.setRecording(true);
-        Tasker.setDebugMessage(true);
-        Tasker.setSaveDraw(true);
-        Tasker.setStdoutLevel(MaaLoggingLevelEunm.ALL);
-//        Tasker.setShowHitDraw(true);
+        Assertions.assertTrue(Tasker.setLogDir("./resources/debug"));
+        Assertions.assertTrue(Tasker.setRecording(true));
+        Assertions.assertTrue(Tasker.setDebugMessage(true));
+        Assertions.assertTrue(Tasker.setSaveDraw(true));
+        Assertions.assertTrue(Tasker.setStdoutLevel(MaaLoggingLevelEunm.ALL));
+//        Assertions.assertTrue(Tasker.setShowHitDraw(true));
 
         resource = new Resource((message, detailsJson, callbackArg) -> {
             log.info("[resource] received callback: ********************************************");
@@ -80,6 +82,7 @@ class TaskerTest {
         }, null);
 
         resource.load("./resources/resource");
+        Assertions.assertTrue(resource.loaded());
     }
 
     @AfterEach
@@ -90,10 +93,6 @@ class TaskerTest {
             resource.close();
         if (adbController != null)
             adbController.close();
-    }
-
-    @Test
-    void close() {
     }
 
     @Test
@@ -193,26 +192,10 @@ class TaskerTest {
     }
 
     @Test
-    void postAction() {
-    }
-
-    @Test
-    void running() {
-    }
-
-    @Test
-    void stop() {
-    }
-
-    @Test
-    void postStop() {
-    }
-
-    @Test
     void registerRecognizer() {
         bind();
 
-        CustomRecognizer customRecognizer = new CustomRecognizer() {
+        CustomRecognition customRecognition = new CustomRecognition() {
             @Override
             public AnalyzeResult analyze(Context context, AnalyzeArg arg) {
                 log.info("[custom recognizer]");
@@ -223,14 +206,14 @@ class TaskerTest {
                 log.info("customRecognitionParam: {}", arg.getCustomRecognitionParam());
                 log.info("image: {}", arg.getImage());
                 log.info("roi: {}", arg.getRoi());
-                return new CustomRecognizer.AnalyzeResult(
+                return new CustomRecognition.AnalyzeResult(
                         new Rect().setX(0).setY(0).setW(600).setH(600),
                         "detail...."
                 );
             }
         };
 
-        boolean result = resource.registerRecognizer("Custom_Rec", customRecognizer);
+        boolean result = resource.registerRecognition("Custom_Rec", customRecognition);
         log.info("register recognizer result: {}", result);
         Assertions.assertTrue(result);
     }
@@ -270,7 +253,7 @@ class TaskerTest {
 
         // register.
         MyCustomRecognizer myCustomRecognizer = new MyCustomRecognizer();
-        boolean b = resource.registerRecognizer("MyRec", myCustomRecognizer);
+        boolean b = resource.registerRecognition("MyRec", myCustomRecognizer);
         log.info("register recognizer: {}", b);
 
         // get the resource task list.
@@ -332,36 +315,6 @@ class TaskerTest {
 
     }
 
-    public static class MyCustomRecognizer extends CustomRecognizer {
-
-        public MyCustomRecognizer() {
-            super();
-        }
-
-        @Override
-        public CustomRecognizer.AnalyzeResult analyze(Context context, AnalyzeArg arg) {
-            log.info("[custom recognizer]");
-            log.info("context: {}", context);
-            log.info("taskDetail: {}", arg.getTaskDetail());
-            log.info("currentTaskName: {}", arg.getCurrentTaskName());
-            log.info("customRecognitionName: {}", arg.getCustomRecognitionName());
-            log.info("customRecognitionParam: {}", arg.getCustomRecognitionParam());
-            log.info("image: {}", arg.getImage());
-            log.info("roi: {}", arg.getRoi());
-
-            // make a new context to override the pipeline, only for itself
-            Context newContext = context.copy();
-            log.info("context: {}", newContext);
-
-            context.overrideNext(arg.getCurrentTaskName(), List.of("TaskA", "TaskB"));
-
-            return new CustomRecognizer.AnalyzeResult(
-                    new Rect().setX(0).setY(0).setW(600).setH(600),
-                    "detail...."
-            );
-        }
-    }
-
     @SneakyThrows
     @Test
     public void test_register() {
@@ -373,7 +326,7 @@ class TaskerTest {
         boolean customActionResult = resource.registerAction("MyAct2", customAction);
         Assertions.assertTrue(customActionResult);
 
-        boolean customRecognizerResult = resource.registerRecognizer("MyRec2", customRecognizer);
+        boolean customRecognizerResult = resource.registerRecognition("MyRec2", customRecognizer);
         Assertions.assertTrue(customRecognizerResult);
 
         Assertions.assertTrue(tasker.inited());
@@ -389,6 +342,36 @@ class TaskerTest {
         boolean customRecognizerUnregister = resource.unregisterRecognizer("MyRec2");
         Assertions.assertTrue(customRecognizerUnregister);
 
+    }
+
+    public static class MyCustomRecognizer extends CustomRecognition {
+
+        public MyCustomRecognizer() {
+            super();
+        }
+
+        @Override
+        public CustomRecognition.AnalyzeResult analyze(Context context, AnalyzeArg arg) {
+            log.info("[custom recognizer]");
+            log.info("context: {}", context);
+            log.info("taskDetail: {}", arg.getTaskDetail());
+            log.info("currentTaskName: {}", arg.getCurrentTaskName());
+            log.info("customRecognitionName: {}", arg.getCustomRecognitionName());
+            log.info("customRecognitionParam: {}", arg.getCustomRecognitionParam());
+            log.info("image: {}", arg.getImage());
+            log.info("roi: {}", arg.getRoi());
+
+            // make a new context to override the pipeline, only for itself
+            Context newContext = context.copy();
+            log.info("context: {}", newContext);
+
+            context.overrideNext(arg.getCurrentTaskName(), List.of("TaskA", "TaskB"));
+
+            return new CustomRecognition.AnalyzeResult(
+                    new Rect().setX(0).setY(0).setW(600).setH(600),
+                    "detail...."
+            );
+        }
     }
 
 

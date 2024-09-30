@@ -6,6 +6,7 @@ import io.github.hanhuoer.maa.callbak.MaaNotificationCallback;
 import io.github.hanhuoer.maa.model.AdbInfo;
 import io.github.hanhuoer.maa.util.CollectionUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -58,7 +59,7 @@ class AdbControllerTest {
 
     @Test
     void testConnection() {
-        List<AdbInfo> adbInfoList = AdbController.find("J:/Program Files/Netease/MuMu Player 12/shell/adb.exe");
+        List<AdbInfo> adbInfoList = AdbController.find();
         if (CollectionUtils.isEmpty(adbInfoList)) {
             return;
         }
@@ -78,13 +79,14 @@ class AdbControllerTest {
 //        adbController.postConnection().waiting();
         adbController.connect();
         log.info("adb connected: {}", adbController.connected());
+        Assertions.assertTrue(adbController.connected());
 
         log.info("...");
     }
 
     @Test
     void testClick() {
-        List<AdbInfo> adbInfoList = AdbController.find("J:/Program Files/Netease/MuMu Player 12/shell/adb.exe");
+        List<AdbInfo> adbInfoList = AdbController.find();
         AdbInfo adbInfo = adbInfoList.get(0);
 
         AdbController adbController = new AdbController(adbInfo, (msg, detailsJson, callbackArg) -> {
@@ -100,11 +102,12 @@ class AdbControllerTest {
 //        boolean connect = adbController.connect();
         adbController.postConnection().waiting();
         log.info("adb connected: {}", adbController.connected());
+        Assertions.assertTrue(adbController.connected());
 
         log.info("adb click result: {}", adbController.click(150, 600));
         log.info("adb click result: {}", adbController.click(250, 600));
-        log.info("adb click result: {}", adbController.click(350, 600));
-        log.info("adb click result: {}", adbController.click(450, 600));
+        Assertions.assertTrue(adbController.click(350, 600));
+        Assertions.assertTrue(adbController.click(450, 600));
 
         log.info("...");
     }
@@ -126,13 +129,15 @@ class AdbControllerTest {
         log.info("adb controller start connecting");
         adbController.postConnection().waiting();
         log.info("adb connected: {}", adbController.connected());
+        Assertions.assertTrue(adbController.connected());
 
         log.info("adb swipe result: {}", adbController.swipe(450, 100, 450, 600, 1 * 1000));
         log.info("continue...");
         log.info("adb swipe result: {}", adbController.swipe(100, 450, 600, 450, 5 * 1000));
 
+        Assertions.assertTrue(adbController.swipe(100, 550, 800, 550, 5 * 1000));
+
         log.info("...");
-        Thread.sleep(10 * 1000);
     }
 
     @Test
@@ -152,8 +157,10 @@ class AdbControllerTest {
         log.info("adb controller start connecting");
         adbController.postConnection().waiting();
         log.info("adb connected: {}", adbController.connected());
+        Assertions.assertTrue(adbController.connected());
 
         BufferedImage screencap = adbController.screencap();
+        Assertions.assertNotNull(screencap);
         log.info("adb screencap result: {}", screencap);
         String base64Img = bufferedImageToBase64(screencap);
         log.info("adb screencap base64 result: {}", base64Img);
@@ -163,7 +170,6 @@ class AdbControllerTest {
         log.info("adb screencap base64 result: {}", base64Img2);
 
         log.info("...");
-        Thread.sleep(10 * 1000);
     }
 
 

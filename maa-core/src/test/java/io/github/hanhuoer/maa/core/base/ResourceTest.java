@@ -1,13 +1,10 @@
 package io.github.hanhuoer.maa.core.base;
 
 import io.github.hanhuoer.maa.Maa;
-import io.github.hanhuoer.maa.define.StringListBuffer;
+import io.github.hanhuoer.maa.buffer.StringListBuffer;
 import io.github.hanhuoer.maa.jna.MaaFramework;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
 import java.util.List;
 
@@ -44,17 +41,11 @@ class ResourceTest {
     }
 
     @Test
-    void close() {
-    }
-
-    @Test
     void load() {
         Boolean load = resource.load("./resources/resource");
         log.info("load result: {}", load);
-    }
-
-    @Test
-    void postPath() {
+        Assertions.assertTrue(load);
+        Assertions.assertTrue(resource.loaded());
     }
 
     @Test
@@ -66,15 +57,6 @@ class ResourceTest {
 
         log.info("loaded: {}", resource.loaded());
     }
-
-    @Test
-    void clear() {
-    }
-
-    @Test
-    void status() {
-    }
-
 
     @Test
     void loadAndGetTest() {

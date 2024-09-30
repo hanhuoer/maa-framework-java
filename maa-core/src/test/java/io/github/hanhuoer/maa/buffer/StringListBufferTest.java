@@ -1,6 +1,8 @@
-package io.github.hanhuoer.maa.define;
+package io.github.hanhuoer.maa.buffer;
 
 import io.github.hanhuoer.maa.Maa;
+import io.github.hanhuoer.maa.define.MaaSize;
+import io.github.hanhuoer.maa.define.MaaStringBufferHandle;
 import io.github.hanhuoer.maa.jna.MaaFramework;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;
@@ -26,47 +28,7 @@ class StringListBufferTest {
     }
 
     @Test
-    void close() {
-    }
-
-    @Test
-    void getValue() {
-    }
-
-    @Test
-    void setValue() {
-    }
-
-    @Test
-    void append() {
-    }
-
-    @Test
-    void empty() {
-    }
-
-    @Test
-    void remove() {
-    }
-
-    @Test
-    void clear() {
-    }
-
-    @Test
-    void getHandle() {
-    }
-
-    @Test
-    void isOwn() {
-    }
-
-    @Test
-    void getStringBuffers() {
-    }
-
-    @Test
-    void test() {
+    void testCase() {
         List<StringBuffer> stringBufferList = new LinkedList<>();
         IntStream.range(0, 10).forEach(i -> {
             StringBuffer stringBuffer = new StringBuffer();
