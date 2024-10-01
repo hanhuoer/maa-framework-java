@@ -48,6 +48,7 @@
         <module>maa-all</module>
         <module>maa-framework-java</module>
         <module>maa-sample</module>
+        <module>maa-spring-boot-starter</module>
         <module>maa-agent</module>
         <module>maa-platform</module>
         <module>maa-linux-aarch64</module>
@@ -99,6 +100,11 @@
             <dependency>
                 <groupId>io.github.hanhuoer</groupId>
                 <artifactId>maa-framework-java</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.hanhuoer</groupId>
+                <artifactId>maa-spring-boot-starter</artifactId>
                 <version>${revision}</version>
             </dependency>
 
@@ -233,7 +239,7 @@
                 <configuration>
                     <publishingServerId>maven_central</publishingServerId>
                     <checksums>required</checksums>
-                    <deploymentName>Maa Framework Java v${project.version}</deploymentName>
+                    <deploymentName>${project.name}</deploymentName>
                 </configuration>
             </plugin>
             <plugin>

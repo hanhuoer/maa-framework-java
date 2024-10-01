@@ -166,6 +166,7 @@ screenshot
 /maa/resources/
 /maa/config/
 /maa/debug/
+/maa-spring-boot-starter/resources/
 /maa-agent/src/main/resources/agent
 /maa-linux-aarch64/src/main/resources/linux_aarch64
 /maa-linux-x86_64/src/main/resources/linux_x86_64

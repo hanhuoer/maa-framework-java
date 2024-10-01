@@ -75,6 +75,17 @@ graph TD
 </dependency>
 ```
 
+如果是 spring boot 项目，则可使用以下依赖 [maa-spring-boot-starter 文档](maa-spring-boot-starter/README.md)
+
+```xml
+
+<dependency>
+    <groupId>io.github.hanhuoer</groupId>
+    <artifactId>maa-spring-boot-starter</artifactId>
+    <version>2.0.0</version>
+</dependency>
+```
+
 ### 2️⃣ 使用示例
 
 ```java
