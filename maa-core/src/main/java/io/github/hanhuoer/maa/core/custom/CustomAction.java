@@ -20,6 +20,7 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 public abstract class CustomAction implements MaaCustomActionCallback {
 
+    private String name;
 
     public CustomAction() {
     }

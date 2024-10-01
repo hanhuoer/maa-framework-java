@@ -23,6 +23,8 @@ import java.awt.image.BufferedImage;
 @Accessors(chain = true)
 public abstract class CustomRecognition implements MaaCustomRecognitionCallback {
 
+    private String name;
+
     public CustomRecognition() {
     }
 

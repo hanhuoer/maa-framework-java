@@ -38,11 +38,11 @@ import java.util.Map;
 public class Tasker implements AutoCloseable {
 
     @Getter
+    private final boolean own;
+    @Getter
     private MaaTaskerHandle handle;
     private Controller controller;
     private Resource resource;
-    @Getter
-    private boolean own;
     private MaaNotificationCallback callback;
     private MaaCallbackTransparentArg callbackArg;
 

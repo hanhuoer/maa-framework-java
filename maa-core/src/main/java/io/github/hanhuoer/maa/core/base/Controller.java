@@ -24,8 +24,8 @@ import java.io.IOException;
 @Getter
 public class Controller implements AutoCloseable {
 
-    protected MaaControllerHandle handle;
     private final Boolean own;
+    protected MaaControllerHandle handle;
     protected MaaCallbackTransparentArg callbackArgs;
     protected MaaNotificationCallback callback;
 
@@ -113,6 +113,46 @@ public class Controller implements AutoCloseable {
 
     public boolean swipe(int x1, int y1, int x2, int y2, int duration) {
         return postSwipe(x1, y1, x2, y2, duration).waiting().succeeded();
+    }
+
+    public boolean pressKey(int keyCode) {
+        return postPressKey(keyCode).waiting().succeeded();
+    }
+
+    public boolean inputText(String text) {
+        return postInputText(text).waiting().succeeded();
+    }
+
+    public boolean startApp(String intent) {
+        return postStartApp(intent).waiting().succeeded();
+    }
+
+    public boolean stopApp(String intent) {
+        return postStopApp(intent).waiting().succeeded();
+    }
+
+    public boolean touchDown(int x, int y) {
+        return postTouchDown(x, y).waiting().succeeded();
+    }
+
+    public boolean touchDown(int x, int y, int contact, int pressure) {
+        return postTouchDown(x, y, contact, pressure).waiting().succeeded();
+    }
+
+    public boolean touchMove(int x, int y) {
+        return postTouchMove(x, y).waiting().succeeded();
+    }
+
+    public boolean touchMove(int x, int y, int contact, int pressure) {
+        return postTouchMove(x, y, contact, pressure).waiting().succeeded();
+    }
+
+    public boolean touchUp() {
+        return postTouchUp().waiting().succeeded();
+    }
+
+    public boolean touchUp(int contact) {
+        return postTouchUp(contact).waiting().succeeded();
     }
 
     public Future postConnection() {

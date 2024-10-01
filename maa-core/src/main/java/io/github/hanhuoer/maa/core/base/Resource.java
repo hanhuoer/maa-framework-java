@@ -26,13 +26,13 @@ import java.util.function.Function;
 public class Resource implements AutoCloseable {
 
     @Getter
+    private final boolean own;
+    @Getter
     private MaaResourceHandle handle;
     @Getter
     private final MaaNotificationCallback callback;
     @Getter
     private final MaaCallbackTransparentArg callbackArg;
-    @Getter
-    private final boolean own;
     private final Map<String, CustomRecognition> customRecognitionMap;
     private final Map<String, CustomAction> customActionHashMap;
 
@@ -112,8 +112,23 @@ public class Resource implements AutoCloseable {
     }
 
     @Deprecated
+    public boolean registerRecognizer(CustomRecognition recognizer) {
+        if (recognizer == null) {
+            throw new IllegalArgumentException("Recognition cannot be null");
+        }
+        return registerRecognizer(recognizer.getName(), recognizer);
+    }
+
+    @Deprecated
     public boolean registerRecognizer(String name, CustomRecognition recognizer) {
         return registerRecognition(name, recognizer);
+    }
+
+    public boolean registerRecognition(CustomRecognition recognizer) {
+        if (recognizer == null) {
+            throw new IllegalArgumentException("Recognition cannot be null");
+        }
+        return registerRecognition(recognizer.getName(), recognizer);
     }
 
     /**
@@ -124,10 +139,10 @@ public class Resource implements AutoCloseable {
      */
     public boolean registerRecognition(String name, CustomRecognition recognizer) {
         if (name == null || name.isEmpty()) {
-            throw new IllegalArgumentException("Recognizer name cannot be null or empty");
+            throw new IllegalArgumentException("Recognition name cannot be null or empty");
         }
         if (recognizer == null) {
-            throw new IllegalArgumentException("Recognizer cannot be null");
+            throw new IllegalArgumentException("Recognition cannot be null");
         }
 
         MaaBool maaBool = MaaFramework.resource().MaaResourceRegisterCustomRecognition(
@@ -142,6 +157,13 @@ public class Resource implements AutoCloseable {
             customRecognitionMap.put(name, recognizer);
         }
         return equals;
+    }
+
+    public boolean registerAction(CustomAction action) {
+        if (action == null) {
+            throw new IllegalArgumentException("Action cannot be null");
+        }
+        return registerAction(action.getName(), action);
     }
 
     public boolean registerAction(String name, CustomAction action) {
@@ -166,6 +188,20 @@ public class Resource implements AutoCloseable {
         return equals;
     }
 
+    public boolean unregister(CustomRecognition recognition) {
+        if (recognition == null) {
+            throw new IllegalArgumentException("Recognition cannot be null");
+        }
+        return unregisterAction(recognition.getName());
+    }
+
+    public boolean unregister(CustomAction action) {
+        if (action == null) {
+            throw new IllegalArgumentException("Action cannot be null");
+        }
+        return unregisterAction(action.getName());
+    }
+
     public boolean unregisterRecognition(String name) {
         return unregisterRecognizer(name);
     }
@@ -173,7 +209,7 @@ public class Resource implements AutoCloseable {
     @Deprecated
     public boolean unregisterRecognizer(String name) {
         if (name == null || name.isEmpty()) {
-            throw new IllegalArgumentException("Recognizer name cannot be null or empty");
+            throw new IllegalArgumentException("Recognition name cannot be null or empty");
         }
 
         MaaBool result = MaaFramework.resource().MaaResourceUnregisterCustomRecognition(
@@ -231,11 +267,19 @@ public class Resource implements AutoCloseable {
     }
 
     private Integer status(long maaId) {
-        return MaaFramework.resource().MaaResourceStatus(this.handle, MaaResId.valueOf(maaId)).getValue();
+        return status(MaaResId.valueOf(maaId));
+    }
+
+    private Integer status(MaaResId maaId) {
+        return MaaFramework.resource().MaaResourceStatus(this.handle, maaId).getValue();
     }
 
     private Integer waiting(long maaId) {
-        return MaaFramework.resource().MaaResourceWait(handle, MaaResId.valueOf(maaId)).getValue();
+        return waiting(MaaResId.valueOf(maaId));
+    }
+
+    private Integer waiting(MaaResId maaId) {
+        return MaaFramework.resource().MaaResourceWait(handle, maaId).getValue();
     }
 
     public String hash() {
