@@ -47,8 +47,8 @@
         <module>maa-common</module>
         <module>maa-all</module>
         <module>maa-framework-java</module>
-        <module>maa-sample</module>
         <module>maa-spring-boot-starter</module>
+        <module>maa-sample</module>
         <module>maa-agent</module>
         <module>maa-platform</module>
         <module>maa-linux-aarch64</module>
@@ -69,7 +69,7 @@
 
         <!-- Maa Framework Java Version: current project -->
         <!-- https://github.com/hanhuoer/maa-framework-java -->
-        <revision>2.0.0</revision>
+        <revision>2.0.1</revision>
 
         <!-- Maa Framework Version: native lib -->
         <!-- https://github.com/MaaXYZ/MaaFramework -->
