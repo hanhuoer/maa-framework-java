@@ -8,7 +8,8 @@ import lombok.Getter;
  */
 @Getter
 public enum MaaResOptionEnum {
-    MaaResOption_Invalid(0),
+    INVALID(0),
+    INFERENCE_DEVICE(1),
     ;
 
     private final int value;

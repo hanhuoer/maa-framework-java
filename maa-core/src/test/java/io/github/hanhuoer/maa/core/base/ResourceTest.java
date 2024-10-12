@@ -78,4 +78,22 @@ class ResourceTest {
         }
     }
 
+    @Test
+    void setGpu() {
+        boolean b = resource.setGpu(0);
+        Assertions.assertTrue(b, "Failed to set gpu.");
+    }
+
+    @Test
+    void setCpu() {
+        boolean b = resource.setCpu();
+        Assertions.assertTrue(b, "Failed to set cpu.");
+    }
+
+    @Test
+    void setAutoDevice() {
+        boolean b = resource.setAutoDevice();
+        Assertions.assertTrue(b, "Failed to set auto device.");
+    }
+
 }

@@ -51,4 +51,20 @@ public class MaaOptionValue extends PointerType {
         this.size = stringValue.length();
     }
 
+    public static MaaOptionValue valueOf(int intValue) {
+        return new MaaOptionValue(intValue);
+    }
+
+    public static MaaOptionValue valueOf(boolean boolValue) {
+        return new MaaOptionValue(boolValue);
+    }
+
+    public static MaaOptionValue valueOf(byte[] byteArray) {
+        return new MaaOptionValue(byteArray);
+    }
+
+    public static MaaOptionValue valueOf(String stringValue) {
+        return new MaaOptionValue(stringValue);
+    }
+
 }

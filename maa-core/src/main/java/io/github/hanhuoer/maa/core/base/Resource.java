@@ -2,14 +2,12 @@ package io.github.hanhuoer.maa.core.base;
 
 import io.github.hanhuoer.maa.buffer.StringBuffer;
 import io.github.hanhuoer.maa.callbak.MaaNotificationCallback;
+import io.github.hanhuoer.maa.consts.MaaInferenceDeviceEnum;
 import io.github.hanhuoer.maa.consts.MaaStatusEnum;
 import io.github.hanhuoer.maa.core.custom.CustomAction;
 import io.github.hanhuoer.maa.core.custom.CustomRecognition;
 import io.github.hanhuoer.maa.core.util.Future;
-import io.github.hanhuoer.maa.define.MaaCallbackTransparentArg;
-import io.github.hanhuoer.maa.define.MaaId;
-import io.github.hanhuoer.maa.define.MaaResId;
-import io.github.hanhuoer.maa.define.MaaResourceHandle;
+import io.github.hanhuoer.maa.define.*;
 import io.github.hanhuoer.maa.define.base.MaaBool;
 import io.github.hanhuoer.maa.jna.MaaFramework;
 import lombok.Getter;
@@ -266,6 +264,30 @@ public class Resource implements AutoCloseable {
         return equals;
     }
 
+    public String hash() {
+        try (StringBuffer buffer = new StringBuffer()) {
+            MaaBool bool = MaaFramework.resource().MaaResourceGetHash(handle, buffer.getHandle());
+            if (!MaaBool.TRUE.equals(bool)) {
+                throw new RuntimeException("Failed to get hash.");
+            }
+            return buffer.getValue();
+        }
+    }
+
+    public boolean setGpu(int gpuId) {
+        if (gpuId < 0) return false;
+
+        return this.setInterfaceDevice(gpuId);
+    }
+
+    public boolean setCpu() {
+        return this.setInterfaceDevice(MaaInferenceDeviceEnum.CPU);
+    }
+
+    public boolean setAutoDevice() {
+        return this.setInterfaceDevice(MaaInferenceDeviceEnum.AUTO);
+    }
+
     private Integer status(long maaId) {
         return status(MaaResId.valueOf(maaId));
     }
@@ -282,14 +304,16 @@ public class Resource implements AutoCloseable {
         return MaaFramework.resource().MaaResourceWait(handle, maaId).getValue();
     }
 
-    public String hash() {
-        try (StringBuffer buffer = new StringBuffer()) {
-            MaaBool bool = MaaFramework.resource().MaaResourceGetHash(handle, buffer.getHandle());
-            if (!MaaBool.TRUE.equals(bool)) {
-                throw new RuntimeException("Failed to get hash.");
-            }
-            return buffer.getValue();
-        }
+    private Boolean setInterfaceDevice(MaaInferenceDeviceEnum interfaceDeviceEnum) {
+        if (interfaceDeviceEnum == null) return false;
+        return this.setInterfaceDevice(interfaceDeviceEnum.getValue());
+    }
+
+    private Boolean setInterfaceDevice(int deviceId) {
+        MaaOptionValue value = MaaOptionValue.valueOf(deviceId);
+        return MaaBool.TRUE.equals(
+                MaaFramework.resource().MaaResourceSetOption(handle, new MaaResOption(), value, value.getMaaOptionValueSize())
+        );
     }
 
 }
