@@ -294,6 +294,56 @@ class TaskerTest {
         log.info("action task result: {}", taskDetail);
     }
 
+    /**
+     * <pre>
+     *   "Task6": {
+     *     "recognition": "TemplateMatch",
+     *     "template": "sk.png",
+     *     "action": "Click"
+     *   }
+     * </pre>
+     */
+    @Test
+    void templateMatchGpuTest() {
+        bind();
+
+        resource.setGpu(1);
+
+        TaskFuture<TaskDetail> task = tasker.postPipeline("Task6");
+        task.waiting();
+        TaskDetail taskDetail = task.get();
+        log.info("task detail: {}", taskDetail);
+
+//        while (true) {
+//            tasker.pipeline("Task6");
+//        }
+    }
+
+
+    /**
+     * <pre>
+     *   "Task4": {
+     *     "recognition": "OCR",
+     *     "expected": "Sketchbook",
+     *     "action": "Click"
+     *   }
+     * </pre>
+     */
+    @Test
+    void OcrGpuTest() {
+        bind();
+
+        resource.setGpu(1);
+        TaskFuture<TaskDetail> task = tasker.postPipeline("Task4");
+        task.waiting();
+        TaskDetail taskDetail = task.get();
+        log.info("task detail: {}", taskDetail);
+
+//        while (true) {
+//            tasker.pipeline("Task4");
+//        }
+    }
+
 
     public static class MyCustomAction extends CustomAction {
         @Override

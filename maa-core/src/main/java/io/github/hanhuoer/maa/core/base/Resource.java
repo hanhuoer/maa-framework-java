@@ -3,6 +3,7 @@ package io.github.hanhuoer.maa.core.base;
 import io.github.hanhuoer.maa.buffer.StringBuffer;
 import io.github.hanhuoer.maa.callbak.MaaNotificationCallback;
 import io.github.hanhuoer.maa.consts.MaaInferenceDeviceEnum;
+import io.github.hanhuoer.maa.consts.MaaResOptionEnum;
 import io.github.hanhuoer.maa.consts.MaaStatusEnum;
 import io.github.hanhuoer.maa.core.custom.CustomAction;
 import io.github.hanhuoer.maa.core.custom.CustomRecognition;
@@ -312,7 +313,8 @@ public class Resource implements AutoCloseable {
     private Boolean setInterfaceDevice(int deviceId) {
         MaaOptionValue value = MaaOptionValue.valueOf(deviceId);
         return MaaBool.TRUE.equals(
-                MaaFramework.resource().MaaResourceSetOption(handle, new MaaResOption(), value, value.getMaaOptionValueSize())
+                MaaFramework.resource().MaaResourceSetOption(handle, MaaResOptionEnum.INFERENCE_DEVICE.value(),
+                        value, value.getMaaOptionValueSize())
         );
     }
 
