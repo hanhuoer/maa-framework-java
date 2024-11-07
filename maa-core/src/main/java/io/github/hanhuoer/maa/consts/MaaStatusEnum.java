@@ -3,8 +3,6 @@ package io.github.hanhuoer.maa.consts;
 import io.github.hanhuoer.maa.define.MaaStatus;
 import lombok.Getter;
 
-import java.util.function.Function;
-
 /**
  * @author H
  */
@@ -24,17 +22,17 @@ public enum MaaStatusEnum {
     }
 
     public static MaaStatusEnum of(Integer status) {
-        for (MaaStatusEnum item : values()) {
-            if (Integer.valueOf(item.value).equals(status)) return item;
-        }
-        return INVALID;
+        return of(status.longValue());
     }
 
     public static MaaStatusEnum of(MaaStatus status) {
         return of(status.getValue());
     }
 
-    public static Function<Long, MaaStatusEnum> of(Object status) {
-        return null;
+    public static MaaStatusEnum of(Long status) {
+        for (MaaStatusEnum item : values()) {
+            if (Long.valueOf(item.value).equals(status)) return item;
+        }
+        return INVALID;
     }
 }

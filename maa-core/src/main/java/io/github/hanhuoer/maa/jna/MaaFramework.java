@@ -448,12 +448,14 @@ public class MaaFramework {
         /**
          * @param node_id_list      out, array
          * @param node_id_list_size in, out
+         * @param status            status
          */
         MaaBool MaaTaskerGetTaskDetail(MaaTaskerHandle tasker,
                                        MaaTaskId task_id,
                                        MaaStringBufferHandle entry,
                                        NativeLongByReference[] node_id_list,
-                                       MaaSize.Reference node_id_list_size);
+                                       MaaSize.Reference node_id_list_size,
+                                       MaaStatus.Reference status);
 
         /**
          * @param[out] latest_id

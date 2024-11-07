@@ -1,6 +1,7 @@
 package io.github.hanhuoer.maa.core.util;
 
 import io.github.hanhuoer.maa.consts.MaaStatusEnum;
+import io.github.hanhuoer.maa.define.MaaStatus;
 
 /**
  * @author H
@@ -10,6 +11,22 @@ public class Status {
 
     public Status(MaaStatusEnum status) {
         this.status = status;
+    }
+
+    public Status(MaaStatus status) {
+        this.status = MaaStatusEnum.of(status);
+    }
+
+    public Status(MaaStatus.Reference status) {
+        this.status = MaaStatusEnum.of(status.getValue().longValue());
+    }
+
+    public Status(Integer status) {
+        this.status = MaaStatusEnum.of(status);
+    }
+
+    public Status(Long status) {
+        this.status = MaaStatusEnum.of(status);
     }
 
     public boolean done() {

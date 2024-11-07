@@ -251,6 +251,15 @@ public class Controller implements AutoCloseable {
         ));
     }
 
+    public boolean setScreenshotUseRawSize(boolean enable) {
+        return MaaBool.TRUE.equals(MaaFramework.controller().MaaControllerSetOption(
+                handle,
+                new MaaCtrlOption(MaaCtrlOptionEnum.SCREENSHOT_USE_RAW_SIZE.getValue()),
+                new MaaOptionValue(enable),
+                new MaaOptionValueSize(Native.BOOL_SIZE)
+        ));
+    }
+
     public String uuid() {
         StringBuffer stringBuffer = new StringBuffer();
         MaaBool maaBool = MaaFramework.controller().MaaControllerGetUUID(this.handle, stringBuffer.getHandle());

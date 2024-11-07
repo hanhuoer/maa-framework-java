@@ -13,6 +13,7 @@ import io.github.hanhuoer.maa.consts.MaaLoggingLevelEunm;
 import io.github.hanhuoer.maa.consts.MaaRecognitionAlgorithmEnum;
 import io.github.hanhuoer.maa.consts.MaaStatusEnum;
 import io.github.hanhuoer.maa.core.util.Future;
+import io.github.hanhuoer.maa.core.util.Status;
 import io.github.hanhuoer.maa.core.util.TaskFuture;
 import io.github.hanhuoer.maa.define.*;
 import io.github.hanhuoer.maa.define.base.MaaBool;
@@ -467,8 +468,9 @@ public class Tasker implements AutoCloseable {
         MaaSize.Reference size = new MaaSize.Reference();
         StringBuffer entry = new StringBuffer();
 
+        MaaStatus.Reference statusReference = new MaaStatus.Reference();
         MaaBool maaBool = MaaFramework.tasker().MaaTaskerGetTaskDetail(
-                this.handle, taskId, entry.getHandle(), null, size
+                this.handle, taskId, entry.getHandle(), null, size, statusReference
         );
         if (!MaaBool.TRUE.equals(maaBool))
             return null;
@@ -476,12 +478,14 @@ public class Tasker implements AutoCloseable {
             return null;
 
         NativeLongByReference[] maaNodeIds = new NativeLongByReference[size.getValue().intValue()];
+        MaaLong.Reference status = new MaaStatus.Reference();
         MaaBool ret = MaaFramework.tasker().MaaTaskerGetTaskDetail(
                 this.handle,
                 taskId,
                 entry.getHandle(),
                 maaNodeIds,
-                size
+                size,
+                status
         );
         if (!MaaBool.TRUE.equals(ret))
             return null;
@@ -500,6 +504,7 @@ public class Tasker implements AutoCloseable {
                 .setTaskId(taskId.getValue())
                 .setEntry(entryValue)
                 .setNodeDetails(nodeList)
+                .setStatus(new Status(status))
                 ;
     }
 
