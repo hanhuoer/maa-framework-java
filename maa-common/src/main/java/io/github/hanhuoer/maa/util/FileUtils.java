@@ -50,4 +50,8 @@ public class FileUtils {
         System.out.println(file.getAbsoluteFile());
     }
 
+    public static boolean exists(String path) {
+        File file = new File(path);
+        return file.exists();
+    }
 }

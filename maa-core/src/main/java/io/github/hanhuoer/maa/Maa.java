@@ -1,11 +1,14 @@
 package io.github.hanhuoer.maa;
 
+import com.sun.jna.Platform;
+import io.github.hanhuoer.maa.component.FileVersion;
 import io.github.hanhuoer.maa.core.base.Tasker;
 import io.github.hanhuoer.maa.exception.LoadException;
 import io.github.hanhuoer.maa.jna.MaaFramework;
 import io.github.hanhuoer.maa.jna.MaaToolkit;
 import io.github.hanhuoer.maa.loader.AgentLibraryLoader;
 import io.github.hanhuoer.maa.loader.MaaLibraryLoader;
+import io.github.hanhuoer.maa.util.FileUtils;
 import io.github.hanhuoer.maa.util.StringUtils;
 import lombok.Getter;
 import lombok.SneakyThrows;
@@ -56,8 +59,9 @@ public class Maa {
                 if (INSTANCE == null) {
                     INSTANCE = new Maa();
 
+                    INSTANCE.beforeInit(options);
                     INSTANCE.init(options);
-                    shutdownHandle(options);
+                    INSTANCE.afterInit(options);
                 }
             }
         }
@@ -232,6 +236,49 @@ public class Maa {
     }
 
     /**
+     * Check whether the file version of msvcp140 meets the requirements.
+     */
+    private static void checkWindowsMsvcpVersion() {
+        if (!Platform.isWindows()) {
+            return;
+        }
+        String javaHome = System.getProperty("java.home");
+        String javaDllPath = FileUtils.join(javaHome, "bin", "msvcp140.dll").getAbsolutePath();
+        if (FileUtils.exists(javaDllPath)) {
+            String version = FileVersion.getVersion(javaDllPath);
+            if (version == null) {
+                log.warn("Please check the msvcp140.dll file: {}", javaDllPath);
+                return;
+            }
+
+            if (StringUtils.compareVersion(version, "14.40.0.0") < 0) {
+                throw new RuntimeException("Please check the msvcp140.dll file version is greater than 14.40, refer to https://github.com/MaaXYZ/MaaFramework/issues/361 for details");
+            }
+
+        } else {
+            String sysDllPath = null;
+            if (Platform.is64Bit()) {
+                sysDllPath = "C:\\Windows\\System32\\msvcp140.dll";
+            } else {
+                sysDllPath = "C:\\Windows\\SysWOW64\\msvcp140.dll";
+            }
+            if (!FileUtils.exists(sysDllPath)) {
+                throw new RuntimeException("Please check the msvcp140.dll file if exists.");
+            }
+
+            String version = FileVersion.getVersion(sysDllPath);
+            if (version == null) {
+                log.warn("Please check the msvcp140.dll file: {}", sysDllPath);
+                return;
+            }
+
+            if (StringUtils.compareVersion(version, "14.40.0.0") < 0) {
+                throw new RuntimeException("Please check the msvcp140.dll file version is greater than 14.40, refer to https://github.com/MaaXYZ/MaaFramework/issues/361 for details");
+            }
+        }
+    }
+
+    /**
      * 初始化操作
      *
      * @param options maa options
@@ -246,6 +293,10 @@ public class Maa {
         loadGlobalSetting();
 
         log.info("Maa {} created successfully.", version());
+    }
+
+    private void beforeInit(MaaOptions options) {
+        checkWindowsMsvcpVersion();
     }
 
     /**
@@ -280,5 +331,9 @@ public class Maa {
 
     public String version() {
         return maaFramework.getUtility().MaaVersion();
+    }
+
+    private void afterInit(MaaOptions options) {
+        shutdownHandle(options);
     }
 }
