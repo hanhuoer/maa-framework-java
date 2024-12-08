@@ -49,8 +49,7 @@ graph TD
 
 Windows 平台加载不到 dll 相关问题：
 
--
-首先检查是否安装 [Microsoft Visual C++ Redistributable](https://learn.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist?view=msvc-170#latest-microsoft-visual-c-redistributable-version)
+- 首先检查是否安装 [Microsoft Visual C++ Redistributable](https://learn.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist?view=msvc-170#latest-microsoft-visual-c-redistributable-version)
 - [[win32-x86-64] Unable to load library MaaFramework.dll](https://github.com/hanhuoer/maa-framework-java/issues/1)
 - [[MAA-win-x86_64] 动态链接库(DLL)初始化例程失败](https://github.com/MaaXYZ/MaaFramework/issues/361)
 - [找不到动态链接库问题](https://github.com/MaaXYZ/MaaFramework/issues/233)
