@@ -15,4 +15,11 @@ public enum MaaInferenceDeviceEnum {
 
     private final int value;
 
+    public static MaaInferenceDeviceEnum of(Integer status) {
+        for (MaaInferenceDeviceEnum item : values()) {
+            if (Integer.valueOf(item.value).equals(status)) return item;
+        }
+        return null;
+    }
+
 }

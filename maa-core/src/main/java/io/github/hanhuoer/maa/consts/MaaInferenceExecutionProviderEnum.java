@@ -7,15 +7,17 @@ import lombok.Getter;
  * @author H
  */
 @Getter
-public enum MaaResOptionEnum {
-    INVALID(0),
-    INFERENCE_DEVICE(1),
-    INFERENCE_EXECUTION_PROVIDER(2),
+public enum MaaInferenceExecutionProviderEnum {
+    AUTO(0),
+    CPU(1),
+    DIRECT_ML(2),
+    CORE_ML(3),
+    CUDA(4),
     ;
 
     private final int value;
 
-    MaaResOptionEnum(int value) {
+    MaaInferenceExecutionProviderEnum(int value) {
         this.value = value;
     }
 

@@ -224,13 +224,8 @@ public class Tasker implements AutoCloseable {
     }
 
     public Future postStop() {
-        MaaFramework.tasker().MaaTaskerPostStop(this.handle);
-        return new Future(MaaId.valueOf(0),
-                id -> this.stopStatus(id.getValue()),
-                id -> {
-                    this.stopWait(id.getValue());
-                    return null;
-                });
+        MaaTaskId maaTaskId = MaaFramework.tasker().MaaTaskerPostStop(this.handle);
+        return genTaskJob(maaTaskId);
     }
 
     public NodeDetail getLatestNode(String name) {
@@ -335,26 +330,6 @@ public class Tasker implements AutoCloseable {
 
     public MaaStatus taskWait(long id) {
         return MaaFramework.tasker().MaaTaskerWait(this.handle, MaaTaskId.valueOf(id));
-    }
-
-    private MaaStatusEnum stopStatus(long id) {
-        if (this.running()) {
-            return MaaStatusEnum.SUCCEEDED;
-        } else {
-            return MaaStatusEnum.RUNNING;
-        }
-    }
-
-    private MaaStatusEnum stopWait(long id) {
-        while (this.running()) {
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-        }
-
-        return MaaStatusEnum.SUCCEEDED;
     }
 
     public RecognitionDetail getRecognitionDetail(long recoId) {

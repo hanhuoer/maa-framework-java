@@ -407,7 +407,7 @@ public class MaaFramework {
 
         Boolean MaaTaskerRunning(MaaTaskerHandle tasker);
 
-        MaaBool MaaTaskerPostStop(MaaTaskerHandle tasker);
+        MaaTaskId MaaTaskerPostStop(MaaTaskerHandle tasker);
 
         MaaResourceHandle MaaTaskerGetResource(MaaTaskerHandle tasker);
 

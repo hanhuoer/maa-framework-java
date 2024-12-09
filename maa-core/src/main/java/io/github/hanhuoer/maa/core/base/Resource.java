@@ -3,6 +3,7 @@ package io.github.hanhuoer.maa.core.base;
 import io.github.hanhuoer.maa.buffer.StringBuffer;
 import io.github.hanhuoer.maa.callbak.MaaNotificationCallback;
 import io.github.hanhuoer.maa.consts.MaaInferenceDeviceEnum;
+import io.github.hanhuoer.maa.consts.MaaInferenceExecutionProviderEnum;
 import io.github.hanhuoer.maa.consts.MaaResOptionEnum;
 import io.github.hanhuoer.maa.consts.MaaStatusEnum;
 import io.github.hanhuoer.maa.core.custom.CustomAction;
@@ -275,18 +276,69 @@ public class Resource implements AutoCloseable {
         }
     }
 
+    public boolean useCpu() {
+        return setInterfaceDevice(
+                MaaInferenceExecutionProviderEnum.CPU,
+                MaaInferenceDeviceEnum.CPU
+        );
+    }
+
+    public boolean useDirectMl() {
+        return useDirectMl(null);
+    }
+
+    public boolean useDirectMl(Integer deviceId) {
+        if (deviceId == null) {
+            deviceId = MaaInferenceDeviceEnum.AUTO.getValue();
+        }
+        return setInterfaceDevice(
+                MaaInferenceExecutionProviderEnum.DIRECT_ML,
+                deviceId
+        );
+    }
+
+    public boolean useCoreMl() {
+        return useCoreMl(null);
+    }
+
+    public boolean useCoreMl(Integer coreMlFlag) {
+        if (coreMlFlag == null) {
+            coreMlFlag = MaaInferenceDeviceEnum.AUTO.getValue();
+        }
+        return setInterfaceDevice(
+                MaaInferenceExecutionProviderEnum.CORE_ML,
+                coreMlFlag
+        );
+    }
+
+    public boolean useAutoEp() {
+        return setInterfaceDevice(
+                MaaInferenceExecutionProviderEnum.AUTO,
+                MaaInferenceDeviceEnum.AUTO
+        );
+    }
+
+    /**
+     * @deprecated please use `useDirectMl` instead.
+     */
     public boolean setGpu(int gpuId) {
         if (gpuId < 0) return false;
 
-        return this.setInterfaceDevice(gpuId);
+        return this.useDirectMl(gpuId);
     }
 
+    /**
+     * @deprecated please use `useCpu` instead.
+     */
     public boolean setCpu() {
-        return this.setInterfaceDevice(MaaInferenceDeviceEnum.CPU);
+        return this.useCpu();
     }
 
+    /**
+     * @deprecated please use `useAutoEp` instead.
+     */
     public boolean setAutoDevice() {
-        return this.setInterfaceDevice(MaaInferenceDeviceEnum.AUTO);
+        return this.useAutoEp();
     }
 
     private Integer status(long maaId) {
@@ -305,16 +357,36 @@ public class Resource implements AutoCloseable {
         return MaaFramework.resource().MaaResourceWait(handle, maaId).getValue();
     }
 
-    private Boolean setInterfaceDevice(MaaInferenceDeviceEnum interfaceDeviceEnum) {
+    private Boolean setInterfaceDevice(MaaInferenceExecutionProviderEnum executionProviderEnum,
+                                       MaaInferenceDeviceEnum interfaceDeviceEnum) {
+        if (executionProviderEnum == null) return false;
         if (interfaceDeviceEnum == null) return false;
-        return this.setInterfaceDevice(interfaceDeviceEnum.getValue());
+        return this.setInterfaceDevice(executionProviderEnum.getValue(), interfaceDeviceEnum.getValue());
     }
 
-    private Boolean setInterfaceDevice(int deviceId) {
-        MaaOptionValue value = MaaOptionValue.valueOf(deviceId);
+    private Boolean setInterfaceDevice(Integer executionProviderEnum,
+                                       MaaInferenceDeviceEnum interfaceDeviceEnum) {
+        if (executionProviderEnum == null) return false;
+        if (interfaceDeviceEnum == null) return false;
+        return this.setInterfaceDevice(executionProviderEnum, interfaceDeviceEnum.getValue());
+    }
+
+    private Boolean setInterfaceDevice(MaaInferenceExecutionProviderEnum executionProviderEnum,
+                                       Integer interfaceDeviceEnum) {
+        if (executionProviderEnum == null) return false;
+        if (interfaceDeviceEnum == null) return false;
+        return this.setInterfaceDevice(executionProviderEnum.getValue(), interfaceDeviceEnum);
+    }
+
+    private Boolean setInterfaceDevice(int executionProvider, int deviceId) {
+        MaaOptionValue ep = MaaOptionValue.valueOf(executionProvider);
+        MaaOptionValue device = MaaOptionValue.valueOf(deviceId);
         return MaaBool.TRUE.equals(
                 MaaFramework.resource().MaaResourceSetOption(handle, MaaResOptionEnum.INFERENCE_DEVICE.value(),
-                        value, value.getMaaOptionValueSize())
+                        device, device.getMaaOptionValueSize())
+        ) && MaaBool.TRUE.equals(
+                MaaFramework.resource().MaaResourceSetOption(handle, MaaResOptionEnum.INFERENCE_DEVICE.value(),
+                        ep, ep.getMaaOptionValueSize())
         );
     }
 

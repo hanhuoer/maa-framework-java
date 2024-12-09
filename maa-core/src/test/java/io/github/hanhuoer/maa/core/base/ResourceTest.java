@@ -96,4 +96,29 @@ class ResourceTest {
         Assertions.assertTrue(b, "Failed to set auto device.");
     }
 
+    @Test
+    void useCpu() {
+        boolean b = resource.useCpu();
+        Assertions.assertTrue(b, "Failed useCpu.");
+    }
+
+    @Test
+    void useDirectMl() {
+        boolean b = resource.useDirectMl();
+        Assertions.assertTrue(b, "Failed useDirectMl.");
+    }
+
+    @Test
+    void useCoreMl() {
+        boolean b = resource.useCoreMl();
+        Assertions.assertTrue(b, "Failed useCoreMl.");
+    }
+
+    @Test
+    void useAutoEp() {
+        boolean b = resource.useAutoEp();
+        Assertions.assertTrue(b, "Failed useAutoEp.");
+    }
+
+
 }
