@@ -68,7 +68,7 @@ Windows 平台加载不到 dll 相关问题：
 <dependency>
   <groupId>io.github.hanhuoer</groupId>
   <artifactId>maa-framework-java</artifactId>
-    <version>2.0.7</version>
+    <version>2.0.8</version>
 </dependency>
 ```
 
@@ -80,7 +80,7 @@ Windows 平台加载不到 dll 相关问题：
 <dependency>
   <groupId>io.github.hanhuoer</groupId>
   <artifactId>maa-all</artifactId>
-    <version>2.0.7</version>
+    <version>2.0.8</version>
 </dependency>
 ```
 
@@ -91,7 +91,7 @@ Windows 平台加载不到 dll 相关问题：
 <dependency>
     <groupId>io.github.hanhuoer</groupId>
     <artifactId>maa-spring-boot-starter</artifactId>
-    <version>2.0.7</version>
+    <version>2.0.8</version>
 </dependency>
 ```
 
