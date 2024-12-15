@@ -2,15 +2,13 @@ package io.github.hanhuoer.maa.component;
 
 import com.sun.jna.Memory;
 import com.sun.jna.Pointer;
-import com.sun.jna.Structure;
 import com.sun.jna.platform.win32.VerRsrc.VS_FIXEDFILEINFO;
 import com.sun.jna.platform.win32.Version;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
+import lombok.extern.slf4j.Slf4j;
 
-import java.util.ArrayList;
-import java.util.List;
-
+@Slf4j
 public class FileVersion {
 
     public static String getVersion(String filePath) {
@@ -47,49 +45,9 @@ public class FileVersion {
 
             return v1 + "." + v2 + "." + v3 + "." + v4;
         } else {
-            System.out.println("No version info available");
+            log.warn("No version info available. file: {}", filePath);
         }
         return null;
-    }
-
-    public static void main(String[] args) {
-        String filePath = "D:\\Tools\\Coder\\Developer_tools\\Java\\jdk-17.0.8\\bin\\msvcp140.dll";
-        System.out.println(getVersion(filePath));
-    }
-
-    /**
-     * The structure as implemented by the MSDN article
-     */
-    public static class LANGANDCODEPAGE extends Structure {
-        /**
-         * The language contained in the translation table
-         **/
-        public short wLanguage;
-        /**
-         * The code page contained in the translation table
-         **/
-        public short wCodePage;
-
-        public LANGANDCODEPAGE(Pointer p) {
-            useMemory(p);
-        }
-
-        public LANGANDCODEPAGE(Pointer p, int offset) {
-            useMemory(p, offset);
-        }
-
-        public static int sizeOf() {
-            return 4;
-        }
-
-        // newer versions of JNA require a field order to be set
-        @Override
-        protected List<String> getFieldOrder() {
-            List<String> fieldOrder = new ArrayList<>();
-            fieldOrder.add("wLanguage");
-            fieldOrder.add("wCodePage");
-            return fieldOrder;
-        }
     }
 
 }
