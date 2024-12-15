@@ -36,11 +36,10 @@ import java.util.Map;
  * @author H
  */
 @Slf4j
+@Getter
 public class Tasker implements AutoCloseable {
 
-    @Getter
     private final boolean own;
-    @Getter
     private MaaTaskerHandle handle;
     private Controller controller;
     private Resource resource;

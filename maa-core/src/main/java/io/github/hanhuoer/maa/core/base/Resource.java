@@ -23,15 +23,12 @@ import java.util.function.Function;
  * @author H
  */
 @Slf4j
+@Getter
 public class Resource implements AutoCloseable {
 
-    @Getter
     private final boolean own;
-    @Getter
     private MaaResourceHandle handle;
-    @Getter
     private final MaaNotificationCallback callback;
-    @Getter
     private final MaaCallbackTransparentArg callbackArg;
     private final Map<String, CustomRecognition> customRecognitionMap;
     private final Map<String, CustomAction> customActionHashMap;
