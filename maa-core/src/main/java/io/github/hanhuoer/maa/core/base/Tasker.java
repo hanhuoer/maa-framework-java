@@ -184,21 +184,73 @@ public class Tasker implements AutoCloseable {
     }
 
     public Resource resource() {
+        return resource(false);
+    }
+
+    /**
+     * @param createNewEnabled default is false.
+     *                         if true, a new Resource instance will be created.
+     *                         else, check if the existing instance is modified before deciding whether to return it.
+     * @return the bound resource
+     */
+    public Resource resource(boolean createNewEnabled) {
+        if (this.resource == null)
+            throw new RuntimeException("The resource is null, bind it first.");
         MaaResourceHandle resourceHandle = MaaFramework.tasker().MaaTaskerGetResource(this.handle);
         if (resourceHandle == null)
             throw new RuntimeException("Failed to get resource.");
 
-        resource = new Resource(resourceHandle);
-        return resource;
+        if (createNewEnabled) {
+            this.resource = new Resource(resourceHandle);
+            return this.resource;
+        }
+
+        if (!resourceHandle.equals(this.resource.getHandle()))
+            throw new RuntimeException("The resource has been modified.");
+
+        return this.resource;
     }
 
     public Controller controller() {
+        return controller(false);
+    }
+
+    /**
+     * @param createNewEnabled default is false.
+     *                         if true, a new Controller instance will be created.
+     *                         else, check if the existing instance is modified before deciding whether to return it.
+     * @return the bound controller
+     */
+    public Controller controller(boolean createNewEnabled) {
+        if (this.controller == null)
+            throw new RuntimeException("The controller is null, bind it first.");
         MaaControllerHandle controllerHandle = MaaFramework.tasker().MaaTaskerGetController(this.handle);
         if (controllerHandle == null)
             throw new RuntimeException("Failed to get controller.");
 
-        controller = new Controller(controllerHandle);
-        return controller;
+        if (createNewEnabled) {
+            this.controller = new Controller(controllerHandle);
+            return this.controller;
+        }
+
+        if (!controllerHandle.equals(this.controller.getHandle()))
+            throw new RuntimeException("The controller has been modified.");
+
+        return this.controller;
+    }
+
+    /**
+     * @see Tasker#resource
+     */
+    public Resource getResource() {
+        return resource();
+    }
+
+    /**
+     * @see Tasker#controller
+     */
+    public Controller getController() {
+        return controller();
     }
 
     /**
