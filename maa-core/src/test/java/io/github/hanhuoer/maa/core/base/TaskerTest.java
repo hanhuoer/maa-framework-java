@@ -8,6 +8,8 @@ import io.github.hanhuoer.maa.core.custom.Context;
 import io.github.hanhuoer.maa.core.custom.CustomAction;
 import io.github.hanhuoer.maa.core.custom.CustomRecognition;
 import io.github.hanhuoer.maa.core.util.TaskFuture;
+import io.github.hanhuoer.maa.exception.ControllerNotBoundException;
+import io.github.hanhuoer.maa.exception.ResourceNotBoundException;
 import io.github.hanhuoer.maa.model.AdbInfo;
 import io.github.hanhuoer.maa.model.Rect;
 import io.github.hanhuoer.maa.model.TaskDetail;
@@ -108,6 +110,24 @@ class TaskerTest {
         bind();
 
         log.info("inited result: {}", tasker.inited());
+    }
+
+    @Test
+    void controllerTest() {
+        Assertions.assertThrows(ControllerNotBoundException.class, () -> tasker.getController());
+        Assertions.assertThrows(ResourceNotBoundException.class, () -> tasker.getResource());
+
+        bind();
+
+        Assertions.assertDoesNotThrow(() -> {
+            tasker.getController();
+        });
+        Assertions.assertDoesNotThrow(() -> {
+            tasker.getResource();
+        });
+
+        Assertions.assertNotNull(tasker.getController());
+        Assertions.assertNotNull(tasker.getResource());
     }
 
     /**

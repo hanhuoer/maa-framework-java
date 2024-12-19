@@ -10,6 +10,7 @@ import io.github.hanhuoer.maa.callbak.MaaNotificationCallback;
 import io.github.hanhuoer.maa.define.*;
 import io.github.hanhuoer.maa.define.base.MaaBool;
 import io.github.hanhuoer.maa.define.base.MaaLong;
+import io.github.hanhuoer.maa.exception.MaaFrameworkException;
 import io.github.hanhuoer.maa.loader.MaaLibraryLoader;
 import io.github.hanhuoer.maa.util.FileUtils;
 import lombok.Getter;
@@ -80,25 +81,25 @@ public class MaaFramework {
 
     public static void checkMaaFramework() {
         if (INSTANCE == null) {
-            throw new RuntimeException("MaaFramework instance can not be null.");
+            throw new MaaFrameworkException("MaaFramework instance can not be null.");
         }
         if (INSTANCE.controller == null) {
-            throw new RuntimeException("MaaFramework.controller can not be null.");
+            throw new MaaFrameworkException("MaaFramework.controller can not be null.");
         }
         if (INSTANCE.buffer == null) {
-            throw new RuntimeException("MaaFramework.buffer can not be null.");
+            throw new MaaFrameworkException("MaaFramework.buffer can not be null.");
         }
         if (INSTANCE.utility == null) {
-            throw new RuntimeException("MaaFramework.utility can not be null.");
+            throw new MaaFrameworkException("MaaFramework.utility can not be null.");
         }
         if (INSTANCE.resource == null) {
-            throw new RuntimeException("MaaFramework.resource can not be null.");
+            throw new MaaFrameworkException("MaaFramework.resource can not be null.");
         }
         if (INSTANCE.tasker == null) {
-            throw new RuntimeException("MaaFramework.tasker can not be null.");
+            throw new MaaFrameworkException("MaaFramework.tasker can not be null.");
         }
         if (INSTANCE.context == null) {
-            throw new RuntimeException("MaaFramework.syncContext can not be null.");
+            throw new MaaFrameworkException("MaaFramework.syncContext can not be null.");
         }
     }
 

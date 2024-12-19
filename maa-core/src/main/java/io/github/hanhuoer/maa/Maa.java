@@ -4,6 +4,7 @@ import com.sun.jna.Platform;
 import io.github.hanhuoer.maa.component.FileVersion;
 import io.github.hanhuoer.maa.core.base.Tasker;
 import io.github.hanhuoer.maa.exception.LoadException;
+import io.github.hanhuoer.maa.exception.MaaFrameworkException;
 import io.github.hanhuoer.maa.jna.MaaFramework;
 import io.github.hanhuoer.maa.jna.MaaToolkit;
 import io.github.hanhuoer.maa.loader.AgentLibraryLoader;
@@ -252,7 +253,7 @@ public class Maa {
             }
 
             if (StringUtils.compareVersion(version, "14.40.0.0") < 0) {
-                throw new RuntimeException("Please check the msvcp140.dll file version is greater than 14.40, refer to https://github.com/MaaXYZ/MaaFramework/issues/361 for details");
+                throw new MaaFrameworkException("Please check the msvcp140.dll file version is greater than 14.40, refer to https://github.com/MaaXYZ/MaaFramework/issues/361 for details");
             }
 
         } else {
@@ -263,7 +264,7 @@ public class Maa {
                 sysDllPath = "C:\\Windows\\SysWOW64\\msvcp140.dll";
             }
             if (!FileUtils.exists(sysDllPath)) {
-                throw new RuntimeException("Please check the msvcp140.dll file if exists.");
+                throw new MaaFrameworkException("Please check the msvcp140.dll file if exists.");
             }
 
             String version = FileVersion.getVersion(sysDllPath);
@@ -273,7 +274,7 @@ public class Maa {
             }
 
             if (StringUtils.compareVersion(version, "14.40.0.0") < 0) {
-                throw new RuntimeException("Please check the msvcp140.dll file version is greater than 14.40, refer to https://github.com/MaaXYZ/MaaFramework/issues/361 for details");
+                throw new MaaFrameworkException("Please check the msvcp140.dll file version is greater than 14.40, refer to https://github.com/MaaXYZ/MaaFramework/issues/361 for details");
             }
         }
     }

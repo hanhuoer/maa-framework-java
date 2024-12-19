@@ -6,6 +6,7 @@ import io.github.hanhuoer.maa.core.base.Controller;
 import io.github.hanhuoer.maa.define.MaaCallbackTransparentArg;
 import io.github.hanhuoer.maa.define.MaaControllerHandle;
 import io.github.hanhuoer.maa.define.MaaDbgControllerType;
+import io.github.hanhuoer.maa.exception.ControllerCreateException;
 import io.github.hanhuoer.maa.jna.MaaFramework;
 import lombok.extern.slf4j.Slf4j;
 
@@ -28,7 +29,7 @@ public class DbgController extends Controller {
 
 
         if (handle == null) {
-            throw new RuntimeException("Failed to create DbgController.");
+            throw new ControllerCreateException("Failed to create DbgController.");
         }
         super.handle = handle;
     }

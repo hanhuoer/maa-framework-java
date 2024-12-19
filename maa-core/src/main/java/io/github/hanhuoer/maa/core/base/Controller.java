@@ -10,6 +10,7 @@ import io.github.hanhuoer.maa.core.util.Future;
 import io.github.hanhuoer.maa.core.util.TaskFuture;
 import io.github.hanhuoer.maa.define.*;
 import io.github.hanhuoer.maa.define.base.MaaBool;
+import io.github.hanhuoer.maa.exception.MaaFrameworkException;
 import io.github.hanhuoer.maa.jna.MaaFramework;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -264,7 +265,7 @@ public class Controller implements AutoCloseable {
         StringBuffer stringBuffer = new StringBuffer();
         MaaBool maaBool = MaaFramework.controller().MaaControllerGetUUID(this.handle, stringBuffer.getHandle());
         if (!MaaBool.TRUE.equals(maaBool)) {
-            throw new RuntimeException("Failed to get UUID.");
+            throw new MaaFrameworkException("Failed to get UUID.");
         }
         String uuid = stringBuffer.getValue();
         stringBuffer.close();

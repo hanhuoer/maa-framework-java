@@ -11,6 +11,8 @@ import io.github.hanhuoer.maa.core.custom.CustomRecognition;
 import io.github.hanhuoer.maa.core.util.Future;
 import io.github.hanhuoer.maa.define.*;
 import io.github.hanhuoer.maa.define.base.MaaBool;
+import io.github.hanhuoer.maa.exception.MaaFrameworkException;
+import io.github.hanhuoer.maa.exception.ResourceCreateException;
 import io.github.hanhuoer.maa.jna.MaaFramework;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -60,7 +62,7 @@ public class Resource implements AutoCloseable {
         }
 
         if (this.handle == null) {
-            throw new RuntimeException("Failed to create resource.");
+            throw new ResourceCreateException("Failed to create resource.");
         }
 
         this.customRecognitionMap = new HashMap<>();
@@ -267,7 +269,7 @@ public class Resource implements AutoCloseable {
         try (StringBuffer buffer = new StringBuffer()) {
             MaaBool bool = MaaFramework.resource().MaaResourceGetHash(handle, buffer.getHandle());
             if (!MaaBool.TRUE.equals(bool)) {
-                throw new RuntimeException("Failed to get hash.");
+                throw new MaaFrameworkException("Failed to get hash.");
             }
             return buffer.getValue();
         }

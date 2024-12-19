@@ -18,6 +18,7 @@ import io.github.hanhuoer.maa.core.util.TaskFuture;
 import io.github.hanhuoer.maa.define.*;
 import io.github.hanhuoer.maa.define.base.MaaBool;
 import io.github.hanhuoer.maa.define.base.MaaLong;
+import io.github.hanhuoer.maa.exception.*;
 import io.github.hanhuoer.maa.jna.MaaFramework;
 import io.github.hanhuoer.maa.model.NodeDetail;
 import io.github.hanhuoer.maa.model.RecognitionDetail;
@@ -68,7 +69,7 @@ public class Tasker implements AutoCloseable {
             this.own = false;
         }
 
-        if (this.handle == null) throw new RuntimeException("Failed to create tasker.");
+        if (this.handle == null) throw new TaskerCreateException("Failed to create tasker.");
 
         this.callback = callback;
         this.callbackArg = callbackArg;
@@ -195,10 +196,10 @@ public class Tasker implements AutoCloseable {
      */
     public Resource resource(boolean createNewEnabled) {
         if (this.resource == null)
-            throw new RuntimeException("The resource is null, bind it first.");
+            throw new ResourceNotBoundException("The resource is null, bind it first.");
         MaaResourceHandle resourceHandle = MaaFramework.tasker().MaaTaskerGetResource(this.handle);
         if (resourceHandle == null)
-            throw new RuntimeException("Failed to get resource.");
+            throw new MaaFrameworkException("Failed to get resource.");
 
         if (createNewEnabled) {
             this.resource = new Resource(resourceHandle);
@@ -206,7 +207,7 @@ public class Tasker implements AutoCloseable {
         }
 
         if (!resourceHandle.equals(this.resource.getHandle()))
-            throw new RuntimeException("The resource has been modified.");
+            throw new ResourceModifiedException("The resource has been modified.");
 
         return this.resource;
     }
@@ -223,10 +224,10 @@ public class Tasker implements AutoCloseable {
      */
     public Controller controller(boolean createNewEnabled) {
         if (this.controller == null)
-            throw new RuntimeException("The controller is null, bind it first.");
+            throw new ControllerNotBoundException("The controller is null, bind it first.");
         MaaControllerHandle controllerHandle = MaaFramework.tasker().MaaTaskerGetController(this.handle);
         if (controllerHandle == null)
-            throw new RuntimeException("Failed to get controller.");
+            throw new MaaFrameworkException("Failed to get controller.");
 
         if (createNewEnabled) {
             this.controller = new Controller(controllerHandle);
@@ -234,7 +235,7 @@ public class Tasker implements AutoCloseable {
         }
 
         if (!controllerHandle.equals(this.controller.getHandle()))
-            throw new RuntimeException("The controller has been modified.");
+            throw new ControllerModifiedException("The controller has been modified.");
 
         return this.controller;
     }

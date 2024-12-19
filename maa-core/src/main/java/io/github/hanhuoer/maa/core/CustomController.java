@@ -6,6 +6,7 @@ import io.github.hanhuoer.maa.callbak.MaaNotificationCallback;
 import io.github.hanhuoer.maa.core.base.Controller;
 import io.github.hanhuoer.maa.define.*;
 import io.github.hanhuoer.maa.define.base.MaaInteger;
+import io.github.hanhuoer.maa.exception.ControllerCreateException;
 import io.github.hanhuoer.maa.jna.MaaFramework;
 import io.github.hanhuoer.maa.util.StringUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -59,7 +60,7 @@ public abstract class CustomController extends Controller {
         );
 
         if (controllerHandle == null) {
-            throw new RuntimeException("CustomController create failed");
+            throw new ControllerCreateException("CustomController create failed");
         }
         super.handle = controllerHandle;
     }

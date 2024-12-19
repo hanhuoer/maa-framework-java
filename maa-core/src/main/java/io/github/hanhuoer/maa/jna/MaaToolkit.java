@@ -8,6 +8,7 @@ import io.github.hanhuoer.maa.callbak.MaaCustomRecognitionCallback;
 import io.github.hanhuoer.maa.callbak.MaaNotificationCallback;
 import io.github.hanhuoer.maa.define.*;
 import io.github.hanhuoer.maa.define.base.MaaBool;
+import io.github.hanhuoer.maa.exception.MaaFrameworkException;
 import io.github.hanhuoer.maa.loader.MaaLibraryLoader;
 import io.github.hanhuoer.maa.util.FileUtils;
 
@@ -62,19 +63,19 @@ public class MaaToolkit {
 
     public static void checkMaaToolKit() {
         if (INSTANCE == null) {
-            throw new RuntimeException("MaaToolKit instance can not be null.");
+            throw new MaaFrameworkException("MaaToolKit instance can not be null.");
         }
         if (INSTANCE.config == null) {
-            throw new RuntimeException("MaaToolKit.config can not be null.");
+            throw new MaaFrameworkException("MaaToolKit.config can not be null.");
         }
         if (INSTANCE.adbDevice == null) {
-            throw new RuntimeException("MaaToolKit.device can not be null.");
+            throw new MaaFrameworkException("MaaToolKit.device can not be null.");
         }
         if (INSTANCE.projectInterface == null) {
-            throw new RuntimeException("MaaToolKit.execAgent can not be null.");
+            throw new MaaFrameworkException("MaaToolKit.execAgent can not be null.");
         }
         if (INSTANCE.desktopWindow == null) {
-            throw new RuntimeException("MaaToolKit.win32Window can not be null.");
+            throw new MaaFrameworkException("MaaToolKit.win32Window can not be null.");
         }
     }
 

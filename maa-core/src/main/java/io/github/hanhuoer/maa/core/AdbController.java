@@ -7,6 +7,7 @@ import io.github.hanhuoer.maa.consts.MaaAdbScreencapMethodEnum;
 import io.github.hanhuoer.maa.core.base.Controller;
 import io.github.hanhuoer.maa.define.*;
 import io.github.hanhuoer.maa.define.base.MaaBool;
+import io.github.hanhuoer.maa.exception.ControllerCreateException;
 import io.github.hanhuoer.maa.jna.MaaFramework;
 import io.github.hanhuoer.maa.jna.MaaToolkit;
 import io.github.hanhuoer.maa.model.AdbInfo;
@@ -76,7 +77,7 @@ public class AdbController extends Controller {
         );
 
         if (handle == null) {
-            throw new RuntimeException("AdbController create failed");
+            throw new ControllerCreateException("AdbController create failed");
         }
         super.handle = handle;
     }
