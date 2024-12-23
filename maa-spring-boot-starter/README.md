@@ -8,7 +8,7 @@ maa spring boot starter
 <dependency>
     <groupId>io.github.hanhuoer</groupId>
     <artifactId>maa-spring-boot-starter</artifactId>
-    <version>2.1.0</version>
+    <version>2.1.1</version>
 </dependency>
 ```
 
