@@ -185,7 +185,7 @@ public class Tasker implements AutoCloseable {
     }
 
     public Resource resource() {
-        return resource(false);
+        return resource(true);
     }
 
     /**
@@ -195,7 +195,7 @@ public class Tasker implements AutoCloseable {
      * @return the bound resource
      */
     public Resource resource(boolean createNewEnabled) {
-        if (this.resource == null)
+        if (!createNewEnabled && this.resource == null)
             throw new ResourceNotBoundException("The resource is null, bind it first.");
         MaaResourceHandle resourceHandle = MaaFramework.tasker().MaaTaskerGetResource(this.handle);
         if (resourceHandle == null)
@@ -213,7 +213,7 @@ public class Tasker implements AutoCloseable {
     }
 
     public Controller controller() {
-        return controller(false);
+        return controller(true);
     }
 
     /**
@@ -223,7 +223,7 @@ public class Tasker implements AutoCloseable {
      * @return the bound controller
      */
     public Controller controller(boolean createNewEnabled) {
-        if (this.controller == null)
+        if (!createNewEnabled && this.controller == null)
             throw new ControllerNotBoundException("The controller is null, bind it first.");
         MaaControllerHandle controllerHandle = MaaFramework.tasker().MaaTaskerGetController(this.handle);
         if (controllerHandle == null)
