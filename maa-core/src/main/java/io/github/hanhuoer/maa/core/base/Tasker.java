@@ -501,27 +501,28 @@ public class Tasker implements AutoCloseable {
         );
         if (!MaaBool.TRUE.equals(maaBool))
             return null;
-        if (size.getValue().intValue() == 0)
-            return null;
-
-        NativeLongByReference[] maaNodeIds = new NativeLongByReference[size.getValue().intValue()];
-        MaaLong.Reference status = new MaaStatus.Reference();
-        MaaBool ret = MaaFramework.tasker().MaaTaskerGetTaskDetail(
-                this.handle,
-                taskId,
-                entry.getHandle(),
-                maaNodeIds,
-                size,
-                status
-        );
-        if (!MaaBool.TRUE.equals(ret))
-            return null;
 
         List<NodeDetail> nodeList = new ArrayList<>();
-        for (int i = 0; i < size.getValue().longValue(); i++) {
-            long maaNodeId = Pointer.nativeValue(maaNodeIds[i].getPointer());
-            NodeDetail nodeDetail = this.getNodeDetail(maaNodeId);
-            nodeList.add(nodeDetail);
+        MaaLong.Reference status = statusReference;
+        if (size.getValue().intValue() > 0) {
+            NativeLongByReference[] maaNodeIds = new NativeLongByReference[size.getValue().intValue()];
+            status = new MaaStatus.Reference();
+            MaaBool ret = MaaFramework.tasker().MaaTaskerGetTaskDetail(
+                    this.handle,
+                    taskId,
+                    entry.getHandle(),
+                    maaNodeIds,
+                    size,
+                    status
+            );
+            if (!MaaBool.TRUE.equals(ret))
+                return null;
+
+            for (int i = 0; i < size.getValue().longValue(); i++) {
+                long maaNodeId = Pointer.nativeValue(maaNodeIds[i].getPointer());
+                NodeDetail nodeDetail = this.getNodeDetail(maaNodeId);
+                nodeList.add(nodeDetail);
+            }
         }
 
         String entryValue = entry.getValue();

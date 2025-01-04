@@ -387,7 +387,7 @@ class TaskerTest {
 
     @SneakyThrows
     @Test
-    public void test_register() {
+    public void testRegister() {
         bind();
 
         MyCustomAction customAction = new MyCustomAction();
@@ -459,5 +459,36 @@ class TaskerTest {
 
         pipelineJson.put("custom_task_test", taskJson);
         return pipelineJson;
+    }
+
+    @Test
+    public void testCustomScreenshotAction() {
+        bind();
+
+        MyScreenshotAction customAction = new MyScreenshotAction();
+
+        boolean customActionResult = resource.registerAction("screenshotAction", customAction);
+        Assertions.assertTrue(customActionResult);
+
+        String pipeline = "{\n" +
+                "      \"screenshot\": {\n" +
+                "        \"pre_delay\": 0,\n" +
+                "        \"action\": \"Custom\",\n" +
+                "        \"post_delay\": 0,\n" +
+                "        \"custom_action\": \"screenshotAction\"\n" +
+                "      }\n" +
+                "    }";
+        TaskFuture<TaskDetail> taskFuture = tasker.postPipeline("screenshot", pipeline);
+        taskFuture.waiting();
+        TaskDetail taskDetail = taskFuture.get();
+        log.info("taskDetail: {}", taskDetail);
+    }
+
+    public static class MyScreenshotAction extends CustomAction {
+        @Override
+        public CustomAction.RunResult run(Context context, RunArg arg) {
+            log.info("my screenshot action");
+            return CustomAction.RunResult.success();
+        }
     }
 }
