@@ -92,9 +92,9 @@ public class ImageBuffer implements AutoCloseable {
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
                 int pixel = value.getRGB(x, y);
-                pixels[index++] = (byte) ((pixel >> 16) & 0xFF); // Red
-                pixels[index++] = (byte) ((pixel >> 8) & 0xFF);  // Green
                 pixels[index++] = (byte) (pixel & 0xFF);         // Blue
+                pixels[index++] = (byte) ((pixel >> 8) & 0xFF);  // Green
+                pixels[index++] = (byte) ((pixel >> 16) & 0xFF); // Red
             }
         }
 

@@ -11,12 +11,14 @@ import io.github.hanhuoer.maa.core.util.TaskFuture;
 import io.github.hanhuoer.maa.exception.ControllerNotBoundException;
 import io.github.hanhuoer.maa.exception.ResourceNotBoundException;
 import io.github.hanhuoer.maa.model.AdbInfo;
+import io.github.hanhuoer.maa.model.RecognitionDetail;
 import io.github.hanhuoer.maa.model.Rect;
 import io.github.hanhuoer.maa.model.TaskDetail;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
 
+import java.awt.image.BufferedImage;
 import java.util.List;
 import java.util.Map;
 
@@ -488,6 +490,25 @@ class TaskerTest {
         @Override
         public CustomAction.RunResult run(Context context, RunArg arg) {
             log.info("my screenshot action");
+
+            Controller controller = context.tasker().controller();
+            BufferedImage screencap = controller.screencap();
+
+            /*
+            https://github.com/MaaXYZ/MaaFramework/issues/509
+            "rec_icon": {
+                "recognition": "TemplateMatch",
+                "template": ["google.png", "sketchbook.png", "via.png"],
+                "threshold": [0.5, 0.5, 0.5],
+                "pre_delay": 0,
+                "post_delay": 0,
+                "method": 5,
+                "count": 4
+              }
+            * */
+            RecognitionDetail recognitionDetail = context.runRecognition("rec_icon", screencap);
+            log.info("reco detail: {}", recognitionDetail);
+
             return CustomAction.RunResult.success();
         }
     }
