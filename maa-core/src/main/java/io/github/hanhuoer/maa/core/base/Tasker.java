@@ -362,7 +362,7 @@ public class Tasker implements AutoCloseable {
 
     public TaskFuture<TaskDetail> postPipeline(String entry, String pipelineOverride) {
         MaaTaskId maaTaskId = MaaFramework.tasker()
-                .MaaTaskerPostPipeline(this.handle, entry, pipelineOverride);
+                .MaaTaskerPostTask(this.handle, entry, pipelineOverride);
         return this.genTaskJob(maaTaskId);
     }
 

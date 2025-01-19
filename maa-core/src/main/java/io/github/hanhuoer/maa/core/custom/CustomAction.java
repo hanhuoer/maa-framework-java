@@ -32,7 +32,7 @@ public abstract class CustomAction implements MaaCustomActionCallback {
     public MaaBool run(
             MaaContextHandle contextHandle,
             MaaTaskId taskId,
-            String currentTaskName,
+            String nodeName,
             String customActionName,
             String customActionParam,
             MaaRecoId recoId,
@@ -53,7 +53,8 @@ public abstract class CustomAction implements MaaCustomActionCallback {
 
         RunArg runArg = new RunArg()
                 .setTaskDetail(taskDetail)
-                .setCurrentTaskName(currentTaskName)
+                .setNodeName(nodeName)
+                .setCurrentTaskName(nodeName)
                 .setCustomActionName(customActionName)
                 .setCustomActionParam(customActionParam)
                 .setRecognitionDetail(recognitionDetail)
@@ -70,6 +71,11 @@ public abstract class CustomAction implements MaaCustomActionCallback {
     public static class RunArg {
 
         private TaskDetail taskDetail;
+        // same as currentTaskName.
+        private String nodeName;
+        /**
+         * @deprecated use {@link #nodeName}
+         */
         private String currentTaskName;
         private String customActionName;
         private String customActionParam;

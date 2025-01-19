@@ -16,7 +16,7 @@ public interface MaaCustomRecognitionCallback extends Callback {
     MaaBool analyze(
             MaaContextHandle contextHandle,
             MaaTaskId maaTaskId,
-            String currentTaskName,
+            String nodeName,
             String customRecognitionName,
             String customRecognitionParam,
             MaaImageBufferHandle imageHandle,

@@ -13,7 +13,7 @@ public interface MaaCustomActionCallback extends Callback {
     MaaBool run(
             MaaContextHandle contextHandle,
             MaaTaskId taskId,
-            String currentTaskName,
+            String nodeName,
             String customActionName,
             String customActionParam,
             MaaRecoId recoId,

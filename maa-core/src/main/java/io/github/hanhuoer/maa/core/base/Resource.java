@@ -78,6 +78,10 @@ public class Resource implements AutoCloseable {
         if (log.isDebugEnabled()) log.debug("resource has bean destroyed.");
     }
 
+    public Boolean bundle(String path) {
+        return load(path);
+    }
+
     public Boolean load(String path) {
         Future future = this.postPath(path);
         return future.waiting().done();
@@ -87,8 +91,15 @@ public class Resource implements AutoCloseable {
         return this.postPath(path);
     }
 
+    /**
+     * same as {@link #postPath(String)}
+     */
+    public Future postBundle(String path) {
+        return postPath(path);
+    }
+
     public Future postPath(String path) {
-        MaaId maaId = MaaFramework.resource().MaaResourcePostPath(this.handle, path);
+        MaaId maaId = MaaFramework.resource().MaaResourcePostBundle(this.handle, path);
         Function<MaaId, MaaStatusEnum> statusFunc = id -> MaaStatusEnum.of(this.status(id.getValue()));
         Function<MaaId, Void> waitFunc = id -> {
             this.waiting(id.getValue());

@@ -63,7 +63,7 @@ class ResourceTest {
         Boolean load = resource.load("./resources/resource");
 
         try (StringListBuffer stringBuffer = new StringListBuffer()) {
-            Boolean getResult = MaaFramework.resource().MaaResourceGetTaskList(
+            Boolean getResult = MaaFramework.resource().MaaResourceGetNodeList(
                     resource.getHandle(),
                     stringBuffer.getHandle()
             ).getValue();

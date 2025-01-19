@@ -330,7 +330,7 @@ public class MaaFramework {
 
         MaaBool MaaResourceClearCustomAction(MaaResourceHandle res);
 
-        MaaResId MaaResourcePostPath(MaaResourceHandle res, String path);
+        MaaResId MaaResourcePostBundle(MaaResourceHandle res, String path);
 
         MaaBool MaaResourceClear(MaaResourceHandle res);
 
@@ -372,7 +372,7 @@ public class MaaFramework {
          *
          * @param buffer out, the buffer where the task list will be written to.
          */
-        MaaBool MaaResourceGetTaskList(MaaResourceHandle res, MaaStringListBufferHandle buffer);
+        MaaBool MaaResourceGetNodeList(MaaResourceHandle res, MaaStringListBufferHandle buffer);
 
     }
 
@@ -400,7 +400,7 @@ public class MaaFramework {
 
         MaaBool MaaTaskerInited(MaaTaskerHandle tasker);
 
-        MaaTaskId MaaTaskerPostPipeline(MaaTaskerHandle tasker, String entry, String pipeline_override);
+        MaaTaskId MaaTaskerPostTask(MaaTaskerHandle tasker, String entry, String pipeline_override);
 
         MaaStatus MaaTaskerStatus(MaaTaskerHandle tasker, MaaTaskId id);
 
@@ -417,7 +417,7 @@ public class MaaFramework {
         MaaBool MaaTaskerClearCache(MaaTaskerHandle tasker);
 
         /**
-         * @param name        out
+         * @param node_name   out
          * @param algorithm   out
          * @param hit         out
          * @param box         out
@@ -427,7 +427,7 @@ public class MaaFramework {
          */
         MaaBool MaaTaskerGetRecognitionDetail(MaaTaskerHandle tasker,
                                               MaaRecoId reco_id,
-                                              MaaStringBufferHandle name,
+                                              MaaStringBufferHandle node_name,
                                               MaaStringBufferHandle algorithm,
                                               MaaBool hit,
                                               MaaRectHandle box,
@@ -436,13 +436,13 @@ public class MaaFramework {
                                               MaaImageListBufferHandle draws);
 
         /**
-         * @param name      out
+         * @param node_name out
          * @param reco_id   out
          * @param completed out
          */
         MaaBool MaaTaskerGetNodeDetail(MaaTaskerHandle tasker,
                                        MaaNodeId node_id,
-                                       MaaStringBufferHandle name,
+                                       MaaStringBufferHandle node_name,
                                        MaaRecoId.Reference reco_id,
                                        MaaBool completed);
 
@@ -461,7 +461,7 @@ public class MaaFramework {
         /**
          * @param[out] latest_id
          */
-        MaaBool MaaTaskerGetLatestNode(MaaTaskerHandle tasker, String task_name,/* out */ MaaLong.Reference latest_id);
+        MaaBool MaaTaskerGetLatestNode(MaaTaskerHandle tasker, String node_name,/* out */ MaaLong.Reference latest_id);
 
     }
 
@@ -473,7 +473,7 @@ public class MaaFramework {
      */
     public interface MaaContext extends Library {
 
-        MaaTaskId MaaContextRunPipeline(MaaContextHandle context, String entry, String pipeline_override);
+        MaaTaskId MaaContextRunTask(MaaContextHandle context, String entry, String pipeline_override);
 
         MaaRecoId MaaContextRunRecognition(MaaContextHandle context, String entry, String pipeline_override, MaaImageBufferHandle image);
 
@@ -482,7 +482,7 @@ public class MaaFramework {
 
         MaaBool MaaContextOverridePipeline(MaaContextHandle context, String pipeline_override);
 
-        MaaBool MaaContextOverrideNext(MaaContextHandle context, String name, MaaStringListBufferHandle next_list);
+        MaaBool MaaContextOverrideNext(MaaContextHandle context, String node_name, MaaStringListBufferHandle next_list);
 
         MaaTaskId MaaContextGetTaskId(MaaContextHandle context);
 

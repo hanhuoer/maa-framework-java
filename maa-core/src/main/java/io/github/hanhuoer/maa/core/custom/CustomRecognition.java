@@ -42,7 +42,7 @@ public abstract class CustomRecognition implements MaaCustomRecognitionCallback 
     public MaaBool analyze(
             MaaContextHandle contextHandle,
             MaaTaskId taskId,
-            String currentTaskName,
+            String nodeName,
             String customRecoName,
             String customRecoParam,
             MaaImageBufferHandle imageHandle,
@@ -62,7 +62,8 @@ public abstract class CustomRecognition implements MaaCustomRecognitionCallback 
         RectBuffer roiBuffer = new RectBuffer(roi);
         AnalyzeArg analyzeArg = new AnalyzeArg()
                 .setTaskDetail(taskDetail)
-                .setCurrentTaskName(currentTaskName)
+                .setNodeName(nodeName)
+                .setCurrentTaskName(nodeName)
                 .setCustomRecognitionName(customRecoName)
                 .setCustomRecognitionParam(customRecoParam)
                 .setImage(image)
@@ -88,6 +89,11 @@ public abstract class CustomRecognition implements MaaCustomRecognitionCallback 
     public static class AnalyzeArg {
 
         private TaskDetail taskDetail;
+        // same as currentTaskName.
+        private String nodeName;
+        /**
+         * @deprecated use {@link #nodeName}
+         */
         private String currentTaskName;
         private String customRecognitionName;
         private String customRecognitionParam;

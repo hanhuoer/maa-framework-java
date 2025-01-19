@@ -43,34 +43,18 @@ public class Context {
         this.tasker = new Tasker(taskerHandle);
     }
 
-    /**
-     * @since 2.0.0
-     * @deprecated use runPipeline instead.
-     */
     public TaskDetail runTask(String entry) {
         return runTask(entry, "{}");
     }
 
-    /**
-     * @since 2.0.0
-     * @deprecated use runPipeline instead.
-     */
     public TaskDetail runTask(String entry, Map<String, Object> pipelineOverride) {
         return runTask(entry, JSONObject.toJSONString(pipelineOverride));
     }
 
-    /**
-     * @since 2.0.0
-     * @deprecated use runPipeline instead.
-     */
     public TaskDetail runTask(String entry, JSONObject pipelineOverride) {
         return runTask(entry, pipelineOverride.toString());
     }
 
-    /**
-     * @since 2.0.0
-     * @deprecated use runPipeline instead.
-     */
     public TaskDetail runTask(String entry, String pipelineOverride) {
         return runPipeline(entry, pipelineOverride);
     }
@@ -88,7 +72,7 @@ public class Context {
     }
 
     public TaskDetail runPipeline(String entry, String pipelineOverride) {
-        MaaTaskId maaTaskId = MaaFramework.context().MaaContextRunPipeline(this.handle, entry, pipelineOverride);
+        MaaTaskId maaTaskId = MaaFramework.context().MaaContextRunTask(this.handle, entry, pipelineOverride);
         if (maaTaskId == null) {
             return null;
         }
@@ -172,12 +156,12 @@ public class Context {
         );
     }
 
-    public boolean overrideNext(String name, List<String> nextList) {
+    public boolean overrideNext(String nodeName, List<String> nextList) {
         try (StringListBuffer stringListBuffer = new StringListBuffer()) {
             stringListBuffer.setValue(nextList);
             return MaaBool.TRUE.equals(
                     MaaFramework.context().MaaContextOverrideNext(
-                            this.handle, name, stringListBuffer.getHandle()
+                            this.handle, nodeName, stringListBuffer.getHandle()
                     )
             );
         }
