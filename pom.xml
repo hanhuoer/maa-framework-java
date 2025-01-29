@@ -69,11 +69,11 @@
 
         <!-- Maa Framework Java Version: current project -->
         <!-- https://github.com/hanhuoer/maa-framework-java -->
-        <revision>3.0.1</revision>
+        <revision>3.0.2</revision>
 
         <!-- Maa Framework Version: native lib -->
         <!-- https://github.com/MaaXYZ/MaaFramework -->
-        <maa.version>3.0.1</maa.version>
+        <maa.version>3.0.2</maa.version>
 
         <!-- Agent Version: minitouch/minicap/maatouch -->
         <!-- https://github.com/MaaXYZ/MaaAgentBinary -->
